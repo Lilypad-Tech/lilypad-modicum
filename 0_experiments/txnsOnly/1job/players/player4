@@ -1,0 +1,2 @@
+publish /home/riaps/projects/MODiCuM/workloads/bodytrack/job bodytrack run 1 NA END
+postOffer /home/riaps/projects/MODiCuM/workloads/bodytrack/job bodytrack run 1 False END

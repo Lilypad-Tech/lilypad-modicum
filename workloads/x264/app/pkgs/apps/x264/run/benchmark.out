@@ -1,0 +1,8 @@
+PARSEC Benchmark Suite Version 3.0-beta-20150206
+yuv4mpeg: 64x36@25/1fps, 0:0
+double free or corruption (!prev)
+./bin/parsecmgmt: line 1222: 11083 Aborted                 /home/riaps/projects/MODiCuM/workloads/x264/app/pkgs/apps/x264/inst/arm-linux.gcc/bin/x264 --quiet --qp 20 --partitions b8x8,i4x4 --ref 5 --direct auto --b-pyramid --weightb --mixed-refs --no-fast-pskip --me umh --subme 7 --analyse b8x8,i4x4 --threads 1 -o eledream.264 eledream_64x36_3.y4m
+
+real	0m0.064s
+user	0m0.020s
+sys	0m0.015s

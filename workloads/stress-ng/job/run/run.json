@@ -1,0 +1,8 @@
+{
+    "command" : "stress-ng --cpu 0 -t 20 --cpu-method trig --metrics-brief --log-file /app/output/stress-ng.log",
+
+    "mounts" : {"/home/riaps/modicum/apps/stress-ng/output": {"bind":"/app/output","mode":"rw"}},
+
+    "env" : {}
+
+}

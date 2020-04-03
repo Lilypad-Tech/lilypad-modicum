@@ -1,0 +1,17 @@
+{
+    "ijoid":-1,
+    "cpuTime":800000,
+    "bandwidthLimit":100,
+    "instructionMaxPrice":1,
+    "bandwidthMaxPrice":1,
+    "completionDeadline":-1,
+    "matchIncentive":1,
+    "firstLayerHash":87459587363948095559192930170266129492603918279272499779776188190182004565135,
+    "ramLimit":100,
+    "localStorageLimit":1000,
+    "uri":-1,
+    "directory":"0xc590dd7eed9f093d88d2f3c894b769c746bc8c9b",
+    "hash":62268382841976171393676788316701749790062852224703502706616588964451594998902,
+    "arch":"armv7"
+}
+            

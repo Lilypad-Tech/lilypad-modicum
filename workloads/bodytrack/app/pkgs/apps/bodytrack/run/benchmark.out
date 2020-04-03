@@ -1,0 +1,13 @@
+PARSEC Benchmark Suite Version 3.0-beta-20150206
+
+Running Single Threaded
+
+Using dataset : sequenceB_2/
+2000 particles with 5 annealing layers
+
+Processing frame 0
+Processing frame 1
+
+real	0m24.948s
+user	0m20.737s
+sys	0m0.190s

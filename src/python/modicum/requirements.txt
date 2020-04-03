@@ -1,0 +1,3 @@
+pycurl
+zmq
+docker

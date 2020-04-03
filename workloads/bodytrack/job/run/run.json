@@ -1,0 +1,8 @@
+{
+    "command" : "./bin/parsecmgmt -a run -p bodytrack -c gcc-serial -i simmedium",
+
+    "mounts" : {"/home/riaps/modicum/apps/bodytrack/output": {"bind":"/app/log/arm-linux.gcc-serial","mode":"rw"}},
+
+    "env" : {}
+
+}

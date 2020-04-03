@@ -1,0 +1,10 @@
+{
+    "command" : "sudo docker run -it stress-ng -c \"stress-ng --cpu 0 -t 10 --cpu-method trig --metrics-brief --log-file stress-ng.log\"",
+    
+    "mounts" : {
+        "input" : {"bind":"","mode":""},
+        "output": {"bind":"","mode":""}},
+    
+    "env" : {"MODICUM_INPUT":"", "MODICUM_OUTPUT":""}
+
+}

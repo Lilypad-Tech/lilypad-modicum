@@ -1,0 +1,7932 @@
+    /* "/solidity/input/Modicum.sol":26:31580  contract Modicum {... */
+  mstore(0x40, 0x80)
+    /* "/solidity/input/Modicum.sol":75:101  address owner = msg.sender */
+  0x1
+  dup1
+  sload
+  not(sub(exp(0x2, 0xa0), 0x1))
+  and
+    /* "/solidity/input/Modicum.sol":91:101  msg.sender */
+  caller
+    /* "/solidity/input/Modicum.sol":75:101  address owner = msg.sender */
+  or
+  dup2
+  sstore
+    /* "/solidity/input/Modicum.sol":6654:6673  uint256 joIndex = 1 */
+  0x7
+  sstore
+    /* "/solidity/input/Modicum.sol":26:31580  contract Modicum {... */
+  callvalue
+    /* "--CODEGEN--":5:7   */
+  dup1
+  iszero
+  tag_1
+  jumpi
+    /* "--CODEGEN--":30:31   */
+  0x0
+    /* "--CODEGEN--":27:28   */
+  dup1
+    /* "--CODEGEN--":20:32   */
+  revert
+    /* "--CODEGEN--":5:7   */
+tag_1:
+    /* "/solidity/input/Modicum.sol":26:31580  contract Modicum {... */
+  pop
+  dataSize(sub_0)
+  dup1
+  dataOffset(sub_0)
+  0x0
+  codecopy
+  0x0
+  return
+stop
+
+sub_0: assembly {
+        /* "/solidity/input/Modicum.sol":26:31580  contract Modicum {... */
+      mstore(0x40, 0x80)
+      jumpi(tag_1, lt(calldatasize, 0x4))
+      and(div(calldataload(0x0), 0x100000000000000000000000000000000000000000000000000000000), 0xffffffff)
+      0x2ddffbe
+      dup2
+      eq
+      tag_2
+      jumpi
+      dup1
+      0xd4722f6
+      eq
+      tag_3
+      jumpi
+      dup1
+      0x210b2d81
+      eq
+      tag_4
+      jumpi
+      dup1
+      0x2245ae9e
+      eq
+      tag_5
+      jumpi
+      dup1
+      0x29e99f07
+      eq
+      tag_6
+      jumpi
+      dup1
+      0x3093a889
+      eq
+      tag_7
+      jumpi
+      dup1
+      0x3be1bfe8
+      eq
+      tag_8
+      jumpi
+      dup1
+      0x413ba302
+      eq
+      tag_9
+      jumpi
+      dup1
+      0x41591992
+      eq
+      tag_10
+      jumpi
+      dup1
+      0x4c4a76e5
+      eq
+      tag_11
+      jumpi
+      dup1
+      0x4fea39c2
+      eq
+      tag_12
+      jumpi
+      dup1
+      0x75158b70
+      eq
+      tag_13
+      jumpi
+      dup1
+      0x78e75f0f
+      eq
+      tag_14
+      jumpi
+      dup1
+      0x80cde9bc
+      eq
+      tag_15
+      jumpi
+      dup1
+      0x82792410
+      eq
+      tag_16
+      jumpi
+      dup1
+      0x8a54fcee
+      eq
+      tag_17
+      jumpi
+      dup1
+      0x9cbf282c
+      eq
+      tag_18
+      jumpi
+      dup1
+      0xa1bab447
+      eq
+      tag_19
+      jumpi
+      dup1
+      0xa7c2c44d
+      eq
+      tag_20
+      jumpi
+      dup1
+      0xae625e56
+      eq
+      tag_21
+      jumpi
+      dup1
+      0xc1a1668f
+      eq
+      tag_22
+      jumpi
+      dup1
+      0xcf72e7bd
+      eq
+      tag_23
+      jumpi
+      dup1
+      0xd5fb4e18
+      eq
+      tag_24
+      jumpi
+      dup1
+      0xdadb2ebd
+      eq
+      tag_25
+      jumpi
+      dup1
+      0xdcb8e23a
+      eq
+      tag_26
+      jumpi
+      dup1
+      0xff91ab04
+      eq
+      tag_27
+      jumpi
+    tag_1:
+        /* "/solidity/input/Modicum.sol":7555:7588  revert("Why are you calling me?") */
+      0x40
+      dup1
+      mload
+      0x8c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x20
+      0x4
+      dup3
+      add
+      mstore
+      0x17
+      0x24
+      dup3
+      add
+      mstore
+      0x5768792061726520796f752063616c6c696e67206d653f000000000000000000
+      0x44
+      dup3
+      add
+      mstore
+      swap1
+      mload
+      swap1
+      dup2
+      swap1
+      sub
+      0x64
+      add
+      swap1
+      revert
+        /* "/solidity/input/Modicum.sol":8085:8269  function setReactionDeadline(uint256 _reactionDeadline) public administrative {... */
+    tag_2:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_30
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_30:
+      pop
+        /* "/solidity/input/Modicum.sol":8085:8269  function setReactionDeadline(uint256 _reactionDeadline) public administrative {... */
+      tag_31
+      calldataload(0x4)
+      jump(tag_32)
+    tag_31:
+      stop
+        /* "/solidity/input/Modicum.sol":8276:9151  function registerMediator(... */
+    tag_3:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_33
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_33:
+      pop
+        /* "/solidity/input/Modicum.sol":8276:9151  function registerMediator(... */
+      tag_31
+      and(calldataload(0x4), 0xff)
+      calldataload(0x24)
+      calldataload(0x44)
+      calldataload(0x64)
+      calldataload(0x84)
+      jump(tag_35)
+        /* "/solidity/input/Modicum.sol":23279:24448  function postResult(... */
+    tag_4:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_36
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_36:
+      pop
+        /* "/solidity/input/Modicum.sol":23279:24448  function postResult(... */
+      tag_37
+      calldataload(0x4)
+      calldataload(0x24)
+      and(calldataload(0x44), 0xff)
+      calldataload(0x64)
+      calldataload(0x84)
+      calldataload(0xa4)
+      calldataload(0xc4)
+      jump(tag_38)
+    tag_37:
+      0x40
+      dup1
+      mload
+      swap2
+      dup3
+      mstore
+      mload
+      swap1
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      return
+        /* "/solidity/input/Modicum.sol":10468:10688  function resourceProviderAddTrustedMediator(address mediator) public {... */
+    tag_5:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_39
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_39:
+      pop
+        /* "/solidity/input/Modicum.sol":10468:10688  function resourceProviderAddTrustedMediator(address mediator) public {... */
+      tag_31
+      and(calldataload(0x4), sub(exp(0x2, 0xa0), 0x1))
+      jump(tag_41)
+        /* "/solidity/input/Modicum.sol":7601:7737  function test(uint256 value) public{... */
+    tag_6:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_42
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_42:
+      pop
+        /* "/solidity/input/Modicum.sol":7601:7737  function test(uint256 value) public{... */
+      tag_31
+      calldataload(0x4)
+      jump(tag_44)
+        /* "/solidity/input/Modicum.sol":24454:25266  function rejectResult(uint256 resultId, uint256 jobOfferId) public {... */
+    tag_7:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_45
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_45:
+      pop
+        /* "/solidity/input/Modicum.sol":24454:25266  function rejectResult(uint256 resultId, uint256 jobOfferId) public {... */
+      tag_31
+      calldataload(0x4)
+      calldataload(0x24)
+      jump(tag_47)
+        /* "/solidity/input/Modicum.sol":14182:16059  function postJobOfferPartOne(... */
+    tag_8:
+      tag_31
+      calldataload(0x4)
+      calldataload(0x24)
+      calldataload(0x44)
+      calldataload(0x64)
+      calldataload(0x84)
+      calldataload(0xa4)
+      calldataload(0xc4)
+      jump(tag_49)
+        /* "/solidity/input/Modicum.sol":9366:9592  function mediatorAddSupportedFirstLayer(uint256 firstLayerHash) public {... */
+    tag_9:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_50
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_50:
+      pop
+        /* "/solidity/input/Modicum.sol":9366:9592  function mediatorAddSupportedFirstLayer(uint256 firstLayerHash) public {... */
+      tag_31
+      calldataload(0x4)
+      jump(tag_52)
+        /* "/solidity/input/Modicum.sol":10927:11177  function resourceProviderAddSupportedFirstLayer(uint256 firstLayerHash) public {... */
+    tag_10:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_53
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_53:
+      pop
+        /* "/solidity/input/Modicum.sol":10927:11177  function resourceProviderAddSupportedFirstLayer(uint256 firstLayerHash) public {... */
+      tag_31
+      calldataload(0x4)
+      jump(tag_55)
+        /* "/solidity/input/Modicum.sol":30927:31430  function timeout(uint256 matchId, uint256 jobOfferId) public {... */
+    tag_11:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_56
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_56:
+      pop
+        /* "/solidity/input/Modicum.sol":30927:31430  function timeout(uint256 matchId, uint256 jobOfferId) public {... */
+      tag_31
+      calldataload(0x4)
+      calldataload(0x24)
+      jump(tag_58)
+        /* "/solidity/input/Modicum.sol":7743:7920  function check(Architecture arch) public{... */
+    tag_12:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_59
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_59:
+      pop
+        /* "/solidity/input/Modicum.sol":7743:7920  function check(Architecture arch) public{... */
+      tag_31
+      and(calldataload(0x4), 0xff)
+      jump(tag_61)
+        /* "/solidity/input/Modicum.sol":9771:10462  function registerResourceProvider(... */
+    tag_13:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_62
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_62:
+      pop
+        /* "/solidity/input/Modicum.sol":9771:10462  function registerResourceProvider(... */
+      tag_31
+      and(calldataload(0x4), 0xff)
+      calldataload(0x24)
+      jump(tag_64)
+        /* "/solidity/input/Modicum.sol":31436:31577  function receiveValues(address toAccount, uint256 amount) public administrative {... */
+    tag_14:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_65
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_65:
+      pop
+        /* "/solidity/input/Modicum.sol":31436:31577  function receiveValues(address toAccount, uint256 amount) public administrative {... */
+      tag_31
+      and(calldataload(0x4), sub(exp(0x2, 0xa0), 0x1))
+      calldataload(0x24)
+      jump(tag_67)
+        /* "/solidity/input/Modicum.sol":18062:18658  function cancelResOffer(uint256 offerId) public {... */
+    tag_15:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_68
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_68:
+      pop
+        /* "/solidity/input/Modicum.sol":18062:18658  function cancelResOffer(uint256 offerId) public {... */
+      tag_31
+      calldataload(0x4)
+      jump(tag_70)
+        /* "/solidity/input/Modicum.sol":9157:9360  function mediatorAddTrustedDirectory(address directory) public {... */
+    tag_16:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_71
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_71:
+      pop
+        /* "/solidity/input/Modicum.sol":9157:9360  function mediatorAddTrustedDirectory(address directory) public {... */
+      tag_31
+      and(calldataload(0x4), sub(exp(0x2, 0xa0), 0x1))
+      jump(tag_73)
+        /* "/solidity/input/Modicum.sol":11989:12191  function jobCreatorAddTrustedMediator(address mediator) public {... */
+    tag_17:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_74
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_74:
+      pop
+        /* "/solidity/input/Modicum.sol":11989:12191  function jobCreatorAddTrustedMediator(address mediator) public {... */
+      tag_31
+      and(calldataload(0x4), sub(exp(0x2, 0xa0), 0x1))
+      jump(tag_76)
+        /* "/solidity/input/Modicum.sol":16065:17452  function postJobOfferPartTwo(... */
+    tag_18:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_77
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_77:
+      pop
+        /* "/solidity/input/Modicum.sol":16065:17452  function postJobOfferPartTwo(... */
+      tag_31
+      calldataload(0x4)
+      calldataload(0x24)
+      calldataload(0x44)
+      calldataload(0x64)
+      calldataload(0x84)
+      and(calldataload(0xa4), sub(exp(0x2, 0xa0), 0x1))
+      calldataload(0xc4)
+      and(calldataload(0xe4), 0xff)
+      jump(tag_79)
+        /* "/solidity/input/Modicum.sol":7926:8079  function setPenaltyRate(uint256 _penaltyRate) public administrative {... */
+    tag_19:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_80
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_80:
+      pop
+        /* "/solidity/input/Modicum.sol":7926:8079  function setPenaltyRate(uint256 _penaltyRate) public administrative {... */
+      tag_31
+      calldataload(0x4)
+      jump(tag_82)
+        /* "/solidity/input/Modicum.sol":17458:18056  function cancelJobOffer(uint256 offerId) public {... */
+    tag_20:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_83
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_83:
+      pop
+        /* "/solidity/input/Modicum.sol":17458:18056  function cancelJobOffer(uint256 offerId) public {... */
+      tag_31
+      calldataload(0x4)
+      jump(tag_85)
+        /* "/solidity/input/Modicum.sol":12197:14176  function postResOffer(... */
+    tag_21:
+      tag_31
+      calldataload(0x4)
+      calldataload(0x24)
+      calldataload(0x44)
+      calldataload(0x64)
+      calldataload(0x84)
+      calldataload(0xa4)
+      calldataload(0xc4)
+      calldataload(0xe4)
+      calldataload(0x104)
+      jump(tag_87)
+        /* "/solidity/input/Modicum.sol":11532:11823  function registerJobCreator(... */
+    tag_22:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_88
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_88:
+        /* "/solidity/input/Modicum.sol":11532:11823  function registerJobCreator(... */
+      pop
+      tag_31
+      jump(tag_90)
+        /* "/solidity/input/Modicum.sol":10694:10921  function resourceProviderAddTrustedDirectory(address directory) public {... */
+    tag_23:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_91
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_91:
+      pop
+        /* "/solidity/input/Modicum.sol":10694:10921  function resourceProviderAddTrustedDirectory(address directory) public {... */
+      tag_31
+      and(calldataload(0x4), sub(exp(0x2, 0xa0), 0x1))
+      jump(tag_93)
+        /* "/solidity/input/Modicum.sol":6338:6383  mapping(address => Mediator) public mediators */
+    tag_24:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_94
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_94:
+      pop
+        /* "/solidity/input/Modicum.sol":6338:6383  mapping(address => Mediator) public mediators */
+      tag_95
+      and(calldataload(0x4), sub(exp(0x2, 0xa0), 0x1))
+      jump(tag_96)
+    tag_95:
+      mload(0x40)
+      dup1
+      dup7
+      0x1
+      dup2
+      gt
+      iszero
+      tag_97
+      jumpi
+      invalid
+    tag_97:
+      0xff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup6
+      dup2
+      mstore
+      0x20
+      add
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap6
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "/solidity/input/Modicum.sol":25272:26202  function acceptResult(uint256 resultId, uint256 jobOfferId) public returns (uint256) {... */
+    tag_25:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_98
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_98:
+      pop
+        /* "/solidity/input/Modicum.sol":25272:26202  function acceptResult(uint256 resultId, uint256 jobOfferId) public returns (uint256) {... */
+      tag_37
+      calldataload(0x4)
+      calldataload(0x24)
+      jump(tag_100)
+        /* "/solidity/input/Modicum.sol":26209:27990  function postMediationResult(... */
+    tag_26:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_101
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_101:
+      pop
+        /* "/solidity/input/Modicum.sol":26209:27990  function postMediationResult(... */
+      tag_102
+      calldataload(0x4)
+      calldataload(0x24)
+      0xff
+      calldataload(0x44)
+      dup2
+      and
+      swap1
+      calldataload(0x64)
+      swap1
+      calldataload(0x84)
+      swap1
+      calldataload(0xa4)
+      swap1
+      calldataload(0xc4)
+      swap1
+      calldataload(0xe4)
+      dup2
+      and
+      swap1
+      calldataload(0x104)
+      and
+      jump(tag_103)
+    tag_102:
+      mload(0x40)
+      dup1
+      dup3
+      0x1
+      dup2
+      gt
+      iszero
+      tag_104
+      jumpi
+      invalid
+    tag_104:
+      0xff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "/solidity/input/Modicum.sol":18664:23273  function postMatch(... */
+    tag_27:
+      callvalue
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_105
+      jumpi
+        /* "--CODEGEN--":30:31   */
+      0x0
+        /* "--CODEGEN--":27:28   */
+      dup1
+        /* "--CODEGEN--":20:32   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_105:
+      pop
+        /* "/solidity/input/Modicum.sol":18664:23273  function postMatch(... */
+      tag_37
+      calldataload(0x4)
+      calldataload(0x24)
+      and(calldataload(0x44), sub(exp(0x2, 0xa0), 0x1))
+      jump(tag_107)
+        /* "/solidity/input/Modicum.sol":8085:8269  function setReactionDeadline(uint256 _reactionDeadline) public administrative {... */
+    tag_32:
+        /* "/solidity/input/Modicum.sol":190:195  owner */
+      and(sub(exp(0x2, 0xa0), 0x1), sload(0x1))
+        /* "/solidity/input/Modicum.sol":176:186  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":176:195  msg.sender == owner */
+      eq
+        /* "/solidity/input/Modicum.sol":172:266  if (msg.sender == owner)... */
+      iszero
+      tag_109
+      jumpi
+        /* "/solidity/input/Modicum.sol":8173:8189  reactionDeadline */
+      0x2
+        /* "/solidity/input/Modicum.sol":8173:8209  reactionDeadline = _reactionDeadline */
+      dup2
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":8224:8262  reactionDeadlineSet(_reactionDeadline) */
+      0x40
+      dup1
+      mload
+      dup3
+      dup2
+      mstore
+      swap1
+      mload
+      0xafb2b5bfefa5580825b0de810f205cc4f63195be2b7581e3a6d86853cda215a8
+      swap2
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":172:266  if (msg.sender == owner)... */
+      jump(tag_111)
+    tag_109:
+        /* "/solidity/input/Modicum.sol":237:266  revert('You cannot call me!') */
+      0x40
+      dup1
+      mload
+      0x8c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x20
+      0x4
+      dup3
+      add
+      mstore
+      0x13
+      0x24
+      dup3
+      add
+      mstore
+      0x596f752063616e6e6f742063616c6c206d652100000000000000000000000000
+      0x44
+      dup3
+      add
+      mstore
+      swap1
+      mload
+      swap1
+      dup2
+      swap1
+      sub
+      0x64
+      add
+      swap1
+      revert
+        /* "/solidity/input/Modicum.sol":172:266  if (msg.sender == owner)... */
+    tag_111:
+        /* "/solidity/input/Modicum.sol":8085:8269  function setReactionDeadline(uint256 _reactionDeadline) public administrative {... */
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":8276:9151  function registerMediator(... */
+    tag_35:
+        /* "/solidity/input/Modicum.sol":8488:8523  address[] memory trustedDirectories */
+      0x60
+        /* "/solidity/input/Modicum.sol":8533:8570  uint256[] memory supportedFirstLayers */
+      dup1
+        /* "/solidity/input/Modicum.sol":8604:8952  Mediator({... */
+      0xe0
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+        /* "/solidity/input/Modicum.sol":8633:8637  arch */
+      dup9
+        /* "/solidity/input/Modicum.sol":8604:8952  Mediator({... */
+      0x1
+      dup2
+      gt
+      iszero
+      tag_113
+      jumpi
+      invalid
+    tag_113:
+      dup2
+      mstore
+      0x20
+      dup1
+      dup3
+      add
+      dup10
+      swap1
+      mstore
+      0x40
+      dup1
+      dup4
+      add
+      dup10
+      swap1
+      mstore
+      0x60
+      dup4
+      add
+      dup7
+      swap1
+      mstore
+      0x80
+      dup4
+      add
+      dup6
+      swap1
+      mstore
+      0xa0
+      dup4
+      add
+      dup9
+      swap1
+      mstore
+      0xc0
+      swap1
+      swap3
+      add
+      dup7
+      swap1
+      mstore
+        /* "/solidity/input/Modicum.sol":8590:8600  msg.sender */
+      caller
+      0x0
+        /* "/solidity/input/Modicum.sol":8580:8601  mediators[msg.sender] */
+      swap1
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":8580:8589  mediators */
+      0x3
+        /* "/solidity/input/Modicum.sol":8580:8601  mediators[msg.sender] */
+      swap1
+      swap2
+      mstore
+      keccak256
+        /* "/solidity/input/Modicum.sol":8580:8952  mediators[msg.sender] = Mediator({... */
+      dup2
+      mload
+      dup2
+      sload
+        /* "/solidity/input/Modicum.sol":8580:8601  mediators[msg.sender] */
+      dup3
+      swap1
+      not(0xff)
+        /* "/solidity/input/Modicum.sol":8580:8952  mediators[msg.sender] = Mediator({... */
+      and
+      0x1
+      dup4
+      dup2
+      dup2
+      gt
+      iszero
+      tag_114
+      jumpi
+      invalid
+    tag_114:
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      dup2
+      add
+      mload
+      0x1
+      dup4
+      add
+      sstore
+      0x40
+      dup4
+      add
+      mload
+      0x2
+      dup4
+      add
+      sstore
+      0x60
+      dup4
+      add
+      mload
+      dup1
+      mload
+      tag_115
+      swap3
+      0x3
+      dup6
+      add
+      swap3
+      add
+      swap1
+      jump	// in(tag_116)
+    tag_115:
+      pop
+      0x80
+      dup3
+      add
+      mload
+      dup1
+      mload
+      tag_117
+      swap2
+      0x4
+      dup5
+      add
+      swap2
+      0x20
+      swap1
+      swap2
+      add
+      swap1
+      jump	// in(tag_118)
+    tag_117:
+      pop
+      0xa0
+      dup3
+      add
+      mload
+      dup2
+      0x5
+      add
+      sstore
+      0xc0
+      dup3
+      add
+      mload
+      dup2
+      0x6
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "/solidity/input/Modicum.sol":8967:9144  MediatorRegistered(msg.sender,... */
+      0x30f100afd350d3923afbf22d61bb461b018387a905b01935a82fd31739f7ecc8
+        /* "/solidity/input/Modicum.sol":8986:8996  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":9010:9014  arch */
+      dup9
+        /* "/solidity/input/Modicum.sol":9028:9044  instructionPrice */
+      dup9
+        /* "/solidity/input/Modicum.sol":9058:9072  bandwidthPrice */
+      dup9
+        /* "/solidity/input/Modicum.sol":9086:9103  availabilityValue */
+      dup9
+        /* "/solidity/input/Modicum.sol":9117:9134  verificationCount */
+      dup9
+        /* "/solidity/input/Modicum.sol":8967:9144  MediatorRegistered(msg.sender,... */
+      mload(0x40)
+      dup1
+      dup8
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup7
+      0x1
+      dup2
+      gt
+      iszero
+      tag_119
+      jumpi
+      invalid
+    tag_119:
+      0xff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup6
+      dup2
+      mstore
+      0x20
+      add
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap7
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":8276:9151  function registerMediator(... */
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":23279:24448  function postResult(... */
+    tag_38:
+        /* "/solidity/input/Modicum.sol":23512:23519  uint256 */
+      0x0
+        /* "/solidity/input/Modicum.sol":23802:23815  uint256 index */
+      dup1
+        /* "/solidity/input/Modicum.sol":24120:24121  1 */
+      0x1
+        /* "/solidity/input/Modicum.sol":23818:23825  results */
+      0xc
+        /* "/solidity/input/Modicum.sol":23831:24116  JobResult({... */
+      0x100
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+        /* "/solidity/input/Modicum.sol":23863:23869  status */
+      dup11
+        /* "/solidity/input/Modicum.sol":23831:24116  JobResult({... */
+      0x9
+      dup2
+      gt
+      iszero
+      tag_121
+      jumpi
+      invalid
+    tag_121:
+      dup2
+      mstore
+      0x20
+      dup2
+      add
+      dup11
+      swap1
+      mstore
+      0x40
+      dup2
+      add
+      dup14
+      swap1
+      mstore
+      0x60
+      dup2
+      add
+      dup10
+      swap1
+      mstore
+      0x80
+      dup2
+      add
+      dup9
+      swap1
+      mstore
+      0xa0
+      dup2
+      add
+      dup8
+      swap1
+      mstore
+      0xc0
+      add
+        /* "/solidity/input/Modicum.sol":24060:24073  Reaction.None */
+      0x2
+        /* "/solidity/input/Modicum.sol":23831:24116  JobResult({... */
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":24098:24101  now */
+      timestamp
+        /* "/solidity/input/Modicum.sol":23831:24116  JobResult({... */
+      0x20
+      swap2
+      dup3
+      add
+      mstore
+        /* "--CODEGEN--":27:37   */
+      dup3
+      sload
+        /* "--CODEGEN--":39:40   */
+      0x1
+        /* "--CODEGEN--":23:41   */
+      dup2
+      dup2
+      add
+        /* "--CODEGEN--":45:68   */
+      dup1
+      dup7
+      sstore
+      0x0
+        /* "/solidity/input/Modicum.sol":23818:24117  results.push(JobResult({... */
+      swap6
+      dup7
+      mstore
+      swap3
+      swap1
+      swap5
+      keccak256
+      dup4
+      mload
+      0x8
+      swap1
+      swap3
+      mul
+      add
+      dup1
+      sload
+        /* "--CODEGEN--":23:41   */
+      swap3
+      swap5
+        /* "/solidity/input/Modicum.sol":23818:24117  results.push(JobResult({... */
+      swap1
+      swap3
+      dup4
+      swap2
+      not(0xff)
+      swap1
+      swap2
+      and
+      swap1
+      dup4
+      0x9
+      dup2
+      gt
+      iszero
+      tag_124
+      jumpi
+      invalid
+    tag_124:
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x1
+      add
+      swap1
+      not(0x0)
+      and
+      swap1
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x2
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x3
+      add
+      sstore
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x4
+      add
+      sstore
+      0xa0
+      dup3
+      add
+      mload
+      dup2
+      0x5
+      add
+      sstore
+      0xc0
+      dup3
+      add
+      mload
+      dup2
+      0x6
+      add
+      exp(0x100, 0x0)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0x2
+      dup2
+      gt
+      iszero
+      tag_125
+      jumpi
+      invalid
+    tag_125:
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0xe0
+      swap2
+      swap1
+      swap2
+      add
+      mload
+      0x7
+      swap1
+      swap2
+      add
+      sstore
+        /* "/solidity/input/Modicum.sol":24132:24154  matchToResult[matchId] */
+      0x0
+      dup12
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":24132:24145  matchToResult */
+      0x12
+        /* "/solidity/input/Modicum.sol":24132:24154  matchToResult[matchId] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":23818:24121  results.push(JobResult({... */
+      swap5
+      swap1
+      swap4
+      sub
+        /* "/solidity/input/Modicum.sol":24132:24162  matchToResult[matchId] = index */
+      swap4
+      dup5
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":24172:24187  resultAvailable */
+      0x13
+        /* "/solidity/input/Modicum.sol":24172:24196  resultAvailable[matchId] */
+      dup2
+      mstore
+      swap1
+      dup3
+      swap1
+      keccak256
+        /* "/solidity/input/Modicum.sol":24172:24203  resultAvailable[matchId] = true */
+      dup1
+      sload
+      not(0xff)
+      and
+        /* "/solidity/input/Modicum.sol":24199:24203  true */
+      0x1
+        /* "/solidity/input/Modicum.sol":24172:24203  resultAvailable[matchId] = true */
+      or
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":24219:24418  ResultPosted(... */
+      dup2
+      mload
+        /* "/solidity/input/Modicum.sol":24245:24255  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":24219:24418  ResultPosted(... */
+      dup1
+      dup3
+      mstore
+      swap2
+      dup2
+      add
+      dup5
+      swap1
+      mstore
+      swap2
+      dup3
+      add
+      dup13
+      swap1
+      mstore
+        /* "/solidity/input/Modicum.sol":23818:24121  results.push(JobResult({... */
+      swap2
+      swap3
+      pop
+        /* "/solidity/input/Modicum.sol":24219:24418  ResultPosted(... */
+      0x519e6f7a419dbb08af4c0314090065c887fc0662751c943a7abe86f1b8defb2f
+      swap2
+        /* "/solidity/input/Modicum.sol":24245:24255  msg.sender */
+      swap1
+        /* "/solidity/input/Modicum.sol":23818:24121  results.push(JobResult({... */
+      dup4
+      swap1
+        /* "/solidity/input/Modicum.sol":24146:24153  matchId */
+      dup13
+      swap1
+        /* "/solidity/input/Modicum.sol":24309:24315  status */
+      dup12
+      swap1
+        /* "/solidity/input/Modicum.sol":24329:24332  uri */
+      dup12
+      swap1
+        /* "/solidity/input/Modicum.sol":24346:24350  hash */
+      dup12
+      swap1
+        /* "/solidity/input/Modicum.sol":24364:24380  instructionCount */
+      dup12
+      swap1
+        /* "/solidity/input/Modicum.sol":24394:24408  bandwidthUsage */
+      dup12
+      swap1
+        /* "/solidity/input/Modicum.sol":24219:24418  ResultPosted(... */
+      0x60
+      dup2
+      add
+        /* "/solidity/input/Modicum.sol":24309:24315  status */
+      dup7
+        /* "/solidity/input/Modicum.sol":24219:24418  ResultPosted(... */
+      0x9
+      dup2
+      gt
+      iszero
+      tag_126
+      jumpi
+      invalid
+    tag_126:
+      0xff
+      and
+      dup2
+      mstore
+      0x20
+      dup2
+      add
+      swap6
+      swap1
+      swap6
+      mstore
+      pop
+      0x40
+      dup1
+      dup6
+      add
+      swap4
+      swap1
+      swap4
+      mstore
+      0x60
+      dup5
+      add
+      swap2
+      swap1
+      swap2
+      mstore
+      0x80
+      dup4
+      add
+      mstore
+      mload
+      swap1
+      dup2
+      swap1
+      sub
+      0xa0
+      add
+      swap5
+      pop
+      swap3
+      pop
+      pop
+      pop
+      log1
+        /* "/solidity/input/Modicum.sol":24436:24441  index */
+      swap9
+        /* "/solidity/input/Modicum.sol":23279:24448  function postResult(... */
+      swap8
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":10468:10688  function resourceProviderAddTrustedMediator(address mediator) public {... */
+    tag_41:
+        /* "/solidity/input/Modicum.sol":10565:10575  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":10547:10576  resourceProviders[msg.sender] */
+      0x0
+      dup2
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":10547:10564  resourceProviders */
+      0x4
+        /* "/solidity/input/Modicum.sol":10547:10576  resourceProviders[msg.sender] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      dup1
+      dup4
+      keccak256
+        /* "--CODEGEN--":27:37   */
+      dup1
+      sload
+        /* "--CODEGEN--":39:40   */
+      0x1
+        /* "--CODEGEN--":23:41   */
+      dup2
+      add
+        /* "--CODEGEN--":45:68   */
+      dup3
+      sstore
+        /* "/solidity/input/Modicum.sol":10547:10608  resourceProviders[msg.sender].trustedMediators.push(mediator) */
+      swap1
+      dup5
+      mstore
+      swap3
+      dup3
+      swap1
+      keccak256
+      swap1
+      swap3
+      add
+      dup1
+      sload
+      not(sub(exp(0x2, 0xa0), 0x1))
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      dup7
+      and
+      swap1
+      dup2
+      or
+      swap1
+      swap2
+      sstore
+        /* "/solidity/input/Modicum.sol":10623:10681  ResourceProviderAddedTrustedMediator(msg.sender, mediator) */
+      dup3
+      mload
+      swap4
+      dup5
+      mstore
+      swap1
+      dup4
+      add
+      mstore
+      dup1
+      mload
+      0xc46f5b1885edcb90bd9c37370760e20924bd0b4815bc3aa0999135f9e7447ba3
+      swap3
+      dup2
+      swap1
+      sub
+      swap1
+      swap2
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":10468:10688  function resourceProviderAddTrustedMediator(address mediator) public {... */
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":7601:7737  function test(uint256 value) public{... */
+    tag_44:
+        /* "/solidity/input/Modicum.sol":7660:7661  0 */
+      0x0
+        /* "/solidity/input/Modicum.sol":7652:7661  value > 0 */
+      dup2
+      gt
+        /* "/solidity/input/Modicum.sol":7644:7701  require(value > 0,... */
+      tag_130
+      jumpi
+      0x40
+      dup1
+      mload
+      0x8c379a000000000000000000000000000000000000000000000000000000000
+      dup2
+      mstore
+      0x20
+      0x4
+      dup3
+      add
+      mstore
+      0x1d
+      0x24
+      dup3
+      add
+      mstore
+      0x546869732073686f756c642062652067726561746572207468616e2030000000
+      0x44
+      dup3
+      add
+      mstore
+      swap1
+      mload
+      swap1
+      dup2
+      swap1
+      sub
+      0x64
+      add
+      swap1
+      revert
+    tag_130:
+        /* "/solidity/input/Modicum.sol":7714:7730  DebugUint(value) */
+      0x40
+      dup1
+      mload
+      dup3
+      dup2
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_b69ceb39ad2ae6bbaf7963b0deaf1a1f11cbb548060a493047bacbbfe0860c2d
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":7601:7737  function test(uint256 value) public{... */
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":24454:25266  function rejectResult(uint256 resultId, uint256 jobOfferId) public {... */
+    tag_47:
+        /* "/solidity/input/Modicum.sol":24974:24991  Reaction.Rejected */
+      0x1
+        /* "/solidity/input/Modicum.sol":24946:24953  results */
+      0xc
+        /* "/solidity/input/Modicum.sol":24954:24962  resultId */
+      dup4
+        /* "/solidity/input/Modicum.sol":24946:24963  results[resultId] */
+      dup2
+      sload
+      dup2
+      lt
+      iszero
+      iszero
+      tag_132
+      jumpi
+      invalid
+    tag_132:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      swap1
+      swap2
+      keccak256
+        /* "/solidity/input/Modicum.sol":24946:24971  results[resultId].reacted */
+      0x6
+        /* "/solidity/input/Modicum.sol":24946:24963  results[resultId] */
+      0x8
+      swap1
+      swap3
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":24946:24971  results[resultId].reacted */
+      add
+        /* "/solidity/input/Modicum.sol":24946:24991  results[resultId].reacted = Reaction.Rejected */
+      dup1
+      sload
+      not(0xff)
+      and
+      0x1
+      dup4
+      0x2
+      dup2
+      gt
+      iszero
+      tag_134
+      jumpi
+      invalid
+    tag_134:
+      mul
+      or
+      swap1
+      sstore
+      pop
+        /* "/solidity/input/Modicum.sol":25049:25053  true */
+      0x1
+        /* "/solidity/input/Modicum.sol":25001:25019  mediationRequested */
+      0x10
+        /* "/solidity/input/Modicum.sol":25001:25046  mediationRequested[results[resultId].matchId] */
+      0x0
+        /* "/solidity/input/Modicum.sol":25020:25027  results */
+      0xc
+        /* "/solidity/input/Modicum.sol":25028:25036  resultId */
+      dup6
+        /* "/solidity/input/Modicum.sol":25020:25037  results[resultId] */
+      dup2
+      sload
+      dup2
+      lt
+      iszero
+      iszero
+      tag_135
+      jumpi
+      invalid
+    tag_135:
+      swap1
+      0x0
+      mstore
+      keccak256(0x0, 0x20)
+      swap1
+      0x8
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":25020:25045  results[resultId].matchId */
+      0x2
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":25001:25046  mediationRequested[results[resultId].matchId] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      keccak256
+      0x0
+        /* "/solidity/input/Modicum.sol":25001:25053  mediationRequested[results[resultId].matchId] = true */
+      0x100
+      exp
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+        /* "/solidity/input/Modicum.sol":25069:25135  ResultReaction(msg.sender, resultId,results[resultId].matchId,  1) */
+      0x9cf99d589438cb7c5e0d92e45b92b87bcf5a2201479e72e8f31396be4a7505ab
+        /* "/solidity/input/Modicum.sol":25084:25094  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":25096:25104  resultId */
+      dup4
+        /* "/solidity/input/Modicum.sol":25105:25112  results */
+      0xc
+        /* "/solidity/input/Modicum.sol":25113:25121  resultId */
+      dup6
+        /* "/solidity/input/Modicum.sol":25105:25122  results[resultId] */
+      dup2
+      sload
+      dup2
+      lt
+      iszero
+      iszero
+      tag_137
+      jumpi
+      invalid
+    tag_137:
+      swap1
+      0x0
+      mstore
+      keccak256(0x0, 0x20)
+      swap1
+      0x8
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":25105:25130  results[resultId].matchId */
+      0x2
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":25133:25134  1 */
+      0x1
+        /* "/solidity/input/Modicum.sol":25069:25135  ResultReaction(msg.sender, resultId,results[resultId].matchId,  1) */
+      mload(0x40)
+      dup1
+      dup6
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap5
+      pop
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":25151:25181  DebugString("result rejected") */
+      0x40
+      dup1
+      mload
+      0x726573756c742072656a65637465640000000000000000000000000000000000
+      dup2
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_57835b8ce659599ea7968c6609c8126280c7cea560d819dd9c24a6499f8f50d4
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":25197:25259  JobAssignedForMediation(msg.sender, results[resultId].matchId) */
+      0x6e377930a82feda820d86166d6ed1dcbb8cb48305b1d20048584586cb1d424af
+        /* "/solidity/input/Modicum.sol":25221:25231  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":25233:25240  results */
+      0xc
+        /* "/solidity/input/Modicum.sol":25241:25249  resultId */
+      dup5
+        /* "/solidity/input/Modicum.sol":25233:25250  results[resultId] */
+      dup2
+      sload
+      dup2
+      lt
+      iszero
+      iszero
+      tag_139
+      jumpi
+      invalid
+    tag_139:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      swap2
+      dup3
+      swap1
+      keccak256
+        /* "/solidity/input/Modicum.sol":25233:25258  results[resultId].matchId */
+      0x2
+        /* "/solidity/input/Modicum.sol":25233:25250  results[resultId] */
+      0x8
+      swap1
+      swap3
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":25233:25258  results[resultId].matchId */
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":25197:25259  JobAssignedForMediation(msg.sender, results[resultId].matchId) */
+      0x40
+      dup1
+      mload
+      sub(exp(0x2, 0xa0), 0x1)
+      swap1
+      swap5
+      and
+      dup5
+      mstore
+      swap2
+      dup4
+      add
+      mstore
+      dup1
+      mload
+      swap2
+      dup3
+      swap1
+      sub
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":24454:25266  function rejectResult(uint256 resultId, uint256 jobOfferId) public {... */
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":14182:16059  function postJobOfferPartOne(... */
+    tag_49:
+        /* "/solidity/input/Modicum.sol":14812:14825  uint256 index */
+      0x0
+        /* "/solidity/input/Modicum.sol":15123:15152  JobOfferPartOne memory joPOne */
+      tag_141
+      jump	// in(tag_142)
+    tag_141:
+        /* "/solidity/input/Modicum.sol":14840:14850  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":14828:14851  findJOIndex[msg.sender] */
+      0x0
+      swap1
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":14828:14839  findJOIndex */
+      0xa
+        /* "/solidity/input/Modicum.sol":14828:14851  findJOIndex[msg.sender] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":14828:14858  findJOIndex[msg.sender][ijoid] */
+      dup13
+      dup5
+      mstore
+      swap1
+      swap2
+      mstore
+      swap1
+      keccak256
+      sload
+      swap2
+      pop
+        /* "/solidity/input/Modicum.sol":14872:14882  index == 0 */
+      dup2
+      iszero
+        /* "/solidity/input/Modicum.sol":14868:14999  if (index == 0) {... */
+      iszero
+      tag_144
+      jumpi
+        /* "/solidity/input/Modicum.sol":14906:14913  joIndex */
+      0x7
+      dup1
+      sload
+        /* "/solidity/input/Modicum.sol":14927:14936  joIndex++ */
+      0x1
+      dup2
+      add
+      swap1
+      swap2
+      sstore
+        /* "/solidity/input/Modicum.sol":14962:14972  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":14927:14934  joIndex */
+      0x0
+        /* "/solidity/input/Modicum.sol":14950:14973  findJOIndex[msg.sender] */
+      swap1
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":14950:14961  findJOIndex */
+      0xa
+        /* "/solidity/input/Modicum.sol":14950:14973  findJOIndex[msg.sender] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":14950:14980  findJOIndex[msg.sender][ijoid] */
+      dup14
+      dup5
+      mstore
+      swap1
+      swap2
+      mstore
+      swap1
+      keccak256
+        /* "/solidity/input/Modicum.sol":14950:14988  findJOIndex[msg.sender][ijoid] = index */
+      dup2
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":14906:14913  joIndex */
+      swap2
+      pop
+        /* "/solidity/input/Modicum.sol":14868:14999  if (index == 0) {... */
+    tag_144:
+        /* "/solidity/input/Modicum.sol":15155:15547  JobOfferPartOne({... */
+      0x100
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+        /* "/solidity/input/Modicum.sol":15197:15207  msg.sender */
+      caller
+      sub(exp(0x2, 0xa0), 0x1)
+        /* "/solidity/input/Modicum.sol":15155:15547  JobOfferPartOne({... */
+      and
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":15235:15244  msg.value */
+      callvalue
+        /* "/solidity/input/Modicum.sol":15155:15547  JobOfferPartOne({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":15276:15292  instructionLimit */
+      dup10
+        /* "/solidity/input/Modicum.sol":15155:15547  JobOfferPartOne({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":15322:15336  bandwidthLimit */
+      dup9
+        /* "/solidity/input/Modicum.sol":15155:15547  JobOfferPartOne({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":15371:15390  instructionMaxPrice */
+      dup8
+        /* "/solidity/input/Modicum.sol":15155:15547  JobOfferPartOne({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":15423:15440  bandwidthMaxPrice */
+      dup7
+        /* "/solidity/input/Modicum.sol":15155:15547  JobOfferPartOne({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":15474:15492  completionDeadline */
+      dup6
+        /* "/solidity/input/Modicum.sol":15155:15547  JobOfferPartOne({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":15522:15536  matchIncentive */
+      dup5
+        /* "/solidity/input/Modicum.sol":15155:15547  JobOfferPartOne({... */
+      dup2
+      mstore
+      pop
+        /* "/solidity/input/Modicum.sol":15123:15547  JobOfferPartOne memory joPOne = JobOfferPartOne({... */
+      swap1
+      pop
+        /* "/solidity/input/Modicum.sol":15584:15590  joPOne */
+      dup1
+        /* "/solidity/input/Modicum.sol":15558:15574  jobOffersPartOne */
+      0x8
+        /* "/solidity/input/Modicum.sol":15558:15581  jobOffersPartOne[index] */
+      0x0
+        /* "/solidity/input/Modicum.sol":15575:15580  index */
+      dup5
+        /* "/solidity/input/Modicum.sol":15558:15581  jobOffersPartOne[index] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      keccak256
+        /* "/solidity/input/Modicum.sol":15558:15590  jobOffersPartOne[index] = joPOne */
+      0x0
+      dup3
+      add
+      mload
+      dup2
+      0x0
+      add
+      exp(0x100, 0x0)
+      dup2
+      sload
+      dup2
+      sub(exp(0x2, 0xa0), 0x1)
+      mul
+      not
+      and
+      swap1
+      dup4
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x1
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x2
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x3
+      add
+      sstore
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x4
+      add
+      sstore
+      0xa0
+      dup3
+      add
+      mload
+      dup2
+      0x5
+      add
+      sstore
+      0xc0
+      dup3
+      add
+      mload
+      dup2
+      0x6
+      add
+      sstore
+      0xe0
+      dup3
+      add
+      mload
+      dup2
+      0x7
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "/solidity/input/Modicum.sol":15631:15635  true */
+      0x1
+        /* "/solidity/input/Modicum.sol":15600:15621  jobOfferPartOnePosted */
+      0xe
+        /* "/solidity/input/Modicum.sol":15600:15628  jobOfferPartOnePosted[index] */
+      0x0
+        /* "/solidity/input/Modicum.sol":15622:15627  index */
+      dup5
+        /* "/solidity/input/Modicum.sol":15600:15628  jobOfferPartOnePosted[index] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      keccak256
+      0x0
+        /* "/solidity/input/Modicum.sol":15600:15635  jobOfferPartOnePosted[index] = true */
+      0x100
+      exp
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+        /* "/solidity/input/Modicum.sol":15651:15949  JobOfferPostedPartOne(... */
+      0x9306115efe7bad07bc21e212f2404b33e7376f164de102ec5e1e1b2938328db7
+        /* "/solidity/input/Modicum.sol":15686:15691  index */
+      dup3
+        /* "/solidity/input/Modicum.sol":15705:15710  ijoid */
+      dup11
+        /* "/solidity/input/Modicum.sol":15724:15734  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":15748:15764  instructionLimit */
+      dup12
+        /* "/solidity/input/Modicum.sol":15778:15792  bandwidthLimit */
+      dup12
+        /* "/solidity/input/Modicum.sol":15806:15825  instructionMaxPrice */
+      dup12
+        /* "/solidity/input/Modicum.sol":15839:15856  bandwidthMaxPrice */
+      dup12
+        /* "/solidity/input/Modicum.sol":15870:15888  completionDeadline */
+      dup12
+        /* "/solidity/input/Modicum.sol":15902:15911  msg.value */
+      callvalue
+        /* "/solidity/input/Modicum.sol":15925:15939  matchIncentive */
+      dup13
+        /* "/solidity/input/Modicum.sol":15651:15949  JobOfferPostedPartOne(... */
+      mload(0x40)
+      dup1
+      dup12
+      dup2
+      mstore
+      0x20
+      add
+      dup11
+      dup2
+      mstore
+      0x20
+      add
+      dup10
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup9
+      dup2
+      mstore
+      0x20
+      add
+      dup8
+      dup2
+      mstore
+      0x20
+      add
+      dup7
+      dup2
+      mstore
+      0x20
+      add
+      dup6
+      dup2
+      mstore
+      0x20
+      add
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap11
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":15965:16052  EtherTransferred(msg.sender, address(this), msg.value, EtherTransferCause.PostJobOffer) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":15982:15992  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":15965:16052  EtherTransferred(msg.sender, address(this), msg.value, EtherTransferCause.PostJobOffer) */
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":16002:16006  this */
+      address
+        /* "/solidity/input/Modicum.sol":15965:16052  EtherTransferred(msg.sender, address(this), msg.value, EtherTransferCause.PostJobOffer) */
+      0x20
+      dup3
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":16009:16018  msg.value */
+      callvalue
+        /* "/solidity/input/Modicum.sol":15965:16052  EtherTransferred(msg.sender, address(this), msg.value, EtherTransferCause.PostJobOffer) */
+      dup2
+      dup4
+      add
+      mstore
+      0x0
+      0x60
+      dup3
+      add
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x80
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":14182:16059  function postJobOfferPartOne(... */
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":9366:9592  function mediatorAddSupportedFirstLayer(uint256 firstLayerHash) public {... */
+    tag_52:
+        /* "/solidity/input/Modicum.sol":9457:9467  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":9447:9468  mediators[msg.sender] */
+      0x0
+      dup2
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":9447:9456  mediators */
+      0x3
+        /* "/solidity/input/Modicum.sol":9447:9468  mediators[msg.sender] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":9447:9489  mediators[msg.sender].supportedFirstLayers */
+      0x4
+      add
+        /* "--CODEGEN--":27:37   */
+      dup1
+      sload
+        /* "--CODEGEN--":39:40   */
+      0x1
+        /* "--CODEGEN--":23:41   */
+      dup2
+      add
+        /* "--CODEGEN--":45:68   */
+      dup3
+      sstore
+        /* "/solidity/input/Modicum.sol":9447:9510  mediators[msg.sender].supportedFirstLayers.push(firstLayerHash) */
+      swap1
+      dup5
+      mstore
+      swap3
+      dup3
+      swap1
+      keccak256
+      swap1
+      swap3
+      add
+      dup5
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":9525:9585  MediatorAddedSupportedFirstLayer(msg.sender, firstLayerHash) */
+      dup2
+      mload
+      swap3
+      dup4
+      mstore
+      dup3
+      add
+      dup4
+      swap1
+      mstore
+      dup1
+      mload
+      0xa4afa925b503907dc7699e5423d82b67cb3cce8e083875f0b14ae131ba8852d8
+      swap3
+      dup2
+      swap1
+      sub
+      swap1
+      swap2
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":9366:9592  function mediatorAddSupportedFirstLayer(uint256 firstLayerHash) public {... */
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":10927:11177  function resourceProviderAddSupportedFirstLayer(uint256 firstLayerHash) public {... */
+    tag_55:
+        /* "/solidity/input/Modicum.sol":11034:11044  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":11016:11045  resourceProviders[msg.sender] */
+      0x0
+      dup2
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":11016:11033  resourceProviders */
+      0x4
+        /* "/solidity/input/Modicum.sol":11016:11045  resourceProviders[msg.sender] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":11016:11066  resourceProviders[msg.sender].supportedFirstLayers */
+      0x2
+      add
+        /* "--CODEGEN--":27:37   */
+      dup1
+      sload
+        /* "--CODEGEN--":39:40   */
+      0x1
+        /* "--CODEGEN--":23:41   */
+      dup2
+      add
+        /* "--CODEGEN--":45:68   */
+      dup3
+      sstore
+        /* "/solidity/input/Modicum.sol":11016:11087  resourceProviders[msg.sender].supportedFirstLayers.push(firstLayerHash) */
+      swap1
+      dup5
+      mstore
+      swap3
+      dup3
+      swap1
+      keccak256
+      swap1
+      swap3
+      add
+      dup5
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":11102:11170  ResourceProviderAddedSupportedFirstLayer(msg.sender, firstLayerHash) */
+      dup2
+      mload
+      swap3
+      dup4
+      mstore
+      dup3
+      add
+      dup4
+      swap1
+      mstore
+      dup1
+      mload
+      0x6addfaf8048be7677397f667c84acb7e875091575bf511939b167e804d13a8fe
+      swap3
+      dup2
+      swap1
+      sub
+      swap1
+      swap2
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":10927:11177  function resourceProviderAddSupportedFirstLayer(uint256 firstLayerHash) public {... */
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":30927:31430  function timeout(uint256 matchId, uint256 jobOfferId) public {... */
+    tag_58:
+        /* "/solidity/input/Modicum.sol":31384:31423  punish(matchId, Party.ResourceProvider) */
+      tag_151
+        /* "/solidity/input/Modicum.sol":31391:31398  matchId */
+      dup3
+        /* "/solidity/input/Modicum.sol":31400:31422  Party.ResourceProvider */
+      0x0
+        /* "/solidity/input/Modicum.sol":31384:31390  punish */
+      tag_152
+        /* "/solidity/input/Modicum.sol":31384:31423  punish(matchId, Party.ResourceProvider) */
+      jump	// in
+    tag_151:
+        /* "/solidity/input/Modicum.sol":30927:31430  function timeout(uint256 matchId, uint256 jobOfferId) public {... */
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":7743:7920  function check(Architecture arch) public{... */
+    tag_61:
+        /* "/solidity/input/Modicum.sol":7848:7856  Debug(5) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":7854:7855  5 */
+      0x5
+        /* "/solidity/input/Modicum.sol":7848:7856  Debug(5) */
+      dup2
+      mstore
+      swap1
+      mload
+      0x117173c3f483315f99860ad0cd3da109b9e36f175776c989bee6807ddc7554dd
+      swap2
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":7871:7886  DebugArch(arch) */
+      0xc06e1a5e77fb0f268e7a9d333c44019d6d8bb187b960fa3730205da5fa9a242f
+        /* "/solidity/input/Modicum.sol":7881:7885  arch */
+      dup2
+        /* "/solidity/input/Modicum.sol":7871:7886  DebugArch(arch) */
+      mload(0x40)
+      dup1
+      dup3
+      0x1
+      dup2
+      gt
+      iszero
+      tag_154
+      jumpi
+      invalid
+    tag_154:
+      0xff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap2
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":7901:7913  DebugUint(1) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":7911:7912  1 */
+      0x1
+        /* "/solidity/input/Modicum.sol":7901:7913  DebugUint(1) */
+      dup2
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_b69ceb39ad2ae6bbaf7963b0deaf1a1f11cbb548060a493047bacbbfe0860c2d
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":7743:7920  function check(Architecture arch) public{... */
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":9771:10462  function registerResourceProvider(... */
+    tag_64:
+        /* "/solidity/input/Modicum.sol":9891:9924  address[] memory trustedMediators */
+      0x60
+        /* "/solidity/input/Modicum.sol":9934:9969  address[] memory trustedDirectories */
+      dup1
+        /* "/solidity/input/Modicum.sol":9979:10016  uint256[] memory supportedFirstLayers */
+      0x60
+        /* "/solidity/input/Modicum.sol":10058:10318  ResourceProvider({... */
+      0xa0
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+        /* "/solidity/input/Modicum.sol":10107:10123  trustedMediators */
+      dup5
+        /* "/solidity/input/Modicum.sol":10058:10318  ResourceProvider({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":10289:10307  trustedDirectories */
+      dup4
+        /* "/solidity/input/Modicum.sol":10058:10318  ResourceProvider({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":10159:10179  supportedFirstLayers */
+      dup3
+        /* "/solidity/input/Modicum.sol":10058:10318  ResourceProvider({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":10199:10203  arch */
+      dup7
+        /* "/solidity/input/Modicum.sol":10058:10318  ResourceProvider({... */
+      0x1
+      dup2
+      gt
+      iszero
+      tag_156
+      jumpi
+      invalid
+    tag_156:
+      dup2
+      mstore
+      0x20
+      swap1
+      dup2
+      add
+      dup7
+      swap1
+      mstore
+        /* "/solidity/input/Modicum.sol":10044:10054  msg.sender */
+      caller
+      0x0
+        /* "/solidity/input/Modicum.sol":10026:10055  resourceProviders[msg.sender] */
+      swap1
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":10026:10043  resourceProviders */
+      0x4
+        /* "/solidity/input/Modicum.sol":10026:10055  resourceProviders[msg.sender] */
+      dup3
+      mstore
+      0x40
+      swap1
+      keccak256
+        /* "/solidity/input/Modicum.sol":10026:10318  resourceProviders[msg.sender] = ResourceProvider({... */
+      dup3
+      mload
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":10026:10055  resourceProviders[msg.sender] */
+      swap2
+      swap3
+        /* "/solidity/input/Modicum.sol":10026:10318  resourceProviders[msg.sender] = ResourceProvider({... */
+      tag_157
+      swap3
+        /* "/solidity/input/Modicum.sol":10026:10055  resourceProviders[msg.sender] */
+      dup5
+      swap3
+        /* "/solidity/input/Modicum.sol":10026:10318  resourceProviders[msg.sender] = ResourceProvider({... */
+      swap1
+      swap2
+      add
+      swap1
+      jump	// in(tag_116)
+    tag_157:
+      pop
+      0x20
+      dup3
+      dup2
+      add
+      mload
+      dup1
+      mload
+      tag_158
+      swap3
+      0x1
+      dup6
+      add
+      swap3
+      add
+      swap1
+      jump	// in(tag_116)
+    tag_158:
+      pop
+      0x40
+      dup3
+      add
+      mload
+      dup1
+      mload
+      tag_159
+      swap2
+      0x2
+      dup5
+      add
+      swap2
+      0x20
+      swap1
+      swap2
+      add
+      swap1
+      jump	// in(tag_118)
+    tag_159:
+      pop
+      0x60
+      dup3
+      add
+      mload
+      0x3
+      dup3
+      add
+      dup1
+      sload
+      not(0xff)
+      and
+      0x1
+      dup4
+      dup2
+      dup2
+      gt
+      iszero
+      tag_160
+      jumpi
+      invalid
+    tag_160:
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x4
+      add
+      sstore
+      swap1
+      pop
+      pop
+        /* "/solidity/input/Modicum.sol":10333:10455  ResourceProviderRegistered(msg.sender,... */
+      0xc1fa38743bb572e5e75169e44082ca0108a86cbce71a37e7590b45ace4ec80c9
+        /* "/solidity/input/Modicum.sol":10360:10370  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":10384:10388  arch */
+      dup7
+        /* "/solidity/input/Modicum.sol":10402:10420  timePerInstruction */
+      dup7
+        /* "/solidity/input/Modicum.sol":10434:10445  penaltyRate */
+      sload(0x0)
+        /* "/solidity/input/Modicum.sol":10333:10455  ResourceProviderRegistered(msg.sender,... */
+      mload(0x40)
+      dup1
+      dup6
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup5
+      0x1
+      dup2
+      gt
+      iszero
+      tag_161
+      jumpi
+      invalid
+    tag_161:
+      0xff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap5
+      pop
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":9771:10462  function registerResourceProvider(... */
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":31436:31577  function receiveValues(address toAccount, uint256 amount) public administrative {... */
+    tag_67:
+        /* "/solidity/input/Modicum.sol":190:195  owner */
+      and(sub(exp(0x2, 0xa0), 0x1), sload(0x1))
+        /* "/solidity/input/Modicum.sol":176:186  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":176:195  msg.sender == owner */
+      eq
+        /* "/solidity/input/Modicum.sol":172:266  if (msg.sender == owner)... */
+      iszero
+      tag_109
+      jumpi
+        /* "/solidity/input/Modicum.sol":31526:31570  address(uint160(toAccount)).transfer(amount) */
+      mload(0x40)
+      sub(exp(0x2, 0xa0), 0x1)
+        /* "/solidity/input/Modicum.sol":31526:31562  address(uint160(toAccount)).transfer */
+      dup4
+      and
+      swap1
+        /* "/solidity/input/Modicum.sol":31526:31570  address(uint160(toAccount)).transfer(amount) */
+      dup3
+      iszero
+      0x8fc
+      mul
+      swap1
+        /* "/solidity/input/Modicum.sol":31563:31569  amount */
+      dup4
+      swap1
+        /* "/solidity/input/Modicum.sol":31526:31570  address(uint160(toAccount)).transfer(amount) */
+      0x0
+      dup2
+      dup2
+      dup2
+        /* "/solidity/input/Modicum.sol":31563:31569  amount */
+      dup6
+        /* "/solidity/input/Modicum.sol":31526:31562  address(uint160(toAccount)).transfer */
+      dup9
+        /* "/solidity/input/Modicum.sol":31526:31570  address(uint160(toAccount)).transfer(amount) */
+      dup9
+      call
+      swap4
+      pop
+      pop
+      pop
+      pop
+      iszero
+        /* "--CODEGEN--":8:17   */
+      dup1
+        /* "--CODEGEN--":5:7   */
+      iszero
+      tag_165
+      jumpi
+        /* "--CODEGEN--":45:61   */
+      returndatasize
+        /* "--CODEGEN--":42:43   */
+      0x0
+        /* "--CODEGEN--":39:40   */
+      dup1
+        /* "--CODEGEN--":24:62   */
+      returndatacopy
+        /* "--CODEGEN--":77:93   */
+      returndatasize
+        /* "--CODEGEN--":74:75   */
+      0x0
+        /* "--CODEGEN--":67:94   */
+      revert
+        /* "--CODEGEN--":5:7   */
+    tag_165:
+        /* "/solidity/input/Modicum.sol":31526:31570  address(uint160(toAccount)).transfer(amount) */
+      pop
+        /* "/solidity/input/Modicum.sol":172:266  if (msg.sender == owner)... */
+      jump(tag_151)
+        /* "/solidity/input/Modicum.sol":18062:18658  function cancelResOffer(uint256 offerId) public {... */
+    tag_70:
+        /* "/solidity/input/Modicum.sol":18428:18429  0 */
+      0x0
+        /* "/solidity/input/Modicum.sol":18389:18403  resourceOffers */
+      0x6
+        /* "/solidity/input/Modicum.sol":18404:18411  offerId */
+      dup3
+        /* "/solidity/input/Modicum.sol":18389:18412  resourceOffers[offerId] */
+      dup2
+      sload
+      dup2
+      lt
+      iszero
+      iszero
+      tag_168
+      jumpi
+      invalid
+    tag_168:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":18389:18425  resourceOffers[offerId].depositValue */
+      0x1
+        /* "/solidity/input/Modicum.sol":18389:18412  resourceOffers[offerId] */
+      0xa
+      swap1
+      swap4
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":18389:18425  resourceOffers[offerId].depositValue */
+      dup3
+      add
+        /* "/solidity/input/Modicum.sol":18389:18429  resourceOffers[offerId].depositValue = 0 */
+      swap4
+      swap1
+      swap4
+      sstore
+        /* "/solidity/input/Modicum.sol":18440:18467  isResOfferCanceled[offerId] */
+      dup4
+      dup3
+      mstore
+        /* "/solidity/input/Modicum.sol":18440:18458  isResOfferCanceled */
+      0x17
+        /* "/solidity/input/Modicum.sol":18440:18467  isResOfferCanceled[offerId] */
+      dup4
+      mstore
+      0x40
+      swap2
+      dup3
+      swap1
+      keccak256
+        /* "/solidity/input/Modicum.sol":18440:18474  isResOfferCanceled[offerId] = true */
+      dup1
+      sload
+      not(0xff)
+      and
+      swap1
+      swap2
+      or
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":18490:18520  ResourceOfferCanceled(offerId) */
+      dup1
+      mload
+      dup4
+      dup2
+      mstore
+      swap1
+      mload
+      0xe6979ef995dbef56a8afac32269330ca9887368bbc6f449d0ee4c4ff75333146
+      swap3
+      swap2
+      dup2
+      swap1
+      sub
+      swap1
+      swap2
+      add
+      swap1
+      log1
+      0x0
+      dup1
+      mload
+      0x20
+      data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+        /* "/solidity/input/Modicum.sol":18560:18564  this */
+      address
+        /* "/solidity/input/Modicum.sol":18567:18577  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":18579:18593  resourceOffers */
+      0x6
+        /* "/solidity/input/Modicum.sol":18594:18601  offerId */
+      dup5
+        /* "/solidity/input/Modicum.sol":18579:18602  resourceOffers[offerId] */
+      dup2
+      sload
+      dup2
+      lt
+      iszero
+      iszero
+      tag_170
+      jumpi
+      invalid
+    tag_170:
+      swap1
+      0x0
+      mstore
+      keccak256(0x0, 0x20)
+      swap1
+      0xa
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":18579:18615  resourceOffers[offerId].depositValue */
+      0x1
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":18617:18650  EtherTransferCause.CancelResOffer */
+      0x3
+        /* "/solidity/input/Modicum.sol":18535:18651  EtherTransferred(address(this), msg.sender, resourceOffers[offerId].depositValue, EtherTransferCause.CancelResOffer) */
+      mload(0x40)
+      dup1
+      dup6
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup5
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      0x9
+      dup2
+      gt
+      iszero
+      tag_172
+      jumpi
+      invalid
+    tag_172:
+      0xff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap5
+      pop
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":18062:18658  function cancelResOffer(uint256 offerId) public {... */
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":9157:9360  function mediatorAddTrustedDirectory(address directory) public {... */
+    tag_73:
+        /* "/solidity/input/Modicum.sol":9240:9250  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":9230:9251  mediators[msg.sender] */
+      0x0
+      dup2
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":9230:9239  mediators */
+      0x3
+        /* "/solidity/input/Modicum.sol":9230:9251  mediators[msg.sender] */
+      0x20
+      dup2
+      dup2
+      mstore
+      0x40
+      dup1
+      dup5
+      keccak256
+        /* "/solidity/input/Modicum.sol":9230:9270  mediators[msg.sender].trustedDirectories */
+      swap1
+      swap3
+      add
+        /* "--CODEGEN--":27:37   */
+      dup1
+      sload
+        /* "--CODEGEN--":39:40   */
+      0x1
+        /* "--CODEGEN--":23:41   */
+      dup2
+      add
+        /* "--CODEGEN--":45:68   */
+      dup3
+      sstore
+        /* "/solidity/input/Modicum.sol":9230:9286  mediators[msg.sender].trustedDirectories.push(directory) */
+      swap1
+      dup5
+      mstore
+      swap3
+      dup2
+      swap1
+      keccak256
+      swap1
+      swap3
+      add
+      dup1
+      sload
+      not(sub(exp(0x2, 0xa0), 0x1))
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      dup7
+      and
+      swap1
+      dup2
+      or
+      swap1
+      swap2
+      sstore
+        /* "/solidity/input/Modicum.sol":9301:9353  MediatorAddedTrustedDirectory(msg.sender, directory) */
+      dup2
+      mload
+      swap4
+      dup5
+      mstore
+      swap2
+      dup4
+      add
+      swap2
+      swap1
+      swap2
+      mstore
+      dup1
+      mload
+      0x67d4e0df369cb5dee1cb58b6d75040efd1ee99797e4aa4be77057de2830d1769
+      swap3
+      dup2
+      swap1
+      sub
+      swap1
+      swap2
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":9157:9360  function mediatorAddTrustedDirectory(address directory) public {... */
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":11989:12191  function jobCreatorAddTrustedMediator(address mediator) public {... */
+    tag_76:
+        /* "/solidity/input/Modicum.sol":12074:12084  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":12062:12085  jobCreators[msg.sender] */
+      0x0
+      dup2
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":12062:12073  jobCreators */
+      0x5
+        /* "/solidity/input/Modicum.sol":12062:12085  jobCreators[msg.sender] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      dup1
+      dup4
+      keccak256
+        /* "--CODEGEN--":27:37   */
+      dup1
+      sload
+        /* "--CODEGEN--":39:40   */
+      0x1
+        /* "--CODEGEN--":23:41   */
+      dup2
+      add
+        /* "--CODEGEN--":45:68   */
+      dup3
+      sstore
+        /* "/solidity/input/Modicum.sol":12062:12117  jobCreators[msg.sender].trustedMediators.push(mediator) */
+      swap1
+      dup5
+      mstore
+      swap3
+      dup3
+      swap1
+      keccak256
+      swap1
+      swap3
+      add
+      dup1
+      sload
+      not(sub(exp(0x2, 0xa0), 0x1))
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      dup7
+      and
+      swap1
+      dup2
+      or
+      swap1
+      swap2
+      sstore
+        /* "/solidity/input/Modicum.sol":12132:12184  JobCreatorAddedTrustedMediator(msg.sender, mediator) */
+      dup3
+      mload
+      swap4
+      dup5
+      mstore
+      swap1
+      dup4
+      add
+      mstore
+      dup1
+      mload
+      0x14a79e8259e0076c5c8c81b13bbe7e12e248150c95f1ff3d9e0f2b377f8a15f2
+      swap3
+      dup2
+      swap1
+      sub
+      swap1
+      swap2
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":11989:12191  function jobCreatorAddTrustedMediator(address mediator) public {... */
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":16065:17452  function postJobOfferPartTwo(... */
+    tag_79:
+        /* "/solidity/input/Modicum.sol":16465:16478  uint256 index */
+      0x0
+        /* "/solidity/input/Modicum.sol":16776:16805  JobOfferPartTwo memory joPTwo */
+      tag_177
+      jump	// in(tag_178)
+    tag_177:
+        /* "/solidity/input/Modicum.sol":16493:16503  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":16481:16504  findJOIndex[msg.sender] */
+      0x0
+      swap1
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":16481:16492  findJOIndex */
+      0xa
+        /* "/solidity/input/Modicum.sol":16481:16504  findJOIndex[msg.sender] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":16481:16511  findJOIndex[msg.sender][ijoid] */
+      dup14
+      dup5
+      mstore
+      swap1
+      swap2
+      mstore
+      swap1
+      keccak256
+      sload
+      swap2
+      pop
+        /* "/solidity/input/Modicum.sol":16525:16535  index == 0 */
+      dup2
+      iszero
+        /* "/solidity/input/Modicum.sol":16521:16652  if (index == 0) {... */
+      iszero
+      tag_180
+      jumpi
+        /* "/solidity/input/Modicum.sol":16559:16566  joIndex */
+      0x7
+      dup1
+      sload
+        /* "/solidity/input/Modicum.sol":16580:16589  joIndex++ */
+      0x1
+      dup2
+      add
+      swap1
+      swap2
+      sstore
+        /* "/solidity/input/Modicum.sol":16615:16625  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":16580:16587  joIndex */
+      0x0
+        /* "/solidity/input/Modicum.sol":16603:16626  findJOIndex[msg.sender] */
+      swap1
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":16603:16614  findJOIndex */
+      0xa
+        /* "/solidity/input/Modicum.sol":16603:16626  findJOIndex[msg.sender] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":16603:16633  findJOIndex[msg.sender][ijoid] */
+      dup15
+      dup5
+      mstore
+      swap1
+      swap2
+      mstore
+      swap1
+      keccak256
+        /* "/solidity/input/Modicum.sol":16603:16641  findJOIndex[msg.sender][ijoid] = index */
+      dup2
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":16559:16566  joIndex */
+      swap2
+      pop
+        /* "/solidity/input/Modicum.sol":16521:16652  if (index == 0) {... */
+    tag_180:
+        /* "/solidity/input/Modicum.sol":16808:17107  JobOfferPartTwo({... */
+      0x100
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+        /* "/solidity/input/Modicum.sol":16850:16860  msg.sender */
+      caller
+      sub(exp(0x2, 0xa0), 0x1)
+        /* "/solidity/input/Modicum.sol":16808:17107  JobOfferPartTwo({... */
+      and
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":16890:16904  firstLayerHash */
+      dup11
+        /* "/solidity/input/Modicum.sol":16808:17107  JobOfferPartTwo({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":16928:16936  ramLimit */
+      dup10
+        /* "/solidity/input/Modicum.sol":16808:17107  JobOfferPartTwo({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":16969:16986  localStorageLimit */
+      dup9
+        /* "/solidity/input/Modicum.sol":16808:17107  JobOfferPartTwo({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":17005:17008  uri */
+      dup8
+        /* "/solidity/input/Modicum.sol":16808:17107  JobOfferPartTwo({... */
+      not(0x0)
+      and
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":17033:17042  directory */
+      dup7
+      sub(exp(0x2, 0xa0), 0x1)
+        /* "/solidity/input/Modicum.sol":16808:17107  JobOfferPartTwo({... */
+      and
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":17065:17072  jobHash */
+      dup6
+        /* "/solidity/input/Modicum.sol":16808:17107  JobOfferPartTwo({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":17092:17096  arch */
+      dup5
+        /* "/solidity/input/Modicum.sol":16808:17107  JobOfferPartTwo({... */
+      0x1
+      dup2
+      gt
+      iszero
+      tag_181
+      jumpi
+      invalid
+    tag_181:
+      swap1
+      mstore
+        /* "/solidity/input/Modicum.sol":17118:17141  jobOffersPartTwo[index] */
+      0x0
+      dup4
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":17118:17134  jobOffersPartTwo */
+      0x9
+        /* "/solidity/input/Modicum.sol":17118:17141  jobOffersPartTwo[index] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      swap2
+      dup3
+      swap1
+      keccak256
+        /* "/solidity/input/Modicum.sol":17118:17150  jobOffersPartTwo[index] = joPTwo */
+      dup4
+      mload
+      dup2
+      sload
+      not(sub(exp(0x2, 0xa0), 0x1))
+      swap1
+      dup2
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      swap3
+      dup4
+      and
+      or
+      dup4
+      sstore
+      swap3
+      dup6
+      add
+      mload
+      0x1
+      dup1
+      dup5
+      add
+      swap2
+      swap1
+      swap2
+      sstore
+      swap4
+      dup6
+      add
+      mload
+      0x2
+      dup4
+      add
+      sstore
+      0x60
+      dup6
+      add
+      mload
+      0x3
+      dup4
+      add
+      sstore
+      0x80
+      dup6
+      add
+      mload
+      0x4
+      dup4
+      add
+      sstore
+      0xa0
+      dup6
+      add
+      mload
+      0x5
+      dup4
+      add
+      dup1
+      sload
+      swap1
+      swap5
+      and
+      swap2
+      and
+      or
+      swap1
+      swap2
+      sstore
+      0xc0
+      dup4
+      add
+      mload
+      0x6
+      dup3
+      add
+      sstore
+      0xe0
+      dup4
+      add
+      mload
+      0x7
+      dup3
+      add
+      dup1
+      sload
+      swap5
+      swap6
+      pop
+      dup6
+      swap5
+        /* "/solidity/input/Modicum.sol":17118:17141  jobOffersPartTwo[index] */
+      swap3
+      swap4
+        /* "/solidity/input/Modicum.sol":17118:17150  jobOffersPartTwo[index] = joPTwo */
+      swap2
+      swap3
+      swap1
+      swap2
+      not(0xff)
+      swap1
+      swap2
+      and
+      swap1
+      dup4
+      dup2
+      dup2
+      gt
+      iszero
+      tag_182
+      jumpi
+      invalid
+    tag_182:
+      mul
+      or
+      swap1
+      sstore
+      pop
+      swap1
+      pop
+      pop
+        /* "/solidity/input/Modicum.sol":17191:17195  true */
+      0x1
+        /* "/solidity/input/Modicum.sol":17160:17181  jobOfferPartTwoPosted */
+      0xf
+        /* "/solidity/input/Modicum.sol":17160:17188  jobOfferPartTwoPosted[index] */
+      0x0
+        /* "/solidity/input/Modicum.sol":17182:17187  index */
+      dup5
+        /* "/solidity/input/Modicum.sol":17160:17188  jobOfferPartTwoPosted[index] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      keccak256
+      0x0
+        /* "/solidity/input/Modicum.sol":17160:17195  jobOfferPartTwoPosted[index] = true */
+      0x100
+      exp
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+        /* "/solidity/input/Modicum.sol":17211:17445  JobOfferPostedPartTwo(... */
+      0xba1c09dca68b9938310de6065e8d70fac2917a6a305837f9de7a45c528245d9a
+        /* "/solidity/input/Modicum.sol":17246:17251  index */
+      dup3
+        /* "/solidity/input/Modicum.sol":17265:17275  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":17289:17296  jobHash */
+      dup7
+        /* "/solidity/input/Modicum.sol":17310:17324  firstLayerHash */
+      dup13
+        /* "/solidity/input/Modicum.sol":17338:17341  uri */
+      dup11
+        /* "/solidity/input/Modicum.sol":17355:17364  directory */
+      dup11
+        /* "/solidity/input/Modicum.sol":17378:17382  arch */
+      dup10
+        /* "/solidity/input/Modicum.sol":17396:17404  ramLimit */
+      dup16
+        /* "/solidity/input/Modicum.sol":17418:17435  localStorageLimit */
+      dup16
+        /* "/solidity/input/Modicum.sol":17211:17445  JobOfferPostedPartTwo(... */
+      mload(0x40)
+      dup1
+      dup11
+      dup2
+      mstore
+      0x20
+      add
+      dup10
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup9
+      dup2
+      mstore
+      0x20
+      add
+      dup8
+      dup2
+      mstore
+      0x20
+      add
+      dup7
+      not(0x0)
+      and
+      not(0x0)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup6
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup5
+      0x1
+      dup2
+      gt
+      iszero
+      tag_183
+      jumpi
+      invalid
+    tag_183:
+      0xff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap10
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":16065:17452  function postJobOfferPartTwo(... */
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":7926:8079  function setPenaltyRate(uint256 _penaltyRate) public administrative {... */
+    tag_82:
+        /* "/solidity/input/Modicum.sol":190:195  owner */
+      and(sub(exp(0x2, 0xa0), 0x1), sload(0x1))
+        /* "/solidity/input/Modicum.sol":176:186  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":176:195  msg.sender == owner */
+      eq
+        /* "/solidity/input/Modicum.sol":172:266  if (msg.sender == owner)... */
+      iszero
+      tag_109
+      jumpi
+        /* "/solidity/input/Modicum.sol":8004:8015  penaltyRate */
+      0x0
+        /* "/solidity/input/Modicum.sol":8004:8030  penaltyRate = _penaltyRate */
+      dup2
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":8045:8072  penaltyRateSet(penaltyRate) */
+      0x40
+      dup1
+      mload
+      dup3
+      dup2
+      mstore
+      swap1
+      mload
+      0xc3e81bef45eef27d5efd5d8de49b1398d66e449912912cf50fffdffd283e19e0
+      swap2
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":172:266  if (msg.sender == owner)... */
+      jump(tag_111)
+        /* "/solidity/input/Modicum.sol":17458:18056  function cancelJobOffer(uint256 offerId) public {... */
+    tag_85:
+        /* "/solidity/input/Modicum.sol":17829:17830  0 */
+      0x0
+        /* "/solidity/input/Modicum.sol":17788:17813  jobOffersPartOne[offerId] */
+      dup2
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":17788:17804  jobOffersPartOne */
+      0x8
+        /* "/solidity/input/Modicum.sol":17788:17813  jobOffersPartOne[offerId] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":17788:17826  jobOffersPartOne[offerId].depositValue */
+      0x1
+      swap1
+      dup2
+      add
+        /* "/solidity/input/Modicum.sol":17788:17830  jobOffersPartOne[offerId].depositValue = 0 */
+      dup5
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":17841:17859  isJobOfferCanceled */
+      0x16
+        /* "/solidity/input/Modicum.sol":17841:17868  isJobOfferCanceled[offerId] */
+      dup4
+      mstore
+      swap3
+      dup2
+      swap1
+      keccak256
+        /* "/solidity/input/Modicum.sol":17841:17875  isJobOfferCanceled[offerId] = true */
+      dup1
+      sload
+      not(0xff)
+      and
+      swap1
+      swap4
+      or
+      swap1
+      swap3
+      sstore
+        /* "/solidity/input/Modicum.sol":17891:17916  JobOfferCanceled(offerId) */
+      dup2
+      mload
+      dup4
+      dup2
+      mstore
+      swap2
+      mload
+      0x9e67088fa5663596c8d76e745a455b3c500bd75d1bdf673c41be74d362aaeb0b
+      swap3
+      dup2
+      swap1
+      sub
+      swap1
+      swap2
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":17975:18000  jobOffersPartOne[offerId] */
+      0x0
+      dup2
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":17975:17991  jobOffersPartOne */
+      0x8
+        /* "/solidity/input/Modicum.sol":17975:18000  jobOffersPartOne[offerId] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      swap2
+      dup3
+      swap1
+      keccak256
+        /* "/solidity/input/Modicum.sol":17975:18013  jobOffersPartOne[offerId].depositValue */
+      0x1
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":17931:18049  EtherTransferred(address(this), msg.sender, jobOffersPartOne[offerId].depositValue, EtherTransferCause.CancelJobOffer) */
+      dup3
+      mload
+        /* "/solidity/input/Modicum.sol":17956:17960  this */
+      address
+        /* "/solidity/input/Modicum.sol":17931:18049  EtherTransferred(address(this), msg.sender, jobOffersPartOne[offerId].depositValue, EtherTransferCause.CancelJobOffer) */
+      dup1
+      dup3
+      mstore
+        /* "/solidity/input/Modicum.sol":17963:17973  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":17931:18049  EtherTransferred(address(this), msg.sender, jobOffersPartOne[offerId].depositValue, EtherTransferCause.CancelJobOffer) */
+      swap4
+      dup3
+      add
+      dup5
+      swap1
+      mstore
+      swap4
+      dup2
+      add
+      dup3
+      swap1
+      mstore
+      0x0
+      dup1
+      mload
+      0x20
+      data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap4
+        /* "/solidity/input/Modicum.sol":17956:17960  this */
+      swap3
+        /* "/solidity/input/Modicum.sol":17963:17973  msg.sender */
+      swap2
+        /* "/solidity/input/Modicum.sol":17975:18013  jobOffersPartOne[offerId].depositValue */
+      swap1
+        /* "/solidity/input/Modicum.sol":18015:18048  EtherTransferCause.CancelJobOffer */
+      0x2
+      swap1
+        /* "/solidity/input/Modicum.sol":17931:18049  EtherTransferred(address(this), msg.sender, jobOffersPartOne[offerId].depositValue, EtherTransferCause.CancelJobOffer) */
+      0x60
+      dup2
+      add
+        /* "/solidity/input/Modicum.sol":18015:18048  EtherTransferCause.CancelJobOffer */
+      dup3
+        /* "/solidity/input/Modicum.sol":17931:18049  EtherTransferred(address(this), msg.sender, jobOffersPartOne[offerId].depositValue, EtherTransferCause.CancelJobOffer) */
+      jump(tag_172)
+        /* "/solidity/input/Modicum.sol":12197:14176  function postResOffer(... */
+    tag_87:
+        /* "/solidity/input/Modicum.sol":12698:12708  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":12813:12833  uint256 depositValue */
+      0x0
+        /* "/solidity/input/Modicum.sol":12680:12709  resourceProviders[msg.sender] */
+      swap1
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":12680:12697  resourceProviders */
+      0x4
+        /* "/solidity/input/Modicum.sol":12680:12709  resourceProviders[msg.sender] */
+      0x20
+      mstore
+      0x40
+      dup2
+      keccak256
+        /* "/solidity/input/Modicum.sol":12680:12733  resourceProviders[msg.sender].trustedMediators.length */
+      sload
+        /* "/solidity/input/Modicum.sol":12813:12833  uint256 depositValue */
+      dup2
+      swap1
+      dup2
+      swap1
+        /* "/solidity/input/Modicum.sol":12680:12738  resourceProviders[msg.sender].trustedMediators.length == 0 */
+      iszero
+        /* "/solidity/input/Modicum.sol":12676:12803  if (resourceProviders[msg.sender].trustedMediators.length == 0){... */
+      iszero
+      tag_191
+      jumpi
+        /* "/solidity/input/Modicum.sol":12758:12792  DebugString("trustedMediators==0") */
+      0x40
+      dup1
+      mload
+      0x747275737465644d65646961746f72733d3d3000000000000000000000000000
+      dup2
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_57835b8ce659599ea7968c6609c8126280c7cea560d819dd9c24a6499f8f50d4
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":12676:12803  if (resourceProviders[msg.sender].trustedMediators.length == 0){... */
+    tag_191:
+        /* "/solidity/input/Modicum.sol":12918:12929  penaltyRate */
+      sload(0x0)
+        /* "/solidity/input/Modicum.sol":12837:12870  instructionPrice * instructionCap */
+      dup13
+      dup13
+      mul
+        /* "/solidity/input/Modicum.sol":12885:12914  bandwidthCap * bandwidthPrice */
+      dup10
+      dup10
+      mul
+        /* "/solidity/input/Modicum.sol":12837:12914  instructionPrice * instructionCap +... */
+      add
+        /* "/solidity/input/Modicum.sol":12836:12929  (instructionPrice * instructionCap +... */
+      mul
+      swap3
+      pop
+        /* "/solidity/input/Modicum.sol":12944:12953  msg.value */
+      callvalue
+        /* "/solidity/input/Modicum.sol":12944:12969  msg.value <= depositValue */
+      dup4
+      lt
+        /* "/solidity/input/Modicum.sol":12940:13121  if (msg.value <= depositValue){... */
+      tag_192
+      jumpi
+        /* "/solidity/input/Modicum.sol":12989:13029  DebugString("msg.value <= depositValue") */
+      0x40
+      dup1
+      mload
+      0x6d73672e76616c7565203c3d206465706f73697456616c756500000000000000
+      dup2
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_57835b8ce659599ea7968c6609c8126280c7cea560d819dd9c24a6499f8f50d4
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":13048:13068  DebugUint(msg.value) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":13058:13067  msg.value */
+      callvalue
+        /* "/solidity/input/Modicum.sol":13048:13068  DebugUint(msg.value) */
+      dup2
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_b69ceb39ad2ae6bbaf7963b0deaf1a1f11cbb548060a493047bacbbfe0860c2d
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":13087:13110  DebugUint(depositValue) */
+      0x40
+      dup1
+      mload
+      dup5
+      dup2
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_b69ceb39ad2ae6bbaf7963b0deaf1a1f11cbb548060a493047bacbbfe0860c2d
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":12940:13121  if (msg.value <= depositValue){... */
+    tag_192:
+        /* "/solidity/input/Modicum.sol":13743:13744  1 */
+      0x1
+        /* "/solidity/input/Modicum.sol":13266:13280  resourceOffers */
+      0x6
+        /* "/solidity/input/Modicum.sol":13286:13739  ResourceOffer({... */
+      0x140
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+        /* "/solidity/input/Modicum.sol":13327:13337  msg.sender */
+      caller
+      sub(exp(0x2, 0xa0), 0x1)
+        /* "/solidity/input/Modicum.sol":13286:13739  ResourceOffer({... */
+      and
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":13621:13630  msg.value */
+      callvalue
+        /* "/solidity/input/Modicum.sol":13286:13739  ResourceOffer({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":13369:13385  instructionPrice */
+      dup16
+        /* "/solidity/input/Modicum.sol":13286:13739  ResourceOffer({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":13415:13429  instructionCap */
+      dup15
+        /* "/solidity/input/Modicum.sol":13286:13739  ResourceOffer({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":13454:13463  memoryCap */
+      dup14
+        /* "/solidity/input/Modicum.sol":13286:13739  ResourceOffer({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":13494:13509  localStorageCap */
+      dup13
+        /* "/solidity/input/Modicum.sol":13286:13739  ResourceOffer({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":13537:13549  bandwidthCap */
+      dup12
+        /* "/solidity/input/Modicum.sol":13286:13739  ResourceOffer({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":13579:13593  bandwidthPrice */
+      dup11
+        /* "/solidity/input/Modicum.sol":13286:13739  ResourceOffer({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":13660:13674  matchIncentive */
+      dup10
+        /* "/solidity/input/Modicum.sol":13286:13739  ResourceOffer({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":13707:13724  verificationCount */
+      dup9
+        /* "/solidity/input/Modicum.sol":13286:13739  ResourceOffer({... */
+      dup2
+      mstore
+      pop
+        /* "/solidity/input/Modicum.sol":13266:13740  resourceOffers.push(ResourceOffer({... */
+      swap1
+      dup1
+        /* "--CODEGEN--":39:40   */
+      0x1
+        /* "--CODEGEN--":33:36   */
+      dup2
+        /* "--CODEGEN--":27:37   */
+      sload
+        /* "--CODEGEN--":23:41   */
+      add
+        /* "--CODEGEN--":57:67   */
+      dup1
+        /* "--CODEGEN--":52:55   */
+      dup3
+        /* "--CODEGEN--":45:68   */
+      sstore
+        /* "--CODEGEN--":79:89   */
+      dup1
+        /* "--CODEGEN--":72:89   */
+      swap2
+      pop
+        /* "--CODEGEN--":0:93   */
+      pop
+        /* "/solidity/input/Modicum.sol":13266:13740  resourceOffers.push(ResourceOffer({... */
+      swap1
+      0x1
+      dup3
+      sub
+      swap1
+      0x0
+      mstore
+      keccak256(0x0, 0x20)
+      swap1
+      0xa
+      mul
+      add
+      0x0
+      swap1
+      swap2
+      swap3
+      swap1
+      swap2
+      swap1
+      swap2
+      pop
+      0x0
+      dup3
+      add
+      mload
+      dup2
+      0x0
+      add
+      exp(0x100, 0x0)
+      dup2
+      sload
+      dup2
+      sub(exp(0x2, 0xa0), 0x1)
+      mul
+      not
+      and
+      swap1
+      dup4
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x1
+      add
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x2
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x3
+      add
+      sstore
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x4
+      add
+      sstore
+      0xa0
+      dup3
+      add
+      mload
+      dup2
+      0x5
+      add
+      sstore
+      0xc0
+      dup3
+      add
+      mload
+      dup2
+      0x6
+      add
+      sstore
+      0xe0
+      dup3
+      add
+      mload
+      dup2
+      0x7
+      add
+      sstore
+      0x100
+      dup3
+      add
+      mload
+      dup2
+      0x8
+      add
+      sstore
+      0x120
+      dup3
+      add
+      mload
+      dup2
+      0x9
+      add
+      sstore
+      pop
+      pop
+        /* "/solidity/input/Modicum.sol":13266:13744  resourceOffers.push(ResourceOffer({... */
+      sub
+        /* "/solidity/input/Modicum.sol":13250:13744  uint256 index = resourceOffers.push(ResourceOffer({... */
+      swap2
+      pop
+        /* "/solidity/input/Modicum.sol":13771:13775  misc */
+      dup4
+        /* "/solidity/input/Modicum.sol":13755:13775  uint256 iroid = misc */
+      swap1
+      pop
+        /* "/solidity/input/Modicum.sol":13790:14061  ResourceOfferPosted(index,... */
+      0xdbc425a2857617d2e3336b85e820c082e6403f272bdfc7b2805119a0be44121
+        /* "/solidity/input/Modicum.sol":13810:13815  index */
+      dup3
+        /* "/solidity/input/Modicum.sol":13830:13840  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":13855:13871  instructionPrice */
+      dup15
+        /* "/solidity/input/Modicum.sol":13885:13899  instructionCap */
+      dup15
+        /* "/solidity/input/Modicum.sol":13914:13923  memoryCap */
+      dup15
+        /* "/solidity/input/Modicum.sol":13937:13952  localStorageCap */
+      dup15
+        /* "/solidity/input/Modicum.sol":13967:13979  bandwidthCap */
+      dup15
+        /* "/solidity/input/Modicum.sol":13993:14007  bandwidthPrice */
+      dup15
+        /* "/solidity/input/Modicum.sol":14022:14031  msg.value */
+      callvalue
+        /* "/solidity/input/Modicum.sol":14046:14051  iroid */
+      dup11
+        /* "/solidity/input/Modicum.sol":13790:14061  ResourceOfferPosted(index,... */
+      mload(0x40)
+      dup1
+      dup12
+      dup2
+      mstore
+      0x20
+      add
+      dup11
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup10
+      dup2
+      mstore
+      0x20
+      add
+      dup9
+      dup2
+      mstore
+      0x20
+      add
+      dup8
+      dup2
+      mstore
+      0x20
+      add
+      dup7
+      dup2
+      mstore
+      0x20
+      add
+      dup6
+      dup2
+      mstore
+      0x20
+      add
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap11
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":14077:14169  EtherTransferred(msg.sender, address(this), msg.value, EtherTransferCause.PostResourceOffer) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":14094:14104  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":14077:14169  EtherTransferred(msg.sender, address(this), msg.value, EtherTransferCause.PostResourceOffer) */
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":14114:14118  this */
+      address
+        /* "/solidity/input/Modicum.sol":14077:14169  EtherTransferred(msg.sender, address(this), msg.value, EtherTransferCause.PostResourceOffer) */
+      0x20
+      dup3
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":14121:14130  msg.value */
+      callvalue
+        /* "/solidity/input/Modicum.sol":14077:14169  EtherTransferred(msg.sender, address(this), msg.value, EtherTransferCause.PostResourceOffer) */
+      dup2
+      dup4
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":14132:14168  EtherTransferCause.PostResourceOffer */
+      0x1
+        /* "/solidity/input/Modicum.sol":14077:14169  EtherTransferred(msg.sender, address(this), msg.value, EtherTransferCause.PostResourceOffer) */
+      0x60
+      dup3
+      add
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x80
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":12197:14176  function postResOffer(... */
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":11532:11823  function registerJobCreator(... */
+    tag_90:
+        /* "/solidity/input/Modicum.sol":11653:11756  JobCreator({... */
+      0x40
+      dup1
+      mload
+      dup1
+      dup3
+      add
+      dup3
+      mstore
+        /* "/solidity/input/Modicum.sol":11584:11617  address[] memory trustedMediators */
+      0x60
+        /* "/solidity/input/Modicum.sol":11653:11756  JobCreator({... */
+      dup1
+      dup3
+      mstore
+      0x0
+      0x20
+      dup1
+      dup5
+      add
+      dup3
+      swap1
+      mstore
+        /* "/solidity/input/Modicum.sol":11639:11649  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":11627:11650  jobCreators[msg.sender] */
+      dup3
+      mstore
+        /* "/solidity/input/Modicum.sol":11627:11638  jobCreators */
+      0x5
+        /* "/solidity/input/Modicum.sol":11627:11650  jobCreators[msg.sender] */
+      dup2
+      mstore
+      swap4
+      swap1
+      keccak256
+        /* "/solidity/input/Modicum.sol":11627:11756  jobCreators[msg.sender] = JobCreator({... */
+      dup3
+      mload
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":11584:11617  address[] memory trustedMediators */
+      swap3
+      swap5
+        /* "/solidity/input/Modicum.sol":11627:11650  jobCreators[msg.sender] */
+      swap2
+      swap3
+        /* "/solidity/input/Modicum.sol":11627:11756  jobCreators[msg.sender] = JobCreator({... */
+      tag_196
+      swap3
+        /* "/solidity/input/Modicum.sol":11627:11650  jobCreators[msg.sender] */
+      dup5
+      swap3
+        /* "/solidity/input/Modicum.sol":11627:11756  jobCreators[msg.sender] = JobCreator({... */
+      add
+      swap1
+      jump	// in(tag_116)
+    tag_196:
+      pop
+      0x20
+      swap2
+      dup3
+      add
+      mload
+      0x1
+      swap1
+      swap2
+      add
+      sstore
+        /* "/solidity/input/Modicum.sol":11804:11815  penaltyRate */
+      sload(0x0)
+        /* "/solidity/input/Modicum.sol":11771:11816  JobCreatorRegistered(msg.sender, penaltyRate) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":11792:11802  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":11771:11816  JobCreatorRegistered(msg.sender, penaltyRate) */
+      dup2
+      mstore
+      swap3
+      dup4
+      add
+      swap2
+      swap1
+      swap2
+      mstore
+      dup1
+      mload
+      0x4599183a5415a1a36544283668387752f2b7459b061d4c8434642289d6146a9e
+      swap3
+      dup2
+      swap1
+      sub
+      swap1
+      swap2
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":11532:11823  function registerJobCreator(... */
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":10694:10921  function resourceProviderAddTrustedDirectory(address directory) public {... */
+    tag_93:
+        /* "/solidity/input/Modicum.sol":10793:10803  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":10775:10804  resourceProviders[msg.sender] */
+      0x0
+      dup2
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":10775:10792  resourceProviders */
+      0x4
+        /* "/solidity/input/Modicum.sol":10775:10804  resourceProviders[msg.sender] */
+      0x20
+      swap1
+      dup2
+      mstore
+      0x40
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":10775:10823  resourceProviders[msg.sender].trustedDirectories */
+      0x1
+      swap1
+      dup2
+      add
+        /* "--CODEGEN--":27:37   */
+      dup1
+      sload
+        /* "--CODEGEN--":23:41   */
+      swap2
+      dup3
+      add
+        /* "--CODEGEN--":45:68   */
+      dup2
+      sstore
+        /* "/solidity/input/Modicum.sol":10775:10839  resourceProviders[msg.sender].trustedDirectories.push(directory) */
+      dup5
+      mstore
+      swap3
+      dup3
+      swap1
+      keccak256
+      swap1
+      swap3
+      add
+      dup1
+      sload
+      not(sub(exp(0x2, 0xa0), 0x1))
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      dup7
+      and
+      swap1
+      dup2
+      or
+      swap1
+      swap2
+      sstore
+        /* "/solidity/input/Modicum.sol":10854:10914  ResourceProviderAddedTrustedDirectory(msg.sender, directory) */
+      dup3
+      mload
+      swap4
+      dup5
+      mstore
+      swap1
+      dup4
+      add
+      mstore
+      dup1
+      mload
+      0xc8dca6a50f889635c514a90f99165d542d96eb943731beabec830ec3110ace73
+      swap3
+      dup2
+      swap1
+      sub
+      swap1
+      swap2
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":10694:10921  function resourceProviderAddTrustedDirectory(address directory) public {... */
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":6338:6383  mapping(address => Mediator) public mediators */
+    tag_96:
+      mstore(0x20, 0x3)
+      0x0
+      swap1
+      dup2
+      mstore
+      0x40
+      swap1
+      keccak256
+      dup1
+      sload
+      0x1
+      dup3
+      add
+      sload
+      0x2
+      dup4
+      add
+      sload
+      0x5
+      dup5
+      add
+      sload
+      0x6
+      swap1
+      swap5
+      add
+      sload
+      0xff
+      swap1
+      swap4
+      and
+      swap4
+      swap2
+      swap3
+      swap1
+      swap2
+      swap1
+      dup6
+      jump	// out
+        /* "/solidity/input/Modicum.sol":25272:26202  function acceptResult(uint256 resultId, uint256 jobOfferId) public returns (uint256) {... */
+    tag_100:
+        /* "/solidity/input/Modicum.sol":25348:25355  uint256 */
+      0x0
+        /* "/solidity/input/Modicum.sol":25999:26016  Reaction.Accepted */
+      dup1
+        /* "/solidity/input/Modicum.sol":25971:25978  results */
+      0xc
+        /* "/solidity/input/Modicum.sol":25979:25987  resultId */
+      dup5
+        /* "/solidity/input/Modicum.sol":25971:25988  results[resultId] */
+      dup2
+      sload
+      dup2
+      lt
+      iszero
+      iszero
+      tag_200
+      jumpi
+      invalid
+    tag_200:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      swap1
+      swap2
+      keccak256
+        /* "/solidity/input/Modicum.sol":25971:25996  results[resultId].reacted */
+      0x6
+        /* "/solidity/input/Modicum.sol":25971:25988  results[resultId] */
+      0x8
+      swap1
+      swap3
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":25971:25996  results[resultId].reacted */
+      add
+        /* "/solidity/input/Modicum.sol":25971:26016  results[resultId].reacted = Reaction.Accepted */
+      dup1
+      sload
+      not(0xff)
+      and
+      0x1
+      dup4
+      0x2
+      dup2
+      gt
+      iszero
+      tag_202
+      jumpi
+      invalid
+    tag_202:
+      mul
+      or
+      swap1
+      sstore
+      pop
+        /* "/solidity/input/Modicum.sol":26032:26098  ResultReaction(msg.sender, resultId,results[resultId].matchId,  0) */
+      0x9cf99d589438cb7c5e0d92e45b92b87bcf5a2201479e72e8f31396be4a7505ab
+        /* "/solidity/input/Modicum.sol":26047:26057  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":26059:26067  resultId */
+      dup5
+        /* "/solidity/input/Modicum.sol":26068:26075  results */
+      0xc
+        /* "/solidity/input/Modicum.sol":26076:26084  resultId */
+      dup7
+        /* "/solidity/input/Modicum.sol":26068:26085  results[resultId] */
+      dup2
+      sload
+      dup2
+      lt
+      iszero
+      iszero
+      tag_203
+      jumpi
+      invalid
+    tag_203:
+      swap1
+      0x0
+      mstore
+      keccak256(0x0, 0x20)
+      swap1
+      0x8
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":26068:26093  results[resultId].matchId */
+      0x2
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":26096:26097  0 */
+      0x0
+        /* "/solidity/input/Modicum.sol":26032:26098  ResultReaction(msg.sender, resultId,results[resultId].matchId,  0) */
+      mload(0x40)
+      dup1
+      dup6
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup5
+      dup2
+      mstore
+      0x20
+      add
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap5
+      pop
+      pop
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":26114:26144  DebugString("result accepted") */
+      0x40
+      dup1
+      mload
+      0x726573756c742061636365707465640000000000000000000000000000000000
+      dup2
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_57835b8ce659599ea7968c6609c8126280c7cea560d819dd9c24a6499f8f50d4
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x20
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":26162:26194  close(results[resultId].matchId) */
+      tag_205
+        /* "/solidity/input/Modicum.sol":26168:26175  results */
+      0xc
+        /* "/solidity/input/Modicum.sol":26176:26184  resultId */
+      dup5
+        /* "/solidity/input/Modicum.sol":26168:26185  results[resultId] */
+      dup2
+      sload
+      dup2
+      lt
+      iszero
+      iszero
+      tag_206
+      jumpi
+      invalid
+    tag_206:
+      swap1
+      0x0
+      mstore
+      keccak256(0x0, 0x20)
+      swap1
+      0x8
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":26168:26193  results[resultId].matchId */
+      0x2
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":26162:26167  close */
+      tag_208
+        /* "/solidity/input/Modicum.sol":26162:26194  close(results[resultId].matchId) */
+      jump	// in
+    tag_205:
+        /* "/solidity/input/Modicum.sol":26155:26194  return close(results[resultId].matchId) */
+      swap4
+        /* "/solidity/input/Modicum.sol":25272:26202  function acceptResult(uint256 resultId, uint256 jobOfferId) public returns (uint256) {... */
+      swap3
+      pop
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":26209:27990  function postMediationResult(... */
+    tag_103:
+        /* "/solidity/input/Modicum.sol":26506:26511  Party */
+      0x0
+        /* "/solidity/input/Modicum.sol":26814:26831  mediated[matchId] */
+      dup10
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":26814:26822  mediated */
+      0x11
+        /* "/solidity/input/Modicum.sol":26814:26831  mediated[matchId] */
+      0x20
+      mstore
+      0x40
+      dup1
+      dup3
+      keccak256
+        /* "/solidity/input/Modicum.sol":26814:26838  mediated[matchId] = true */
+      dup1
+      sload
+      not(0xff)
+      and
+        /* "/solidity/input/Modicum.sol":26834:26838  true */
+      0x1
+        /* "/solidity/input/Modicum.sol":26814:26838  mediated[matchId] = true */
+      swap1
+      dup2
+      or
+      swap1
+      swap2
+      sstore
+        /* "/solidity/input/Modicum.sol":26886:27176  MediatorResult({... */
+      dup2
+      mload
+        /* "/solidity/input/Modicum.sol":26814:26838  mediated[matchId] = true */
+      0x100
+        /* "/solidity/input/Modicum.sol":26886:27176  MediatorResult({... */
+      dup2
+      add
+      swap1
+      swap3
+      mstore
+        /* "/solidity/input/Modicum.sol":26506:26511  Party */
+      dup3
+      swap2
+      dup3
+      swap2
+        /* "/solidity/input/Modicum.sol":26834:26838  true */
+      swap1
+        /* "/solidity/input/Modicum.sol":26865:26880  mediatorResults */
+      0xd
+      swap1
+        /* "/solidity/input/Modicum.sol":26886:27176  MediatorResult({... */
+      dup1
+        /* "/solidity/input/Modicum.sol":26923:26929  status */
+      dup14
+        /* "/solidity/input/Modicum.sol":26886:27176  MediatorResult({... */
+      0x9
+      dup2
+      gt
+      iszero
+      tag_210
+      jumpi
+      invalid
+    tag_210:
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":26948:26951  uri */
+      dup13
+        /* "/solidity/input/Modicum.sol":26886:27176  MediatorResult({... */
+      not(0x0)
+      and
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":26974:26981  matchId */
+      dup16
+        /* "/solidity/input/Modicum.sol":26886:27176  MediatorResult({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":27001:27005  hash */
+      dup12
+        /* "/solidity/input/Modicum.sol":26886:27176  MediatorResult({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":27037:27053  instructionCount */
+      dup11
+        /* "/solidity/input/Modicum.sol":26886:27176  MediatorResult({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":27083:27097  bandwidthUsage */
+      dup10
+        /* "/solidity/input/Modicum.sol":26886:27176  MediatorResult({... */
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":27120:27127  verdict */
+      dup9
+        /* "/solidity/input/Modicum.sol":26886:27176  MediatorResult({... */
+      0x4
+      dup2
+      gt
+      iszero
+      tag_211
+      jumpi
+      invalid
+    tag_211:
+      dup2
+      mstore
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":27154:27165  faultyParty */
+      dup8
+        /* "/solidity/input/Modicum.sol":26886:27176  MediatorResult({... */
+      0x1
+      dup2
+      gt
+      iszero
+      tag_212
+      jumpi
+      invalid
+    tag_212:
+      swap1
+      mstore
+        /* "--CODEGEN--":27:37   */
+      dup2
+      sload
+        /* "--CODEGEN--":39:40   */
+      0x1
+        /* "--CODEGEN--":23:41   */
+      dup2
+      dup2
+      add
+        /* "--CODEGEN--":45:68   */
+      dup1
+      dup6
+      sstore
+      0x0
+        /* "/solidity/input/Modicum.sol":26865:27177  mediatorResults.push(MediatorResult({... */
+      swap5
+      dup6
+      mstore
+      0x20
+      swap1
+      swap5
+      keccak256
+      dup4
+      mload
+      0x7
+      swap1
+      swap4
+      mul
+      add
+      dup1
+      sload
+      swap1
+      swap3
+      swap2
+      dup4
+      swap2
+      not(0xff)
+      and
+      swap1
+      dup4
+      0x9
+      dup2
+      gt
+      iszero
+      tag_214
+      jumpi
+      invalid
+    tag_214:
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0x20
+      dup3
+      add
+      mload
+      dup2
+      0x1
+      add
+      swap1
+      not(0x0)
+      and
+      swap1
+      sstore
+      0x40
+      dup3
+      add
+      mload
+      dup2
+      0x2
+      add
+      sstore
+      0x60
+      dup3
+      add
+      mload
+      dup2
+      0x3
+      add
+      sstore
+      0x80
+      dup3
+      add
+      mload
+      dup2
+      0x4
+      add
+      sstore
+      0xa0
+      dup3
+      add
+      mload
+      dup2
+      0x5
+      add
+      sstore
+      0xc0
+      dup3
+      add
+      mload
+      dup2
+      0x6
+      add
+      exp(0x100, 0x0)
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0x4
+      dup2
+      gt
+      iszero
+      tag_215
+      jumpi
+      invalid
+    tag_215:
+      mul
+      or
+      swap1
+      sstore
+      pop
+      0xe0
+      dup3
+      add
+      mload
+      0x6
+      dup3
+      add
+      dup1
+      sload
+      not(0xff00)
+      and
+      0x100
+      dup4
+      0x1
+      dup2
+      gt
+      iszero
+      tag_216
+      jumpi
+      invalid
+    tag_216:
+      mul
+      or
+      swap1
+      sstore
+      pop
+      pop
+      pop
+        /* "/solidity/input/Modicum.sol":26865:27181  mediatorResults.push(MediatorResult({... */
+      sub
+        /* "/solidity/input/Modicum.sol":26849:27181  uint256 index = mediatorResults.push(MediatorResult({... */
+      swap2
+      pop
+        /* "/solidity/input/Modicum.sol":27373:27387  resourceOffers */
+      0x6
+        /* "/solidity/input/Modicum.sol":27388:27395  matches */
+      0xb
+        /* "/solidity/input/Modicum.sol":27396:27403  matchId */
+      dup14
+        /* "/solidity/input/Modicum.sol":27388:27404  matches[matchId] */
+      dup2
+      sload
+      dup2
+      lt
+      iszero
+      iszero
+      tag_217
+      jumpi
+      invalid
+    tag_217:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      swap1
+      swap2
+      keccak256
+      0x3
+      swap1
+      swap2
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":27388:27418  matches[matchId].resourceOffer */
+      sload
+        /* "/solidity/input/Modicum.sol":27373:27419  resourceOffers[matches[matchId].resourceOffer] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_219
+      jumpi
+      invalid
+    tag_219:
+      swap1
+      0x0
+      mstore
+      keccak256(0x0, 0x20)
+      swap1
+      0xa
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":27373:27437  resourceOffers[matches[matchId].resourceOffer].verificationCount */
+      0x9
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":27309:27318  mediators */
+      0x3
+        /* "/solidity/input/Modicum.sol":27309:27330  mediators[msg.sender] */
+      0x0
+        /* "/solidity/input/Modicum.sol":27319:27329  msg.sender */
+      caller
+      sub(exp(0x2, 0xa0), 0x1)
+        /* "/solidity/input/Modicum.sol":27309:27330  mediators[msg.sender] */
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      keccak256
+        /* "/solidity/input/Modicum.sol":27309:27345  mediators[msg.sender].bandwidthPrice */
+      0x2
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":27292:27306  bandwidthUsage */
+      dup8
+        /* "/solidity/input/Modicum.sol":27292:27345  bandwidthUsage * mediators[msg.sender].bandwidthPrice */
+      mul
+        /* "/solidity/input/Modicum.sol":27227:27236  mediators */
+      0x3
+        /* "/solidity/input/Modicum.sol":27227:27248  mediators[msg.sender] */
+      0x0
+        /* "/solidity/input/Modicum.sol":27237:27247  msg.sender */
+      caller
+      sub(exp(0x2, 0xa0), 0x1)
+        /* "/solidity/input/Modicum.sol":27227:27248  mediators[msg.sender] */
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      keccak256
+        /* "/solidity/input/Modicum.sol":27227:27265  mediators[msg.sender].instructionPrice */
+      0x1
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":27208:27224  instructionCount */
+      dup10
+        /* "/solidity/input/Modicum.sol":27208:27265  instructionCount * mediators[msg.sender].instructionPrice */
+      mul
+        /* "/solidity/input/Modicum.sol":27208:27345  instructionCount * mediators[msg.sender].instructionPrice +... */
+      add
+        /* "/solidity/input/Modicum.sol":27207:27437  (instructionCount * mediators[msg.sender].instructionPrice +... */
+      mul
+        /* "/solidity/input/Modicum.sol":27192:27437  uint256 cost = (instructionCount * mediators[msg.sender].instructionPrice +... */
+      swap1
+      pop
+        /* "/solidity/input/Modicum.sol":27630:27744  MediationResultPosted(matchId, msg.sender, index, faultyParty, verdict, status, uri, hash, instructionCount, cost) */
+      0x3d0a803e2ad2d914da3f6cee43f1cf3c3342774233f2d4dd2a4b09aaaa40cc82
+        /* "/solidity/input/Modicum.sol":27652:27659  matchId */
+      dup13
+        /* "/solidity/input/Modicum.sol":27661:27671  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":27673:27678  index */
+      dup5
+        /* "/solidity/input/Modicum.sol":27680:27691  faultyParty */
+      dup8
+        /* "/solidity/input/Modicum.sol":27693:27700  verdict */
+      dup10
+        /* "/solidity/input/Modicum.sol":27702:27708  status */
+      dup16
+        /* "/solidity/input/Modicum.sol":27710:27713  uri */
+      dup16
+        /* "/solidity/input/Modicum.sol":27715:27719  hash */
+      dup16
+        /* "/solidity/input/Modicum.sol":27721:27737  instructionCount */
+      dup16
+        /* "/solidity/input/Modicum.sol":27739:27743  cost */
+      dup11
+        /* "/solidity/input/Modicum.sol":27630:27744  MediationResultPosted(matchId, msg.sender, index, faultyParty, verdict, status, uri, hash, instructionCount, cost) */
+      mload(0x40)
+      dup1
+      dup12
+      dup2
+      mstore
+      0x20
+      add
+      dup11
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup10
+      dup2
+      mstore
+      0x20
+      add
+      dup9
+      0x1
+      dup2
+      gt
+      iszero
+      tag_221
+      jumpi
+      invalid
+    tag_221:
+      0xff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup8
+      0x4
+      dup2
+      gt
+      iszero
+      tag_222
+      jumpi
+      invalid
+    tag_222:
+      0xff
+      and
+      dup2
+      mstore
+      0x20
+      add
+      dup7
+      0x9
+      dup2
+      gt
+      iszero
+      tag_223
+      jumpi
+      invalid
+    tag_223:
+      0xff
+      and
+      dup2
+      mstore
+      0x20
+      dup2
+      add
+      swap6
+      swap1
+      swap6
+      mstore
+      pop
+      0x40
+      dup1
+      dup6
+      add
+      swap4
+      swap1
+      swap4
+      mstore
+      0x60
+      dup5
+      add
+      swap2
+      swap1
+      swap2
+      mstore
+      0x80
+      dup4
+      add
+      mstore
+      mload
+      swap1
+      dup2
+      swap1
+      sub
+      0xa0
+      add
+      swap7
+      pop
+      swap5
+      pop
+      pop
+      pop
+      pop
+      pop
+      log1
+        /* "/solidity/input/Modicum.sol":27755:27783  punish(matchId, faultyParty) */
+      tag_224
+        /* "/solidity/input/Modicum.sol":27762:27769  matchId */
+      dup13
+        /* "/solidity/input/Modicum.sol":27771:27782  faultyParty */
+      dup6
+        /* "/solidity/input/Modicum.sol":27755:27761  punish */
+      tag_152
+        /* "/solidity/input/Modicum.sol":27755:27783  punish(matchId, faultyParty) */
+      jump	// in
+    tag_224:
+        /* "/solidity/input/Modicum.sol":27835:27914  EtherTransferred(address(this), msg.sender, cost, EtherTransferCause.Mediation) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":27860:27864  this */
+      address
+        /* "/solidity/input/Modicum.sol":27835:27914  EtherTransferred(address(this), msg.sender, cost, EtherTransferCause.Mediation) */
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":27867:27877  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":27835:27914  EtherTransferred(address(this), msg.sender, cost, EtherTransferCause.Mediation) */
+      0x20
+      dup3
+      add
+      mstore
+      dup1
+      dup3
+      add
+      dup4
+      swap1
+      mstore
+        /* "/solidity/input/Modicum.sol":27885:27913  EtherTransferCause.Mediation */
+      0x5
+        /* "/solidity/input/Modicum.sol":27835:27914  EtherTransferred(address(this), msg.sender, cost, EtherTransferCause.Mediation) */
+      0x60
+      dup3
+      add
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x80
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":27929:27955  MatchClosed(matchId, cost) */
+      0x40
+      dup1
+      mload
+      dup14
+      dup2
+      mstore
+      0x20
+      dup2
+      add
+      dup4
+      swap1
+      mstore
+      dup2
+      mload
+      0x30139f0bfbfc8bbba69979f515a178952806079af30fba4bc2e2e03e997769fc
+      swap3
+      swap2
+      dup2
+      swap1
+      sub
+      swap1
+      swap2
+      add
+      swap1
+      log1
+      pop
+        /* "/solidity/input/Modicum.sol":27972:27983  faultyParty */
+      swap2
+      swap11
+        /* "/solidity/input/Modicum.sol":26209:27990  function postMediationResult(... */
+      swap10
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":18664:23273  function postMatch(... */
+    tag_107:
+        /* "/solidity/input/Modicum.sol":22639:22766  Match({... */
+      0x40
+      dup1
+      mload
+      0x60
+      dup2
+      add
+      dup3
+      mstore
+      dup4
+      dup2
+      mstore
+      0x20
+      dup1
+      dup3
+      add
+      dup7
+      dup2
+      mstore
+      sub(exp(0x2, 0xa0), 0x1)
+      dup6
+      dup2
+      and
+      dup5
+      dup7
+      add
+      swap1
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":22626:22633  matches */
+      0xb
+        /* "--CODEGEN--":27:37   */
+      dup1
+      sload
+        /* "/solidity/input/Modicum.sol":22770:22771  1 */
+      0x1
+        /* "--CODEGEN--":23:41   */
+      dup1
+      dup3
+      add
+        /* "--CODEGEN--":45:68   */
+      dup4
+      sstore
+      0x0
+        /* "/solidity/input/Modicum.sol":22626:22767  matches.push(Match({... */
+      swap3
+      dup4
+      mstore
+      swap7
+      mload
+      0x175b7a638427703f0dbe7bb9bbf987a2551717b34e79f33b5b1008d1fa01db9
+      0x3
+      dup4
+      mul
+      swap1
+      dup2
+      add
+      swap2
+      swap1
+      swap2
+      sstore
+      swap5
+      mload
+      0x175b7a638427703f0dbe7bb9bbf987a2551717b34e79f33b5b1008d1fa01dba
+      dup7
+      add
+      sstore
+      swap2
+      mload
+      0x175b7a638427703f0dbe7bb9bbf987a2551717b34e79f33b5b1008d1fa01dbb
+      swap1
+      swap5
+      add
+      dup1
+      sload
+      not(sub(exp(0x2, 0xa0), 0x1))
+      and
+      swap5
+      swap1
+      swap4
+      and
+      swap4
+      swap1
+      swap4
+      or
+      swap1
+      swap2
+      sstore
+        /* "/solidity/input/Modicum.sol":22782:22809  jobOfferMatched[jobOfferId] */
+      dup8
+      dup3
+      mstore
+        /* "/solidity/input/Modicum.sol":22782:22797  jobOfferMatched */
+      0x14
+        /* "/solidity/input/Modicum.sol":22782:22809  jobOfferMatched[jobOfferId] */
+      dup4
+      mstore
+      dup5
+      dup3
+      keccak256
+        /* "/solidity/input/Modicum.sol":22782:22816  jobOfferMatched[jobOfferId] = true */
+      dup1
+      sload
+      not(0xff)
+      swap1
+      dup2
+      and
+      dup7
+      or
+      swap1
+      swap2
+      sstore
+        /* "/solidity/input/Modicum.sol":22826:22858  resOfferMatched[resourceOfferId] */
+      dup8
+      dup4
+      mstore
+        /* "/solidity/input/Modicum.sol":22826:22841  resOfferMatched */
+      0x15
+        /* "/solidity/input/Modicum.sol":22826:22858  resOfferMatched[resourceOfferId] */
+      swap1
+      swap4
+      mstore
+      swap4
+      dup2
+      keccak256
+        /* "/solidity/input/Modicum.sol":22826:22865  resOfferMatched[resourceOfferId] = true */
+      dup1
+      sload
+      swap1
+      swap3
+      and
+      swap1
+      swap3
+      or
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":22963:22977  resourceOffers */
+      0x6
+        /* "/solidity/input/Modicum.sol":22963:22994  resourceOffers[resourceOfferId] */
+      dup1
+      sload
+      swap2
+      swap3
+        /* "--CODEGEN--":27:37   */
+      swap2
+      dup4
+      swap2
+        /* "/solidity/input/Modicum.sol":22963:22977  resourceOffers */
+      swap1
+        /* "/solidity/input/Modicum.sol":22639:22766  Match({... */
+      dup7
+      swap1
+        /* "/solidity/input/Modicum.sol":22963:22994  resourceOffers[resourceOfferId] */
+      dup2
+      lt
+      tag_228
+      jumpi
+      invalid
+    tag_228:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":22963:23009  resourceOffers[resourceOfferId].matchIncentive */
+      0x8
+        /* "/solidity/input/Modicum.sol":22963:22994  resourceOffers[resourceOfferId] */
+      0xa
+      swap4
+      swap1
+      swap4
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":22963:23009  resourceOffers[resourceOfferId].matchIncentive */
+      dup3
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":22901:22929  jobOffersPartOne[jobOfferId] */
+      dup10
+      dup5
+      mstore
+      dup3
+      dup3
+      mstore
+      0x40
+      swap4
+      dup5
+      swap1
+      keccak256
+        /* "/solidity/input/Modicum.sol":22901:22944  jobOffersPartOne[jobOfferId].matchIncentive */
+      0x7
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":23073:23162  EtherTransferred(address(this), msg.sender, matchIncentive, EtherTransferCause.PostMatch) */
+      dup5
+      mload
+        /* "/solidity/input/Modicum.sol":23098:23102  this */
+      address
+        /* "/solidity/input/Modicum.sol":23073:23162  EtherTransferred(address(this), msg.sender, matchIncentive, EtherTransferCause.PostMatch) */
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":23105:23115  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":23073:23162  EtherTransferred(address(this), msg.sender, matchIncentive, EtherTransferCause.PostMatch) */
+      swap4
+      dup2
+      add
+      swap4
+      swap1
+      swap4
+      mstore
+        /* "/solidity/input/Modicum.sol":22901:23009  jobOffersPartOne[jobOfferId].matchIncentive +... */
+      add
+        /* "/solidity/input/Modicum.sol":23073:23162  EtherTransferred(address(this), msg.sender, matchIncentive, EtherTransferCause.PostMatch) */
+      dup2
+      dup5
+      add
+      dup2
+      swap1
+      mstore
+      0x60
+      dup3
+      add
+      swap3
+      swap1
+      swap3
+      mstore
+      swap2
+      mload
+        /* "/solidity/input/Modicum.sol":22901:23009  jobOffersPartOne[jobOfferId].matchIncentive +... */
+      swap1
+      swap3
+      pop
+      0x0
+      dup1
+      mload
+      0x20
+      data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+        /* "/solidity/input/Modicum.sol":23073:23162  EtherTransferred(address(this), msg.sender, matchIncentive, EtherTransferCause.PostMatch) */
+      swap2
+      0x80
+      swap1
+      dup3
+      swap1
+      sub
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":23178:23243  Matched(msg.sender, index, jobOfferId, resourceOfferId, mediator) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":23186:23196  msg.sender */
+      caller
+        /* "/solidity/input/Modicum.sol":23178:23243  Matched(msg.sender, index, jobOfferId, resourceOfferId, mediator) */
+      dup2
+      mstore
+      0x20
+      dup2
+      add
+      dup5
+      swap1
+      mstore
+      dup1
+      dup3
+      add
+      dup9
+      swap1
+      mstore
+      0x60
+      dup2
+      add
+      dup8
+      swap1
+      mstore
+      sub(exp(0x2, 0xa0), 0x1)
+      dup7
+      and
+      0x80
+      dup3
+      add
+      mstore
+      swap1
+      mload
+      0xb30a5088883496975973e21a454aafabbe1548041f5c17c2f2e535532f82fbed
+      swap2
+      dup2
+      swap1
+      sub
+      0xa0
+      add
+      swap1
+      log1
+      pop
+        /* "/solidity/input/Modicum.sol":23261:23266  index */
+      swap5
+        /* "/solidity/input/Modicum.sol":18664:23273  function postMatch(... */
+      swap4
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":27996:29234  function punish(uint256 matchId, Party faultyParty) private {... */
+    tag_152:
+        /* "/solidity/input/Modicum.sol":28192:28215  ResourceOffer memory ro */
+      tag_231
+      jump	// in(tag_232)
+    tag_231:
+        /* "/solidity/input/Modicum.sol":28274:28299  JobOfferPartOne memory jo */
+      tag_233
+      jump	// in(tag_142)
+    tag_233:
+        /* "/solidity/input/Modicum.sol":28356:28373  uint256 roDeposit */
+      0x0
+        /* "/solidity/input/Modicum.sol":28152:28174  isMatchClosed[matchId] */
+      dup5
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":28152:28165  isMatchClosed */
+      0x18
+        /* "/solidity/input/Modicum.sol":28152:28174  isMatchClosed[matchId] */
+      0x20
+      mstore
+      0x40
+      dup2
+      keccak256
+        /* "/solidity/input/Modicum.sol":28152:28181  isMatchClosed[matchId] = true */
+      dup1
+      sload
+      not(0xff)
+      and
+        /* "/solidity/input/Modicum.sol":28177:28181  true */
+      0x1
+        /* "/solidity/input/Modicum.sol":28152:28181  isMatchClosed[matchId] = true */
+      or
+      swap1
+      sstore
+        /* "/solidity/input/Modicum.sol":28233:28240  matches */
+      0xb
+        /* "/solidity/input/Modicum.sol":28233:28249  matches[matchId] */
+      dup1
+      sload
+        /* "/solidity/input/Modicum.sol":28356:28373  uint256 roDeposit */
+      dup3
+      swap2
+      dup3
+      swap2
+      dup3
+      swap2
+        /* "/solidity/input/Modicum.sol":28218:28232  resourceOffers */
+      0x6
+      swap2
+        /* "/solidity/input/Modicum.sol":28166:28173  matchId */
+      dup11
+      swap1
+        /* "/solidity/input/Modicum.sol":28233:28249  matches[matchId] */
+      dup2
+      lt
+      tag_235
+      jumpi
+      invalid
+    tag_235:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      swap1
+      swap2
+      keccak256
+      0x3
+      swap1
+      swap2
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":28233:28263  matches[matchId].resourceOffer */
+      sload
+        /* "/solidity/input/Modicum.sol":28218:28264  resourceOffers[matches[matchId].resourceOffer] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_237
+      jumpi
+      invalid
+    tag_237:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":28192:28264  ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer] */
+      0x40
+      dup1
+      mload
+      0x140
+      dup2
+      add
+      dup3
+      mstore
+        /* "/solidity/input/Modicum.sol":28218:28264  resourceOffers[matches[matchId].resourceOffer] */
+      0xa
+      swap1
+      swap5
+      mul
+      swap1
+      swap2
+      add
+        /* "/solidity/input/Modicum.sol":28192:28264  ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer] */
+      dup1
+      sload
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup5
+      mstore
+      0x1
+      dup2
+      add
+      sload
+      swap3
+      dup5
+      add
+      swap3
+      swap1
+      swap3
+      mstore
+      0x2
+      dup3
+      add
+      sload
+      swap1
+      dup4
+      add
+      mstore
+      0x3
+      dup2
+      add
+      sload
+      0x60
+      dup4
+      add
+      mstore
+      0x4
+      dup2
+      add
+      sload
+      0x80
+      dup4
+      add
+      mstore
+      0x5
+      dup2
+      add
+      sload
+      0xa0
+      dup4
+      add
+      mstore
+      0x6
+      dup2
+      add
+      sload
+      0xc0
+      dup4
+      add
+      mstore
+      0x7
+      dup2
+      add
+      sload
+      0xe0
+      dup4
+      add
+      mstore
+      0x8
+      dup1
+      dup3
+      add
+      sload
+      0x100
+      dup5
+      add
+      mstore
+      0x9
+      swap1
+      swap2
+      add
+      sload
+      0x120
+      dup4
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":28319:28326  matches */
+      0xb
+        /* "/solidity/input/Modicum.sol":28319:28335  matches[matchId] */
+      dup1
+      sload
+        /* "/solidity/input/Modicum.sol":28192:28264  ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer] */
+      swap3
+      swap10
+      pop
+      swap1
+      swap3
+        /* "/solidity/input/Modicum.sol":28218:28264  resourceOffers[matches[matchId].resourceOffer] */
+      swap2
+        /* "/solidity/input/Modicum.sol":28327:28334  matchId */
+      dup12
+      swap1
+        /* "/solidity/input/Modicum.sol":28319:28335  matches[matchId] */
+      dup2
+      lt
+      tag_239
+      jumpi
+      invalid
+    tag_239:
+      swap1
+      0x0
+      mstore
+      keccak256(0x0, 0x20)
+      swap1
+      0x3
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":28319:28344  matches[matchId].jobOffer */
+      0x1
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":28302:28345  jobOffersPartOne[matches[matchId].jobOffer] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      keccak256
+        /* "/solidity/input/Modicum.sol":28274:28345  JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer] */
+      0x100
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      swap1
+      dup2
+      0x0
+      dup3
+      add
+      0x0
+      swap1
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      0x1
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x2
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x3
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x4
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x5
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x6
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      0x20
+      add
+      0x7
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      pop
+      pop
+      swap5
+      pop
+        /* "/solidity/input/Modicum.sol":28376:28378  ro */
+      dup6
+        /* "/solidity/input/Modicum.sol":28376:28391  ro.depositValue */
+      0x20
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":28356:28391  uint256 roDeposit = ro.depositValue */
+      swap4
+      pop
+        /* "/solidity/input/Modicum.sol":28421:28423  jo */
+      dup5
+        /* "/solidity/input/Modicum.sol":28421:28436  jo.depositValue */
+      0x20
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":28401:28436  uint256 joDeposit = jo.depositValue */
+      swap3
+      pop
+        /* "/solidity/input/Modicum.sol":28465:28466  0 */
+      0x0
+        /* "/solidity/input/Modicum.sol":28447:28449  jo */
+      dup6
+        /* "/solidity/input/Modicum.sol":28447:28462  jo.depositValue */
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":28447:28466  jo.depositValue = 0 */
+      dup2
+      dup2
+      mstore
+      pop
+      pop
+        /* "/solidity/input/Modicum.sol":28494:28495  0 */
+      0x0
+        /* "/solidity/input/Modicum.sol":28476:28478  ro */
+      dup7
+        /* "/solidity/input/Modicum.sol":28476:28491  ro.depositValue */
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":28476:28495  ro.depositValue = 0 */
+      dup2
+      dup2
+      mstore
+      pop
+      pop
+        /* "/solidity/input/Modicum.sol":28589:28591  jo */
+      dup5
+        /* "/solidity/input/Modicum.sol":28589:28611  jo.instructionMaxPrice */
+      0x80
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":28567:28569  jo */
+      dup6
+        /* "/solidity/input/Modicum.sol":28567:28586  jo.instructionLimit */
+      0x40
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":28567:28611  jo.instructionLimit * jo.instructionMaxPrice */
+      mul
+        /* "/solidity/input/Modicum.sol":28544:28546  jo */
+      dup6
+        /* "/solidity/input/Modicum.sol":28544:28564  jo.bandwidthMaxPrice */
+      0xa0
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":28524:28526  jo */
+      dup7
+        /* "/solidity/input/Modicum.sol":28524:28541  jo.bandwidthLimit */
+      0x60
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":28524:28564  jo.bandwidthLimit * jo.bandwidthMaxPrice */
+      mul
+        /* "/solidity/input/Modicum.sol":28524:28611  jo.bandwidthLimit * jo.bandwidthMaxPrice + jo.instructionLimit * jo.instructionMaxPrice */
+      add
+        /* "/solidity/input/Modicum.sol":28506:28611  uint256 joValue = jo.bandwidthLimit * jo.bandwidthMaxPrice + jo.instructionLimit * jo.instructionMaxPrice */
+      swap2
+      pop
+        /* "/solidity/input/Modicum.sol":28697:28699  ro */
+      dup6
+        /* "/solidity/input/Modicum.sol":28697:28716  ro.instructionPrice */
+      0x40
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":28677:28679  ro */
+      dup7
+        /* "/solidity/input/Modicum.sol":28677:28694  ro.instructionCap */
+      0x60
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":28677:28716  ro.instructionCap * ro.instructionPrice */
+      mul
+        /* "/solidity/input/Modicum.sol":28657:28659  ro */
+      dup7
+        /* "/solidity/input/Modicum.sol":28657:28674  ro.bandwidthPrice */
+      0xe0
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":28639:28641  ro */
+      dup8
+        /* "/solidity/input/Modicum.sol":28639:28654  ro.bandwidthCap */
+      0xc0
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":28639:28674  ro.bandwidthCap * ro.bandwidthPrice */
+      mul
+        /* "/solidity/input/Modicum.sol":28639:28716  ro.bandwidthCap * ro.bandwidthPrice + ro.instructionCap * ro.instructionPrice */
+      add
+        /* "/solidity/input/Modicum.sol":28621:28716  uint256 roValue = ro.bandwidthCap * ro.bandwidthPrice + ro.instructionCap * ro.instructionPrice */
+      swap1
+      pop
+        /* "/solidity/input/Modicum.sol":28746:28762  Party.JobCreator */
+      0x1
+        /* "/solidity/input/Modicum.sol":28731:28762  faultyParty == Party.JobCreator */
+      dup1
+      dup2
+      gt
+      iszero
+      tag_241
+      jumpi
+      invalid
+    tag_241:
+        /* "/solidity/input/Modicum.sol":28731:28742  faultyParty */
+      dup8
+        /* "/solidity/input/Modicum.sol":28731:28762  faultyParty == Party.JobCreator */
+      0x1
+      dup2
+      gt
+      iszero
+      tag_242
+      jumpi
+      invalid
+    tag_242:
+      eq
+        /* "/solidity/input/Modicum.sol":28727:29228  if (faultyParty == Party.JobCreator) {... */
+      iszero
+      tag_243
+      jumpi
+        /* "/solidity/input/Modicum.sol":28894:28908  ro.resProvider */
+      dup6
+      mload
+        /* "/solidity/input/Modicum.sol":28862:28961  EtherTransferred(address(this), ro.resProvider, roDeposit + roValue, EtherTransferCause.Punishment) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":28887:28891  this */
+      address
+        /* "/solidity/input/Modicum.sol":28862:28961  EtherTransferred(address(this), ro.resProvider, roDeposit + roValue, EtherTransferCause.Punishment) */
+      dup2
+      mstore
+      sub(exp(0x2, 0xa0), 0x1)
+      swap1
+      swap3
+      and
+      0x20
+      dup4
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":28910:28929  roDeposit + roValue */
+      dup3
+      dup7
+      add
+        /* "/solidity/input/Modicum.sol":28862:28961  EtherTransferred(address(this), ro.resProvider, roDeposit + roValue, EtherTransferCause.Punishment) */
+      dup3
+      dup3
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":28931:28960  EtherTransferCause.Punishment */
+      0x4
+        /* "/solidity/input/Modicum.sol":28862:28961  EtherTransferred(address(this), ro.resProvider, roDeposit + roValue, EtherTransferCause.Punishment) */
+      0x60
+      dup4
+      add
+      mstore
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x80
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":28727:29228  if (faultyParty == Party.JobCreator) {... */
+      jump(tag_248)
+    tag_243:
+        /* "/solidity/input/Modicum.sol":28998:29020  Party.ResourceProvider */
+      0x0
+        /* "/solidity/input/Modicum.sol":28983:28994  faultyParty */
+      dup8
+        /* "/solidity/input/Modicum.sol":28983:29020  faultyParty == Party.ResourceProvider */
+      0x1
+      dup2
+      gt
+      iszero
+      tag_247
+      jumpi
+      invalid
+    tag_247:
+      eq
+        /* "/solidity/input/Modicum.sol":28979:29228  if (faultyParty == Party.ResourceProvider) {... */
+      iszero
+      tag_248
+      jumpi
+        /* "/solidity/input/Modicum.sol":29151:29164  jo.jobCreator */
+      dup5
+      mload
+        /* "/solidity/input/Modicum.sol":29119:29217  EtherTransferred(address(this), jo.jobCreator, joDeposit + joValue, EtherTransferCause.Punishment) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":29144:29148  this */
+      address
+        /* "/solidity/input/Modicum.sol":29119:29217  EtherTransferred(address(this), jo.jobCreator, joDeposit + joValue, EtherTransferCause.Punishment) */
+      dup2
+      mstore
+      sub(exp(0x2, 0xa0), 0x1)
+      swap1
+      swap3
+      and
+      0x20
+      dup4
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":29166:29185  joDeposit + joValue */
+      dup4
+      dup6
+      add
+        /* "/solidity/input/Modicum.sol":29119:29217  EtherTransferred(address(this), jo.jobCreator, joDeposit + joValue, EtherTransferCause.Punishment) */
+      dup3
+      dup3
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":29187:29216  EtherTransferCause.Punishment */
+      0x4
+        /* "/solidity/input/Modicum.sol":29119:29217  EtherTransferred(address(this), jo.jobCreator, joDeposit + joValue, EtherTransferCause.Punishment) */
+      0x60
+      dup4
+      add
+      mstore
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x80
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":28979:29228  if (faultyParty == Party.ResourceProvider) {... */
+    tag_248:
+        /* "/solidity/input/Modicum.sol":27996:29234  function punish(uint256 matchId, Party faultyParty) private {... */
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":29240:30921  function close(uint256 matchId) private returns (uint256) {... */
+    tag_208:
+        /* "/solidity/input/Modicum.sol":29289:29296  uint256 */
+      0x0
+        /* "/solidity/input/Modicum.sol":29432:29450  JobResult memory r */
+      tag_250
+      jump	// in(tag_251)
+    tag_250:
+        /* "/solidity/input/Modicum.sol":29494:29517  ResourceOffer memory ro */
+      tag_252
+      jump	// in(tag_232)
+    tag_252:
+        /* "/solidity/input/Modicum.sol":29576:29601  JobOfferPartOne memory jo */
+      tag_253
+      jump	// in(tag_142)
+    tag_253:
+        /* "/solidity/input/Modicum.sol":29657:29666  address m */
+      0x0
+        /* "/solidity/input/Modicum.sol":29461:29483  matchToResult[matchId] */
+      dup6
+      dup2
+      mstore
+        /* "/solidity/input/Modicum.sol":29461:29474  matchToResult */
+      0x12
+        /* "/solidity/input/Modicum.sol":29461:29483  matchToResult[matchId] */
+      0x20
+      mstore
+      0x40
+      dup2
+      keccak256
+      sload
+        /* "/solidity/input/Modicum.sol":29453:29460  results */
+      0xc
+        /* "/solidity/input/Modicum.sol":29453:29484  results[matchToResult[matchId]] */
+      dup1
+      sload
+        /* "/solidity/input/Modicum.sol":29657:29666  address m */
+      dup4
+      swap3
+      dup4
+      swap3
+      dup4
+      swap3
+      dup4
+      swap3
+        /* "/solidity/input/Modicum.sol":29461:29483  matchToResult[matchId] */
+      swap1
+        /* "/solidity/input/Modicum.sol":29453:29484  results[matchToResult[matchId]] */
+      dup2
+      lt
+      tag_255
+      jumpi
+      invalid
+    tag_255:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      swap1
+      swap2
+      keccak256
+        /* "/solidity/input/Modicum.sol":29432:29484  JobResult memory r = results[matchToResult[matchId]] */
+      0x40
+      dup1
+      mload
+      0x100
+      dup2
+      add
+      swap1
+      swap2
+      mstore
+        /* "/solidity/input/Modicum.sol":29453:29484  results[matchToResult[matchId]] */
+      0x8
+      swap1
+      swap3
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":29432:29484  JobResult memory r = results[matchToResult[matchId]] */
+      dup1
+      sload
+      dup3
+      swap1
+      0xff
+      and
+      0x9
+      dup2
+      gt
+      iszero
+      tag_257
+      jumpi
+      invalid
+    tag_257:
+      0x9
+      dup2
+      gt
+      iszero
+      tag_258
+      jumpi
+      invalid
+    tag_258:
+      dup2
+      mstore
+      0x1
+      dup3
+      add
+      sload
+      0x20
+      dup3
+      add
+      mstore
+      0x2
+      dup1
+      dup4
+      add
+      sload
+      0x40
+      dup4
+      add
+      mstore
+      0x3
+      dup4
+      add
+      sload
+      0x60
+      dup4
+      add
+      mstore
+      0x4
+      dup4
+      add
+      sload
+      0x80
+      dup4
+      add
+      mstore
+      0x5
+      dup4
+      add
+      sload
+      0xa0
+      dup4
+      add
+      mstore
+      0x6
+      dup4
+      add
+      sload
+      0xc0
+      swap1
+      swap3
+      add
+      swap2
+      0xff
+      and
+      swap1
+      dup2
+      gt
+      iszero
+      tag_259
+      jumpi
+      invalid
+    tag_259:
+      0x2
+      dup2
+      gt
+      iszero
+      tag_260
+      jumpi
+      invalid
+    tag_260:
+      dup2
+      mstore
+      0x20
+      add
+      0x7
+      dup3
+      add
+      sload
+      dup2
+      mstore
+      pop
+      pop
+      swap8
+      pop
+        /* "/solidity/input/Modicum.sol":29520:29534  resourceOffers */
+      0x6
+        /* "/solidity/input/Modicum.sol":29535:29542  matches */
+      0xb
+        /* "/solidity/input/Modicum.sol":29543:29550  matchId */
+      dup12
+        /* "/solidity/input/Modicum.sol":29535:29551  matches[matchId] */
+      dup2
+      sload
+      dup2
+      lt
+      iszero
+      iszero
+      tag_261
+      jumpi
+      invalid
+    tag_261:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      swap1
+      swap2
+      keccak256
+      0x3
+      swap1
+      swap2
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":29535:29565  matches[matchId].resourceOffer */
+      sload
+        /* "/solidity/input/Modicum.sol":29520:29566  resourceOffers[matches[matchId].resourceOffer] */
+      dup2
+      sload
+      dup2
+      lt
+      tag_263
+      jumpi
+      invalid
+    tag_263:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      dup1
+      dup4
+      keccak256
+        /* "/solidity/input/Modicum.sol":29494:29566  ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer] */
+      0x40
+      dup1
+      mload
+      0x140
+      dup2
+      add
+      dup3
+      mstore
+        /* "/solidity/input/Modicum.sol":29520:29566  resourceOffers[matches[matchId].resourceOffer] */
+      0xa
+      swap1
+      swap5
+      mul
+      swap1
+      swap2
+      add
+        /* "/solidity/input/Modicum.sol":29494:29566  ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer] */
+      dup1
+      sload
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup5
+      mstore
+      0x1
+      dup2
+      add
+      sload
+      swap3
+      dup5
+      add
+      swap3
+      swap1
+      swap3
+      mstore
+      0x2
+      dup3
+      add
+      sload
+      swap1
+      dup4
+      add
+      mstore
+      0x3
+      dup2
+      add
+      sload
+      0x60
+      dup4
+      add
+      mstore
+      0x4
+      dup2
+      add
+      sload
+      0x80
+      dup4
+      add
+      mstore
+      0x5
+      dup2
+      add
+      sload
+      0xa0
+      dup4
+      add
+      mstore
+      0x6
+      dup2
+      add
+      sload
+      0xc0
+      dup4
+      add
+      mstore
+      0x7
+      dup2
+      add
+      sload
+      0xe0
+      dup4
+      add
+      mstore
+      0x8
+      dup1
+      dup3
+      add
+      sload
+      0x100
+      dup5
+      add
+      mstore
+      0x9
+      swap1
+      swap2
+      add
+      sload
+      0x120
+      dup4
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":29621:29628  matches */
+      0xb
+        /* "/solidity/input/Modicum.sol":29621:29637  matches[matchId] */
+      dup1
+      sload
+        /* "/solidity/input/Modicum.sol":29494:29566  ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer] */
+      swap3
+      swap11
+      pop
+      swap1
+      swap3
+        /* "/solidity/input/Modicum.sol":29520:29566  resourceOffers[matches[matchId].resourceOffer] */
+      swap2
+        /* "/solidity/input/Modicum.sol":29629:29636  matchId */
+      dup14
+      swap1
+        /* "/solidity/input/Modicum.sol":29621:29637  matches[matchId] */
+      dup2
+      lt
+      tag_265
+      jumpi
+      invalid
+    tag_265:
+      0x0
+      swap2
+      dup3
+      mstore
+      0x20
+      dup1
+      dup4
+      keccak256
+      0x3
+      swap3
+      dup4
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":29621:29646  matches[matchId].jobOffer */
+      0x1
+      swap1
+      dup2
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":29604:29647  jobOffersPartOne[matches[matchId].jobOffer] */
+      dup6
+      mstore
+      dup5
+      dup3
+      add
+      swap6
+      swap1
+      swap6
+      mstore
+      0x40
+      swap4
+      dup5
+      add
+      swap1
+      swap3
+      keccak256
+        /* "/solidity/input/Modicum.sol":29576:29647  JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer] */
+      dup4
+      mload
+      0x100
+      dup2
+      add
+      dup6
+      mstore
+      dup2
+      sload
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      swap5
+      dup2
+      add
+      sload
+      swap3
+      dup6
+      add
+      swap3
+      swap1
+      swap3
+      mstore
+      0x2
+      dup3
+      add
+      sload
+      swap3
+      dup5
+      add
+      swap3
+      swap1
+      swap3
+      mstore
+      swap1
+      dup2
+      add
+      sload
+      0x60
+      dup4
+      add
+      mstore
+      0x4
+      dup2
+      add
+      sload
+      0x80
+      dup4
+      add
+      mstore
+      0x5
+      dup2
+      add
+      sload
+      0xa0
+      dup4
+      add
+      mstore
+      0x6
+      dup2
+      add
+      sload
+      0xc0
+      dup4
+      add
+      mstore
+      0x7
+      add
+      sload
+      0xe0
+      dup3
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":29669:29676  matches */
+      0xb
+        /* "/solidity/input/Modicum.sol":29669:29685  matches[matchId] */
+      dup1
+      sload
+        /* "/solidity/input/Modicum.sol":29576:29647  JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer] */
+      swap2
+      swap8
+      pop
+        /* "/solidity/input/Modicum.sol":29669:29676  matches */
+      swap1
+        /* "/solidity/input/Modicum.sol":29677:29684  matchId */
+      dup12
+      swap1
+        /* "/solidity/input/Modicum.sol":29669:29685  matches[matchId] */
+      dup2
+      lt
+      tag_267
+      jumpi
+      invalid
+    tag_267:
+      swap1
+      0x0
+      mstore
+      keccak256(0x0, 0x20)
+      swap1
+      0x3
+      mul
+      add
+        /* "/solidity/input/Modicum.sol":29669:29694  matches[matchId].mediator */
+      0x2
+      add
+      0x0
+      swap1
+      sload
+      swap1
+      0x100
+      exp
+      swap1
+      div
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+        /* "/solidity/input/Modicum.sol":29657:29694  address m = matches[matchId].mediator */
+      swap5
+      pop
+        /* "/solidity/input/Modicum.sol":29815:29819  true */
+      0x1
+        /* "/solidity/input/Modicum.sol":29790:29803  isMatchClosed */
+      0x18
+        /* "/solidity/input/Modicum.sol":29790:29812  isMatchClosed[matchId] */
+      0x0
+        /* "/solidity/input/Modicum.sol":29804:29811  matchId */
+      dup13
+        /* "/solidity/input/Modicum.sol":29790:29812  isMatchClosed[matchId] */
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      keccak256
+      0x0
+        /* "/solidity/input/Modicum.sol":29790:29819  isMatchClosed[matchId] = true */
+      0x100
+      exp
+      dup2
+      sload
+      dup2
+      0xff
+      mul
+      not
+      and
+      swap1
+      dup4
+      iszero
+      iszero
+      mul
+      or
+      swap1
+      sstore
+      pop
+        /* "/solidity/input/Modicum.sol":29919:29921  ro */
+      dup7
+        /* "/solidity/input/Modicum.sol":29919:29936  ro.bandwidthPrice */
+      0xe0
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":29900:29901  r */
+      dup9
+        /* "/solidity/input/Modicum.sol":29900:29916  r.bandwidthUsage */
+      0xa0
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":29900:29936  r.bandwidthUsage * ro.bandwidthPrice */
+      mul
+        /* "/solidity/input/Modicum.sol":29866:29868  ro */
+      dup8
+        /* "/solidity/input/Modicum.sol":29866:29885  ro.instructionPrice */
+      0x40
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":29845:29846  r */
+      dup10
+        /* "/solidity/input/Modicum.sol":29845:29863  r.instructionCount */
+      0x80
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":29845:29885  r.instructionCount * ro.instructionPrice */
+      mul
+        /* "/solidity/input/Modicum.sol":29845:29936  r.instructionCount * ro.instructionPrice +... */
+      add
+        /* "/solidity/input/Modicum.sol":29830:29936  uint256 cost = r.instructionCount * ro.instructionPrice +... */
+      swap4
+      pop
+        /* "/solidity/input/Modicum.sol":29987:29996  mediators */
+      0x3
+        /* "/solidity/input/Modicum.sol":29987:29999  mediators[m] */
+      0x0
+        /* "/solidity/input/Modicum.sol":29997:29998  m */
+      dup7
+      sub(exp(0x2, 0xa0), 0x1)
+        /* "/solidity/input/Modicum.sol":29987:29999  mediators[m] */
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      and
+      dup2
+      mstore
+      0x20
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      keccak256
+        /* "/solidity/input/Modicum.sol":29987:30017  mediators[m].availabilityValue */
+      0x5
+      add
+      sload
+        /* "/solidity/input/Modicum.sol":29947:30017  uint256 mediatorAvailabilityIncentive = mediators[m].availabilityValue */
+      swap3
+      pop
+        /* "/solidity/input/Modicum.sol":30049:30051  jo */
+      dup6
+        /* "/solidity/input/Modicum.sol":30049:30064  jo.depositValue */
+      0x20
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":30028:30064  uint256 jo_deposit = jo.depositValue */
+      swap2
+      pop
+        /* "/solidity/input/Modicum.sol":30095:30097  ro */
+      dup7
+        /* "/solidity/input/Modicum.sol":30095:30110  ro.depositValue */
+      0x20
+      add
+      mload
+        /* "/solidity/input/Modicum.sol":30074:30110  uint256 ro_deposit = ro.depositValue */
+      swap1
+      pop
+        /* "/solidity/input/Modicum.sol":30139:30140  0 */
+      0x0
+        /* "/solidity/input/Modicum.sol":30121:30123  jo */
+      dup7
+        /* "/solidity/input/Modicum.sol":30121:30136  jo.depositValue */
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":30121:30140  jo.depositValue = 0 */
+      dup2
+      dup2
+      mstore
+      pop
+      pop
+        /* "/solidity/input/Modicum.sol":30168:30169  0 */
+      0x0
+        /* "/solidity/input/Modicum.sol":30150:30152  ro */
+      dup8
+        /* "/solidity/input/Modicum.sol":30150:30165  ro.depositValue */
+      0x20
+      add
+        /* "/solidity/input/Modicum.sol":30150:30169  ro.depositValue = 0 */
+      dup2
+      dup2
+      mstore
+      pop
+      pop
+        /* "/solidity/input/Modicum.sol":30509:30535  MatchClosed(matchId, cost) */
+      0x30139f0bfbfc8bbba69979f515a178952806079af30fba4bc2e2e03e997769fc
+        /* "/solidity/input/Modicum.sol":30521:30528  matchId */
+      dup11
+        /* "/solidity/input/Modicum.sol":30530:30534  cost */
+      dup6
+        /* "/solidity/input/Modicum.sol":30509:30535  MatchClosed(matchId, cost) */
+      mload(0x40)
+      dup1
+      dup4
+      dup2
+      mstore
+      0x20
+      add
+      dup3
+      dup2
+      mstore
+      0x20
+      add
+      swap3
+      pop
+      pop
+      pop
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":30582:30595  jo.jobCreator */
+      dup6
+      mload
+        /* "/solidity/input/Modicum.sol":30550:30648  EtherTransferred(address(this), jo.jobCreator, jo_deposit - cost, EtherTransferCause.FinishingJob) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":30575:30579  this */
+      address
+        /* "/solidity/input/Modicum.sol":30550:30648  EtherTransferred(address(this), jo.jobCreator, jo_deposit - cost, EtherTransferCause.FinishingJob) */
+      dup2
+      mstore
+      sub(exp(0x2, 0xa0), 0x1)
+      swap1
+      swap3
+      and
+      0x20
+      dup4
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":30597:30614  jo_deposit - cost */
+      dup6
+      dup5
+      sub
+        /* "/solidity/input/Modicum.sol":30550:30648  EtherTransferred(address(this), jo.jobCreator, jo_deposit - cost, EtherTransferCause.FinishingJob) */
+      dup3
+      dup3
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":30616:30647  EtherTransferCause.FinishingJob */
+      0x6
+        /* "/solidity/input/Modicum.sol":30550:30648  EtherTransferred(address(this), jo.jobCreator, jo_deposit - cost, EtherTransferCause.FinishingJob) */
+      0x60
+      dup4
+      add
+      mstore
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x80
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":30695:30709  ro.resProvider */
+      dup7
+      mload
+        /* "/solidity/input/Modicum.sol":30663:30767  EtherTransferred(address(this), ro.resProvider, ro_deposit + cost, EtherTransferCause.FinishingResource) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":30688:30692  this */
+      address
+        /* "/solidity/input/Modicum.sol":30663:30767  EtherTransferred(address(this), ro.resProvider, ro_deposit + cost, EtherTransferCause.FinishingResource) */
+      dup2
+      mstore
+      sub(exp(0x2, 0xa0), 0x1)
+      swap1
+      swap3
+      and
+      0x20
+      dup4
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":30711:30728  ro_deposit + cost */
+      dup6
+      dup4
+      add
+        /* "/solidity/input/Modicum.sol":30663:30767  EtherTransferred(address(this), ro.resProvider, ro_deposit + cost, EtherTransferCause.FinishingResource) */
+      dup3
+      dup3
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":30730:30766  EtherTransferCause.FinishingResource */
+      0x7
+        /* "/solidity/input/Modicum.sol":30663:30767  EtherTransferred(address(this), ro.resProvider, ro_deposit + cost, EtherTransferCause.FinishingResource) */
+      0x60
+      dup4
+      add
+      mstore
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x80
+      add
+      swap1
+      log1
+        /* "/solidity/input/Modicum.sol":30782:30892  EtherTransferred(address(this), m, 2 * mediatorAvailabilityIncentive, EtherTransferCause.MediatorAvailability) */
+      0x40
+      dup1
+      mload
+        /* "/solidity/input/Modicum.sol":30807:30811  this */
+      address
+        /* "/solidity/input/Modicum.sol":30782:30892  EtherTransferred(address(this), m, 2 * mediatorAvailabilityIncentive, EtherTransferCause.MediatorAvailability) */
+      dup2
+      mstore
+      sub(exp(0x2, 0xa0), 0x1)
+      dup8
+      and
+      0x20
+      dup3
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":30817:30818  2 */
+      0x2
+        /* "/solidity/input/Modicum.sol":30817:30850  2 * mediatorAvailabilityIncentive */
+      dup6
+      mul
+        /* "/solidity/input/Modicum.sol":30782:30892  EtherTransferred(address(this), m, 2 * mediatorAvailabilityIncentive, EtherTransferCause.MediatorAvailability) */
+      dup2
+      dup4
+      add
+      mstore
+        /* "/solidity/input/Modicum.sol":30852:30891  EtherTransferCause.MediatorAvailability */
+      0x9
+        /* "/solidity/input/Modicum.sol":30782:30892  EtherTransferred(address(this), m, 2 * mediatorAvailabilityIncentive, EtherTransferCause.MediatorAvailability) */
+      0x60
+      dup3
+      add
+      mstore
+      swap1
+      mload
+      0x0
+      dup1
+      mload
+      0x20
+      data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63
+      dup4
+      codecopy
+      dup2
+      mload
+      swap2
+      mstore
+      swap2
+      dup2
+      swap1
+      sub
+      0x80
+      add
+      swap1
+      log1
+      pop
+        /* "/solidity/input/Modicum.sol":30910:30914  cost */
+      swap2
+      swap9
+        /* "/solidity/input/Modicum.sol":29240:30921  function close(uint256 matchId) private returns (uint256) {... */
+      swap8
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      pop
+      jump	// out
+        /* "/solidity/input/Modicum.sol":26:31580  contract Modicum {... */
+    tag_116:
+      dup3
+      dup1
+      sload
+      dup3
+      dup3
+      sstore
+      swap1
+      0x0
+      mstore
+      keccak256(0x0, 0x20)
+      swap1
+      dup2
+      add
+      swap3
+      dup3
+      iszero
+      tag_274
+      jumpi
+      swap2
+      0x20
+      mul
+      dup3
+      add
+    tag_273:
+      dup3
+      dup2
+      gt
+      iszero
+      tag_274
+      jumpi
+      dup3
+      mload
+      dup3
+      sload
+      not(sub(exp(0x2, 0xa0), 0x1))
+      and
+      sub(exp(0x2, 0xa0), 0x1)
+      swap1
+      swap2
+      and
+      or
+      dup3
+      sstore
+      0x20
+      swap1
+      swap3
+      add
+      swap2
+      0x1
+      swap1
+      swap2
+      add
+      swap1
+      jump(tag_273)
+    tag_274:
+      pop
+      tag_275
+      swap3
+      swap2
+      pop
+      jump	// in(tag_276)
+    tag_275:
+      pop
+      swap1
+      jump	// out
+    tag_118:
+      dup3
+      dup1
+      sload
+      dup3
+      dup3
+      sstore
+      swap1
+      0x0
+      mstore
+      keccak256(0x0, 0x20)
+      swap1
+      dup2
+      add
+      swap3
+      dup3
+      iszero
+      tag_279
+      jumpi
+      swap2
+      0x20
+      mul
+      dup3
+      add
+    tag_278:
+      dup3
+      dup2
+      gt
+      iszero
+      tag_279
+      jumpi
+      dup3
+      mload
+      dup3
+      sstore
+      swap2
+      0x20
+      add
+      swap2
+      swap1
+      0x1
+      add
+      swap1
+      jump(tag_278)
+    tag_279:
+      pop
+      tag_275
+      swap3
+      swap2
+      pop
+      jump	// in(tag_281)
+    tag_142:
+      0x100
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+      and(sub(exp(0x2, 0xa0), 0x1), 0x0)
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      pop
+      swap1
+      jump	// out
+    tag_178:
+      0x40
+      dup1
+      mload
+      0x100
+      dup2
+      add
+      dup3
+      mstore
+      0x0
+      dup1
+      dup3
+      mstore
+      0x20
+      dup3
+      add
+      dup2
+      swap1
+      mstore
+      swap2
+      dup2
+      add
+      dup3
+      swap1
+      mstore
+      0x60
+      dup2
+      add
+      dup3
+      swap1
+      mstore
+      0x80
+      dup2
+      add
+      dup3
+      swap1
+      mstore
+      0xa0
+      dup2
+      add
+      dup3
+      swap1
+      mstore
+      0xc0
+      dup2
+      add
+      dup3
+      swap1
+      mstore
+      swap1
+      0xe0
+      dup3
+      add
+      mstore
+      swap1
+      jump	// out
+    tag_232:
+      0x140
+      mload(0x40)
+      swap1
+      dup2
+      add
+      0x40
+      mstore
+      dup1
+      and(sub(exp(0x2, 0xa0), 0x1), 0x0)
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      pop
+      swap1
+      jump	// out
+    tag_251:
+      0x40
+      dup1
+      mload
+      0x100
+      dup2
+      add
+      dup3
+      mstore
+      0x0
+      dup1
+      dup3
+      mstore
+      0x20
+      dup3
+      add
+      dup2
+      swap1
+      mstore
+      swap2
+      dup2
+      add
+      dup3
+      swap1
+      mstore
+      0x60
+      dup2
+      add
+      dup3
+      swap1
+      mstore
+      0x80
+      dup2
+      add
+      dup3
+      swap1
+      mstore
+      0xa0
+      dup2
+      add
+      dup3
+      swap1
+      mstore
+      swap1
+      0xc0
+      dup3
+      add
+      swap1
+      dup2
+      mstore
+      0x20
+      add
+      0x0
+      dup2
+      mstore
+      pop
+      swap1
+      jump	// out
+    tag_276:
+      tag_285
+      swap2
+      swap1
+    tag_286:
+      dup1
+      dup3
+      gt
+      iszero
+      tag_275
+      jumpi
+      dup1
+      sload
+      not(sub(exp(0x2, 0xa0), 0x1))
+      and
+      dup2
+      sstore
+      0x1
+      add
+      jump(tag_286)
+    tag_285:
+      swap1
+      jump	// out
+    tag_281:
+      tag_285
+      swap2
+      swap1
+    tag_289:
+      dup1
+      dup3
+      gt
+      iszero
+      tag_275
+      jumpi
+      0x0
+      dup2
+      sstore
+      0x1
+      add
+      jump(tag_289)
+    stop
+    data_57835b8ce659599ea7968c6609c8126280c7cea560d819dd9c24a6499f8f50d4 8f83da6c65d35684b1a4e8558c06e87068fb3691117d530c1944f035a32ed03a
+    data_af24d6e6beefb3aa1b972a4850112290c16403340a9df9ceab97cbba809dbe63 7e69a0d958a5252709f48635ae2d7514bc34ffc5f64e5b2aa70336d3e8bfcdf2
+    data_b69ceb39ad2ae6bbaf7963b0deaf1a1f11cbb548060a493047bacbbfe0860c2d f0ed029e274dabb7636aeed7333cf47bc8c97dd6eb6d8faea6e9bfbd6620bebe
+
+    auxdata: 0xa165627a7a72305820ac24eba2dd52b467e941be3c5593a4cdde86da02279850735bd74098ea1cfd5c0029
+}

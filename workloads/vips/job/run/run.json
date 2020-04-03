@@ -1,0 +1,8 @@
+{
+    "command" : "./bin/parsecmgmt -a run -p vips -c gcc-serial -i simsmall",
+
+    "mounts" : {"/home/riaps/modicum/apps/vips/output": {"bind":"/app/log/arm-linux.gcc-serial","mode":"rw"}},
+
+    "env" : {}
+
+}
