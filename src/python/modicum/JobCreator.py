@@ -17,7 +17,7 @@ import datetime
 
 
 class JobCreator(PlatformClient):
-    def __init__(self, index,sim):
+    def __init__(self, index=0, sim=False):
         super().__init__()
         self.logger = logging.getLogger("JobCreator")
         # logging.config.fileConfig(os.path.dirname(__file__)+'/Modicum-log.conf')

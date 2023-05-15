@@ -79,6 +79,7 @@ class ContractManager:
             try:
                 self.helper.getPendingTx(self.ethclient)
             except :
+                pass
 
 
 

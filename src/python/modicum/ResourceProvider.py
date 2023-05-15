@@ -13,7 +13,7 @@ from . import helper
 import datetime
 
 class ResourceProvider(Mediator):
-    def __init__(self, index,sim):
+    def __init__(self, index=0, sim=False):
         super().__init__(-1,sim)
         self.logger = logging.getLogger("ResourceProvider")
         # logging.config.fileConfig(os.path.dirname(__file__)+'/Modicum-log.conf')
