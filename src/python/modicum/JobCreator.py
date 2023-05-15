@@ -176,6 +176,7 @@ class JobCreator(PlatformClient):
             return 0
 
         self.logger.info("L: Requesting Permission to publish")
+        #import pdb; pdb.set_trace()
 
         msg = self.DC.getPermission(_DIRIP_, _DIRPORT_, self.account, tag, _KEY_)
 

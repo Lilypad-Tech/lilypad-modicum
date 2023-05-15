@@ -572,7 +572,7 @@ def startRP(path,index,host,sim):
 
     RP.platformConnect(_CMIP_, _GETHIP_, _GETHPORT_,index)
     print("Resource Provider Daemon is registering... ")
-    exitcode = RP.register(RP.account,'armv7', 1)# ratio to 1Gz processor
+    exitcode = RP.register(RP.account,'armv7', 1)# ratio to 1Gz processor # XXX should this be arm64???
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
         time.sleep(1)
@@ -612,6 +612,7 @@ def startRP(path,index,host,sim):
                 call,irid = line.split(" ")                
                 
                 if call == "postOffer":
+                    print("==== HERE, ABOUT TO POSTOFFER ===")
                     msg = {"request": "post",
                         "deposit" : 1000,
                         "instructionPrice" : 1,
@@ -627,6 +628,7 @@ def startRP(path,index,host,sim):
                     while not RP.idle:
                         time.sleep(1)
                     exitcode = RP.postOffer(msg)
+                    
                 else:
                     pass
 

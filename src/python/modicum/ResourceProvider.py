@@ -154,11 +154,11 @@ class ResourceProvider(Mediator):
         self.active = True
         while self.active:
             events = self.contract.poll_events()
-            # self.logger.info("poll contract events")
+            self.logger.info("poll contract events")
             for event in events:
                 params = event['params']
                 name = event['name']
-                # self.logger.info("{}({}).".format(name, params))
+                self.logger.info("{}({}).".format(name, params))
                 if name == "ResourceProviderRegistered" and self.account == params['addr']:
                 # if name == "ResourceProviderRegistered":
                 #     self.addr = params['addr']
