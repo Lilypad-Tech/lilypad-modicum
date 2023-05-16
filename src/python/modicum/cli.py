@@ -28,8 +28,8 @@ logging.getLogger('fabric')
 
 # sys.stdout = LoggerWriter.LoggerWriter(rootLogger.info)
 # sys.stderr = LoggerWriter.LoggerWriter(rootLogger.warning)
-
-mediator = '0x21822993d2a654e90d4f8f837a8af8a2e23c686f'
+mediator = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
+# mediator = '0x21822993d2a654e90d4f8f837a8af8a2e23c686f'
 
 
 try:
