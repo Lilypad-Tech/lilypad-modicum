@@ -202,6 +202,9 @@ class Contract:
             self.logger.debug("Log: %s" %log)
         for item in log:
             try:
+                if not isinstance(item, dict):
+                    self.logger.info(f"[poll_events] Skipping processing {item} since it is not a dict")
+                    continue
                 if self.address == item['address']:
                     if item['topics'][0] in self.topics:
                         topic = self.topics[item['topics'][0]]

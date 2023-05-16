@@ -154,7 +154,8 @@ class ResourceProvider(Mediator):
         self.active = True
         while self.active:
             events = self.contract.poll_events()
-            self.logger.info("poll contract events")
+            self.logger.info(f"poll contract events on {self.contract.address}")
+            import pprint; pprint.pprint(events)
             for event in events:
                 params = event['params']
                 name = event['name']
