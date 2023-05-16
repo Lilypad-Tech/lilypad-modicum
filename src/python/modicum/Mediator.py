@@ -72,6 +72,25 @@ class Mediator(PlatformClient):
         tag,name = uri.split('_')
         urix = uri+"_"+str(ijoid)
 
+        # RUN BACALHAU JOB AND GET THE ID
+        result = subprocess.run(['bacalhau', 'docker', 'run', '--wait', '--id-only', 'ubuntu', 'echo', 'hello'], text=True, capture_output=True)
+        jobID = result.stdout
+
+        a = f"""
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
+        
+        https://dashboard.bacalhau.org/jobs/{jobID}
+
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
+        """
+
+        print(a)
+
+
         # import pdb; pdb.set_trace()
 
         if self.sim:
@@ -184,7 +203,7 @@ class Mediator(PlatformClient):
                     xdict = json.load(f)
 
                 xdict["command"] = "echo hello"
-                del xdict["mounts"]
+                xdict["mounts"] = {}
 
                 self.logger.info(f"==== XDICT {xdict}")
 
@@ -258,16 +277,19 @@ class Mediator(PlatformClient):
                 output_filename = "%s/output.tar" %(localPath) #_WORKPATH_/tag/output.tar
                 self.logger.info("output_filename = %s" %output_filename)
                
-                output = next(iter(xdict['mounts']))
-                self.logger.info("output directory = %s" %output)
+                # output = next(iter(xdict['mounts']))
+                # self.logger.info("output directory = %s" %output)
 
-                try :
-                    helper.tar(output_filename,output)
-                except FileNotFoundError: 
-                    self.logger.warning("File does not exit = %s" %output)
-                    os.makedirs(output, exist_ok=True) #HACK
-                    helper.tar(output_filename,output)
+                # try :
+                #     helper.tar(output_filename,output)
+                # except FileNotFoundError: 
+                #     self.logger.warning("File does not exit = %s" %output)
+                #     os.makedirs(output, exist_ok=True) #HACK
+                #     helper.tar(output_filename,output)
 
+                fp = open(output_filename, "w")
+                fp.write("APPLES")
+                fp.close()
 
                 resultHash = helper.hashTar(output_filename)
                 self.logger.info("outputTarHash = %s" %resultHash)
