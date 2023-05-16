@@ -72,6 +72,8 @@ class Mediator(PlatformClient):
         tag,name = uri.split('_')
         urix = uri+"_"+str(ijoid)
 
+        # import pdb; pdb.set_trace()
+
         if self.sim:
             self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
             return 0 
@@ -156,15 +158,15 @@ class Mediator(PlatformClient):
 
         try:
             if execute and statusJob==0:
-                images = self.dockerClient.images.list(name=tag)
+                # images = self.dockerClient.images.list(name=tag)
 
-                if not images:
-                    self.logger.info("Image not loaded. loading image... ")
-                    images = DockerWrapper.loadImage(self.dockerClient, "%s/%s/%s.tar" %(_WORKPATH_, tag,tag))
+                # if not images:
+                #     self.logger.info("Image not loaded. loading image... ")
+                #     images = DockerWrapper.loadImage(self.dockerClient, "%s/%s/%s.tar" %(_WORKPATH_, tag,tag))
 
-                self.logger.info(images)
-                self.logger.info("Image is loaded")
-                jobHash_int = DockerWrapper.getImageHash(images[0])
+                # self.logger.info(images)
+                # self.logger.info("Image is loaded")
+                # jobHash_int = DockerWrapper.getImageHash(images[0])
                 
                 # if JO.hash != jobHash_int:
                 #     statusJob = 2
@@ -181,8 +183,13 @@ class Mediator(PlatformClient):
                 with open(xdictPath) as f:
                     xdict = json.load(f)
 
+                xdict["command"] = "echo hello"
+                del xdict["mounts"]
+
+                self.logger.info(f"==== XDICT {xdict}")
+
                 self.logger.info("Starting Docker for job = %s" %ijoid)
-                container = DockerWrapper.runContainer(self.dockerClient, tag, jobname, xdict)
+                container = DockerWrapper.runContainer(self.dockerClient, "ubuntu:latest", jobname, xdict)
                 
                 # container.reload()
                 lid = container.attrs["Id"]
