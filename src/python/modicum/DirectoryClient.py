@@ -36,14 +36,14 @@ class DirectoryClient():
         #         "--include", "%s/*" %(name),
         #         "--include", "%s.tar" %(tag),
         #         "--exclude", "*",
-        #         "-e", "ssh -oStrictHostKeyChecking=no -p 222 -i %s" %(sshpath), 
+        #         "-e", "ssh -oStrictHostKeyChecking=no -p 22 -i %s" %(sshpath), 
         #         "%s/" %(localpath),
         #         "%s@%s:%s" %(user,host,remotePath)                
         #         ]
         args = ["rsync", "-arv",
                 "--include", "%s.tar" %(tag),
                 "--exclude", "*",
-                "-e", "ssh -oStrictHostKeyChecking=no -p 222 -i %s" %(sshpath), 
+                "-e", "ssh -oStrictHostKeyChecking=no -p 22 -i %s" %(sshpath), 
                 "%s/" %(localpath),
                 "%s@%s:%s" %(user,host,remotePath)                
                 ]
@@ -52,7 +52,7 @@ class DirectoryClient():
 
         remotePath = "/home/%s/%s/%s" %(user,tag,name+str(ijid))
         args = ["rsync", "-arv",
-                "-e", "ssh -oStrictHostKeyChecking=no -p 222 -i %s" %(sshpath), 
+                "-e", "ssh -oStrictHostKeyChecking=no -p 22 -i %s" %(sshpath), 
                 "%s/%s/" %(localpath,name),
                 "%s@%s:%s" %(user,host,remotePath)                
                 ]
@@ -70,7 +70,7 @@ class DirectoryClient():
         # , "--chmod=666"
         args = ["rsync", "-arv",
                 "--rsync-path", "mkdir -p %s && rsync" %remotePath,
-                "-e", "ssh -oStrictHostKeyChecking=no -p 222 -i %s" %(sshpath), 
+                "-e", "ssh -oStrictHostKeyChecking=no -p 22 -i %s" %(sshpath), 
                 "%s" %(localpath),
                 "%s@%s:%s" %(user,host,remotePath)                
                 ]
@@ -88,7 +88,7 @@ class DirectoryClient():
         self.logger.info([host,sshport,user,remote_user,tag,name,ijoid,localPath,sshpath])
         # , "--chmod=666"
         args = ["rsync", "-arv",
-                "-e", "ssh -oStrictHostKeyChecking=no -p 222 -i %s" %(sshpath),
+                "-e", "ssh -oStrictHostKeyChecking=no -p 22 -i %s" %(sshpath),
                 "%s@%s:%s" %(user,host,remotePath),
                 "%s" %(localPath)
                 ]
@@ -125,7 +125,7 @@ class DirectoryClient():
                 "--include", "%s/*" %(name+str(ijoid)),
                 "--include", "%s.tar" %(tag),
                 "--exclude", "*",
-                "-e", "ssh -oStrictHostKeyChecking=no -p 222 -i %s" %(sshpath),                 
+                "-e", "ssh -oStrictHostKeyChecking=no -p 22 -i %s" %(sshpath),                 
                 "%s@%s:%s" %(user,host,remotePath),    
                 "%s" %(localPath)        
                 ]

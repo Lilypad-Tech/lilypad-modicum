@@ -1,2 +1,2 @@
-publish /home/kai/projects/protocol-labs/MODICUM/workloads/stress-ng/job stress-ng run 1 NA END
-postOffer /home/kai/projects/protocol-labs/MODICUM/workloads/stress-ng/job stress-ng run 1 False END
+publish /home/luke/pb/MODICUM/workloads/stress-ng/job stress-ng run 1 NA END
+postOffer /home/luke/pb/MODICUM/workloads/stress-ng/job stress-ng run 1 False END

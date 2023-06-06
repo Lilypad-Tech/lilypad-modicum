@@ -5,10 +5,51 @@ from io import BytesIO
 from time import time, sleep
 from threading import Thread, RLock
 from . import config as cfg
+from web3 import Web3
+from web3.middleware import construct_sign_and_send_raw_middleware
+import os
+
+
+class Web3EthereumClient:
+    def __init__(self, ip, port, protocol='http'):
+        self.ip = ip
+        self.port = port
+
+        self.w3 = Web3(Web3.HTTPProvider(f'{protocol}://{self.ip}:{self.port}'))
+        print(w3.is_connected())
+
+        for i in range(5):
+            pk = os.environ.get(f'PRIVATE_KEY_{i}')
+            acct = w3.eth.account.from_key(pk)
+            # Add acct as auto-signer:
+            w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
+            # Transactions from `acct` will then be signed, under the hood, in
+            # the middleware.
+
+    def exit(self):
+        return
+
+    def transaction(self, from_address, data, value, to_address):
+        return w3.eth.send_transaction({
+            "from": from_address,
+            "to": to_address,
+            "data": data,
+            "value": value,
+        })
+
+    def accounts(self):
+        return w3.eth.accounts
+
+    def keccak256(self, string):
+        return w3.solidity_keccak(['string'], [string])
+
+
+
 
 CHECK_INTERVAL = 1  # check for receipts every second
 PENDING_TIMEOUT = 120  # if a transaction has been pending for more than 120 seconds, submit it again
 CLIENT_TIMEOUT = 600  # if a transaction has been stuck for more than 600 seconds, restart the client
+
 
 
 class EthereumClient:
@@ -82,7 +123,7 @@ class EthereumClient:
             }]
 
             self.logger.info("Estimate gas")
-            gasEstimate = self.command("eth_estimateGas", params=params)            
+            gasEstimate = self.command("eth_estimateGas", params=params)
             self.logger.info("Estimate of gas requirement to submit transaction: %s" %gasEstimate)
 
             trans_hash = self.command("eth_sendTransaction", params=params)
@@ -149,7 +190,7 @@ class EthereumClient:
                 self.logger.info("LOG: %s" %log)
                 return log
 
-    def command(self, method, params=[], id=1, jsonrpc="2.0", verbose=False):
+    def command(self, method, params=[], id=1, jsonrpc="2.0", verbose=True):
         """ Send command (method with given parameters) to geth client over RPC using PycURL """
         # IP and port for connection
         ip_port = str(self.ip) + ":" + str(self.port)
@@ -157,7 +198,7 @@ class EthereumClient:
         buffer = BytesIO()
         # start building curl command to process
         c = pycurl.Curl()
-        c.setopt(pycurl.URL, ip_port)
+        c.setopt(pycurl.URL, ip_port+"/rpc/v1")
         c.setopt(pycurl.HTTPHEADER, ['Content-type:application/json'])
         c.setopt(pycurl.WRITEFUNCTION, buffer.write)
         data2 = {"jsonrpc": str(jsonrpc), "method": str(method), "params": params, "id": str(id)}
