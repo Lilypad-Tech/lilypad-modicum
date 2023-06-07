@@ -44,15 +44,20 @@ class EthereumClient:
     def keccak256(self, string):
         return self.w3.solidity_keccak(['string'], [string])
     
-    def command(self, cmd, *args, **kwargs):
-        if cmd == "eth_estimateGas":
-            print(f"faking estimated gas = 0")
-            return 0
-        if cmd == "eth_sendTransaction":
-            tx = kwargs
-            self.w3.eth.send_transaction(tx)
+    def command(self, method, params, verbose=False):
+        print(f"===> Web3EthereumClient command({method}, {str(params)[:100]})")
+        if method == "eth_estimateGas":
+            tx = params[0]
+            if "data" not in tx:
+                return 0
+            return self.w3.eth.estimate_gas(tx)
+        if method == "eth_sendTransaction":
+            tx = params[0]
+            return self.w3.eth.send_transaction(tx)
+        if method == "eth_getTransactionReceipt":
+            tx = params[0]
+            return self.w3.eth.get_transaction_receipt(tx)
 
-        print(f"===> Web3EthereumClient command({args}, {kwargs})")
 
 
 
