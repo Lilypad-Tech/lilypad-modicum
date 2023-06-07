@@ -19,7 +19,8 @@ setuptools.setup(
           'pyzmq',
           'Fabric3',
           'apscheduler',
-          'antlr4-python3-runtime'
+          'antlr4-python3-runtime',
+          'web3==6.4.0'
       ],
     extras_require={
         'dotenv': ['python-dotenv']

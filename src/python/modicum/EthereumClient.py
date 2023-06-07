@@ -10,27 +10,28 @@ from web3.middleware import construct_sign_and_send_raw_middleware
 import os
 
 
-class Web3EthereumClient:
+class EthereumClient:
     def __init__(self, ip, port, protocol='http'):
         self.ip = ip
         self.port = port
 
         self.w3 = Web3(Web3.HTTPProvider(f'{protocol}://{self.ip}:{self.port}'))
-        print(w3.is_connected())
+        print(self.w3.is_connected())
 
         for i in range(5):
             pk = os.environ.get(f'PRIVATE_KEY_{i}')
-            acct = w3.eth.account.from_key(pk)
-            # Add acct as auto-signer:
-            w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
-            # Transactions from `acct` will then be signed, under the hood, in
-            # the middleware.
+            if pk is not None:
+                acct = self.w3.eth.account.from_key(pk)
+                # Add acct as auto-signer:
+                self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
+                # Transactions from `acct` will then be signed, under the hood, in
+                # the middleware.
 
     def exit(self):
         return
 
     def transaction(self, from_address, data, value, to_address):
-        return w3.eth.send_transaction({
+        return self.w3.eth.send_transaction({
             "from": from_address,
             "to": to_address,
             "data": data,
@@ -38,10 +39,13 @@ class Web3EthereumClient:
         })
 
     def accounts(self):
-        return w3.eth.accounts
+        return self.w3.eth.accounts
 
     def keccak256(self, string):
-        return w3.solidity_keccak(['string'], [string])
+        return self.w3.solidity_keccak(['string'], [string])
+    
+    def command(self, *args, **kwargs):
+        print(f"===> Web3EthereumClient command({args}, {kwargs})")
 
 
 
@@ -52,7 +56,7 @@ CLIENT_TIMEOUT = 600  # if a transaction has been stuck for more than 600 second
 
 
 
-class EthereumClient:
+class OldEthereumClient:
     def __init__(self, ip, port):
         self.logger = logging.getLogger("EthereumClient")
         self.logger.setLevel(logging.INFO)
