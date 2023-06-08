@@ -26,23 +26,27 @@ class EthereumClient:
                 self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
                 # Transactions from `acct` will then be signed, under the hood, in
                 # the middleware.
+        
+        self._filter = None
+        self.filter_id = None
 
     def exit(self):
         return
 
     def transaction(self, from_address, data, value, to_address):
-        return self.w3.eth.send_transaction({
+        return str(self.w3.eth.send_transaction({
             "from": from_address,
             "to": to_address,
             "data": data,
             "value": value,
-        })
+        }).hex())
 
     def accounts(self):
         return self.w3.eth.accounts
 
     def keccak256(self, string):
-        return self.w3.solidity_keccak(['string'], [string])
+        r = self.w3.solidity_keccak(['string'], [string])
+        return str(r.hex())
     
     def command(self, method, params, verbose=False):
         print(f"===> Web3EthereumClient command({method}, {str(params)[:100]})")
@@ -58,8 +62,14 @@ class EthereumClient:
             tx = params[0]
             return self.w3.eth.get_transaction_receipt(tx)
 
+    def new_filter(self):
+        self._filter = self.w3.eth.filter({"fromBlock": "0x1"})
+        self.filter_id = self._filter.filter_id
+        return self.filter_id
 
-
+    def get_filter_changes(self, filter_id):
+        # XXX filter_id is not used, remove it from all callers and then from here
+        return self._filter.get_new_entries()
 
 
 CHECK_INTERVAL = 1  # check for receipts every second

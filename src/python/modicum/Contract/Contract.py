@@ -2,6 +2,7 @@ import logging
 import importlib
 from binascii import unhexlify, hexlify
 from .. import helper
+from web3.datastructures import AttributeDict
 
 
 class Contract:
@@ -80,7 +81,7 @@ class Contract:
 
         for array in arrays:
             print(array)
-            if array[0] is not "0":
+            if array[0] != "0":
                 try:
                     string += unhexlify(array).decode('utf-8')
                 except UnicodeDecodeError as e:
@@ -202,7 +203,8 @@ class Contract:
             self.logger.debug("Log: %s" %log)
         for item in log:
             try:
-                if not isinstance(item, dict):
+                # import ipdb; ipdb.set_trace()
+                if not isinstance(item, dict) and not isinstance(item, AttributeDict):
                     self.logger.info(f"[poll_events] Skipping processing {item} since it is not a dict")
                     continue
                 if self.address == item['address']:
