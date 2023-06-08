@@ -9,8 +9,15 @@ from web3 import Web3
 from web3.middleware import construct_sign_and_send_raw_middleware
 import os
 
+# TODO: is it because the eth client is supposed to be polling?
+# XXX: no, it seems like the JC never finishes registering...
+# A-ha: cli.py:243 never hits JC.registered = true
+# TODO: what to do next: try to port the threading code in the previous Ethereum
+# client to the new one. I'm not entirely sure why we need it, but we probably
+# do.
 
 class EthereumClient:
+# class NewEthereumClient:
     def __init__(self, ip, port, protocol='http'):
         self.ip = ip
         self.port = port
@@ -60,7 +67,9 @@ class EthereumClient:
             return self.w3.eth.send_transaction(tx)
         if method == "eth_getTransactionReceipt":
             tx = params[0]
+            import ipdb; ipdb.set_trace()
             return self.w3.eth.get_transaction_receipt(tx)
+        raise Exception(f"Unexpected method {method}")
 
     def new_filter(self):
         self._filter = self.w3.eth.filter({"fromBlock": "0x1"})
@@ -79,6 +88,7 @@ CLIENT_TIMEOUT = 600  # if a transaction has been stuck for more than 600 second
 
 
 class OldEthereumClient:
+# class EthereumClient:
     def __init__(self, ip, port):
         self.logger = logging.getLogger("EthereumClient")
         self.logger.setLevel(logging.INFO)
@@ -216,7 +226,7 @@ class OldEthereumClient:
                 self.logger.info("LOG: %s" %log)
                 return log
 
-    def command(self, method, params=[], id=1, jsonrpc="2.0", verbose=True):
+    def command(self, method, params=[], id=1, jsonrpc="2.0", verbose=False):
         """ Send command (method with given parameters) to geth client over RPC using PycURL """
         # IP and port for connection
         ip_port = str(self.ip) + ":" + str(self.port)

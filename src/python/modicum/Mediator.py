@@ -295,7 +295,9 @@ class Mediator(PlatformClient):
                 self.logger.info("outputTarHash = %s" %resultHash)
 
                 self.logger.info("J: DC publishData = %s" %ijoid)
-                
+
+                # TODO: define output
+
                 self.DC.publishResult(host=_DIRIP_,port=_SSHPORT_,user=self.user,localpath=output,tag=tag,name=name,ijoid=ijoid,sshpath=_SSHKEY_)
                 self.logger.info("J: DC dataPublished = %s" %ijoid)
 
@@ -351,7 +353,7 @@ class Mediator(PlatformClient):
         self.active = True
         while self.active:
             events = self.contract.poll_events()
-            # self.logger.info("poll contract events")
+            self.logger.info(f"poll contract events, got {events}")
             for event in events:
                 params = event['params']
                 name = event['name']

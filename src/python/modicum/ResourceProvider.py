@@ -164,7 +164,7 @@ class ResourceProvider(Mediator):
                 # if name == "ResourceProviderRegistered":
                 #     self.addr = params['addr']
                     self.penaltyRate = params['penaltyRate']
-                    self.registered =True
+                    self.registered = True
                     self.logger.info("A: %s PenaltyRate : %s" %(name,self.penaltyRate))
                     self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=-1, ijoid=-1)
                 elif name == "ResourceProviderAddedTrustedMediator" and self.account == params['addr']:
