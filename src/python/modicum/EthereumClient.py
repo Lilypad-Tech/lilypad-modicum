@@ -15,6 +15,7 @@ import os
 # TODO: what to do next: try to port the threading code in the previous Ethereum
 # client to the new one. I'm not entirely sure why we need it, but we probably
 # do.
+# Update: I don't think that's it -- that just handles pending.
 
 class EthereumClient:
 # class NewEthereumClient:
