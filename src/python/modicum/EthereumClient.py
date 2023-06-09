@@ -43,6 +43,9 @@ class EthereumClient:
             "to": to_address,
             "data": data,
             "value": value,
+            'maxFeePerGas': self.w3.to_wei(250, 'gwei'),
+            'maxPriorityFeePerGas': self.w3.web3.to_wei(2, 'gwei'),
+            # 'maxPriorityFeePerGas': self.w3.eth.max_priority_fee,
         }).hex())
 
     def accounts(self):
