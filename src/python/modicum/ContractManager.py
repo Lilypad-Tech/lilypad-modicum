@@ -40,7 +40,6 @@ class ContractManager:
 
     def getEthAccount(self,index):
         response = self.ethclient.accounts()
-        #import pdb; pdb.set_trace()
         self.logger.debug("ethclient accounts: %s" %response)
         if "ERROR" not in response:
           self.account = response[index] # use the first owned address

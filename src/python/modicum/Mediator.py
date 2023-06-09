@@ -91,7 +91,6 @@ class Mediator(PlatformClient):
         print(a)
 
 
-        # import pdb; pdb.set_trace()
 
         if self.sim:
             self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)

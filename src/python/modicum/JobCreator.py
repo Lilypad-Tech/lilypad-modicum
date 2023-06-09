@@ -176,7 +176,6 @@ class JobCreator(PlatformClient):
             return 0
 
         self.logger.info("L: Requesting Permission to publish")
-        #import pdb; pdb.set_trace()
 
         msg = self.DC.getPermission(_DIRIP_, _DIRPORT_, self.account, tag, _KEY_)
 
@@ -289,14 +288,14 @@ class JobCreator(PlatformClient):
         self.active = True
         while self.active:
             events = self.contract.poll_events()
-            # self.logger.info("poll contract events")
+            self.logger.info(f"poll contract events, got {events}")
             for event in events:
                 params = event['params']
                 name = event['name']
                 # self.logger.info("{}({}).".format(name, params))
                 if name == "JobCreatorRegistered" and self.account == params['addr']:
                     self.penaltyRate = params['penaltyRate']
-                    self.registered=True
+                    self.registered = True
                     self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=-1, ijoid=-1)
                     self.logger.info("A: %s PenaltyRate : %s" %(name, self.penaltyRate))
                 elif name == "JobCreatorAddedTrustedMediator" and self.account == params['addr']:

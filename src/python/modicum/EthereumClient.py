@@ -9,14 +9,6 @@ from web3 import Web3
 from web3.middleware import construct_sign_and_send_raw_middleware
 import os
 
-# TODO: is it because the eth client is supposed to be polling?
-# XXX: no, it seems like the JC never finishes registering...
-# A-ha: cli.py:243 never hits JC.registered = true
-# TODO: what to do next: try to port the threading code in the previous Ethereum
-# client to the new one. I'm not entirely sure why we need it, but we probably
-# do.
-# Update: I don't think that's it -- that just handles pending.
-
 class EthereumClient:
 # class NewEthereumClient:
     def __init__(self, ip, port, protocol='http'):
@@ -68,7 +60,6 @@ class EthereumClient:
             return self.w3.eth.send_transaction(tx)
         if method == "eth_getTransactionReceipt":
             tx = params[0]
-            import ipdb; ipdb.set_trace()
             return self.w3.eth.get_transaction_receipt(tx)
         raise Exception(f"Unexpected method {method}")
 
@@ -79,7 +70,9 @@ class EthereumClient:
 
     def get_filter_changes(self, filter_id):
         # XXX filter_id is not used, remove it from all callers and then from here
-        return self._filter.get_new_entries()
+        ch = self._filter.get_new_entries()
+        # print(f"--> in get_filter_changes({filter_id}), got {ch}")
+        return ch
 
 
 CHECK_INTERVAL = 1  # check for receipts every second
@@ -94,7 +87,7 @@ class OldEthereumClient:
         self.logger = logging.getLogger("EthereumClient")
         self.logger.setLevel(logging.INFO)
 
-        # ch = logging.StreamHandler()
+        # ch = logging.StreamHandler()platformListener
         # formatter = logging.Formatter("---%(name)s---: \n%(message)s\n\r")
         # ch.setFormatter(formatter)
         # self.logger.addHandler(ch)
