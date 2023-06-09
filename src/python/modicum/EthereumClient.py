@@ -22,6 +22,7 @@ class EthereumClient:
             pk = os.environ.get(f'PRIVATE_KEY_{i}')
             if pk is not None:
                 acct = self.w3.eth.account.from_key(pk)
+                print(f"--> Loaded private key for {acct} from env PRIVATE_KEY_{i}")
                 # Add acct as auto-signer:
                 self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
                 # Transactions from `acct` will then be signed, under the hood, in
