@@ -15,13 +15,16 @@ class EthereumClient:
         self.ip = ip
         self.port = port
 
-        self.w3 = Web3(Web3.HTTPProvider(f'{protocol}://{self.ip}:{self.port}'))
+        self.w3 = Web3(Web3.HTTPProvider(f'{protocol}://{self.ip}:{self.port}/rpc/v1'))
         print(self.w3.is_connected())
 
+        self.addresses = []
         for i in range(5):
             pk = os.environ.get(f'PRIVATE_KEY_{i}')
             if pk is not None:
                 acct = self.w3.eth.account.from_key(pk)
+                self.addresses.append(acct.address)
+
                 print(f"--> Loaded private key for {acct} from env PRIVATE_KEY_{i}")
                 # Add acct as auto-signer:
                 self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
@@ -43,6 +46,9 @@ class EthereumClient:
         }).hex())
 
     def accounts(self):
+        if os.environ.get("PRIVATE_KEY_0") is not None:
+            print(f"--> addresses = {self.addresses}")
+            return self.addresses
         return self.w3.eth.accounts
 
     def keccak256(self, string):
