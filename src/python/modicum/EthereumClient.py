@@ -73,6 +73,8 @@ class EthereumClient:
         if method == "eth_getTransactionReceipt":
             tx = params[0]
             return self.w3.eth.get_transaction_receipt(tx)
+        if method == "eth_blockNumber":
+            return self.w3.eth.block_number
         raise Exception(f"Unexpected method {method}")
 
     def new_filter(self):
