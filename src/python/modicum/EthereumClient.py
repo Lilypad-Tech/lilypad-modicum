@@ -10,7 +10,7 @@ from web3.middleware import construct_sign_and_send_raw_middleware
 import os
 
 class EthereumClient:
-    def __init__(self, ip, port, protocol='http'):
+    def __init__(self, ip, port, protocol='https'):
         self.ip = ip
         self.port = port
 
@@ -68,7 +68,13 @@ class EthereumClient:
         if method == "eth_sendTransaction":
             tx = params[0]
             # XXX this doesn't actually call transaction
-            print(f"===> Web3EthereumClient transaction({tx})")
+            if "gas" in tx:
+                print(f"===!!!=== Warning, deleted gas of {tx['gas']} from tx")
+                del tx["gas"]
+            tx_to_print = tx
+            if "data" in tx_to_print:
+                del tx_to_print["data"]
+            print(f"===> Web3EthereumClient transaction({tx_to_print})")
             return self.w3.eth.send_transaction(tx)
         if method == "eth_getTransactionReceipt":
             tx = params[0]
