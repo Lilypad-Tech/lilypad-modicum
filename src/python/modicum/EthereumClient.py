@@ -10,7 +10,6 @@ from web3.middleware import construct_sign_and_send_raw_middleware
 import os
 
 class EthereumClient:
-# class NewEthereumClient:
     def __init__(self, ip, port, protocol='http'):
         self.ip = ip
         self.port = port
@@ -43,8 +42,9 @@ class EthereumClient:
             "to": to_address,
             "data": data,
             "value": value,
-            'maxFeePerGas': self.w3.to_wei(250, 'gwei'),
-            'maxPriorityFeePerGas': self.w3.web3.to_wei(2, 'gwei'),
+            # "gasLimit": 10000000000/2,
+            # 'maxFeePerGas': self.w3.to_wei(250, 'gwei'),
+            # 'maxPriorityFeePerGas': self.w3.web3.to_wei(2, 'gwei'),
             # 'maxPriorityFeePerGas': self.w3.eth.max_priority_fee,
         }).hex())
 
@@ -67,6 +67,8 @@ class EthereumClient:
             return self.w3.eth.estimate_gas(tx)
         if method == "eth_sendTransaction":
             tx = params[0]
+            # XXX this doesn't actually call transaction
+            print(f"===> Web3EthereumClient transaction({tx})")
             return self.w3.eth.send_transaction(tx)
         if method == "eth_getTransactionReceipt":
             tx = params[0]
