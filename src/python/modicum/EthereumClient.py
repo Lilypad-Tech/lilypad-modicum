@@ -10,7 +10,7 @@ from web3.middleware import construct_sign_and_send_raw_middleware
 import os
 
 class EthereumClient:
-    def __init__(self, ip, port, protocol='http'):
+    def __init__(self, ip, port, protocol='https'):
         self.ip = ip
         self.port = port
 
