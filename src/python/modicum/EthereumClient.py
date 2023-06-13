@@ -59,7 +59,7 @@ class EthereumClient:
                 "value": value,
             }).hex())
         except Exception as e:
-            print(f"exception calling transaction(): {e}, sleeping 5s and retrying...")
+            print(f"exception calling transaction(): {e}, sleeping 5s and retrying, try {try_}...")
             sleep(5)
             return self.transaction(from_address, data, value, to_address, try_+1)
 
@@ -75,7 +75,7 @@ class EthereumClient:
     
     def command(self, method, params, verbose=False, try_=0):
         if try_ > 5:
-            raise Exception(f"Too many tries calling transaction()")
+            raise Exception(f"Too many tries calling command()")
         print(f"===> Web3EthereumClient command({method}, {str(params)[:100]})")
         try:
             if method == "eth_estimateGas":
@@ -92,7 +92,7 @@ class EthereumClient:
             if method == "eth_blockNumber":
                 return self.w3.eth.block_number
         except Exception as e:
-            print(f"exception calling command(): {e}, sleeping 5s and retrying...")
+            print(f"exception calling command(): {e}, sleeping 5s and retrying, try {try_}...")
             sleep(5)
             return self.command(method, params, try_+1)
         raise Exception(f"Unexpected method {method}")
