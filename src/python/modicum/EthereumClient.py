@@ -9,12 +9,24 @@ from web3 import Web3
 from web3.middleware import construct_sign_and_send_raw_middleware
 import os
 
+from web3 import HTTPProvider, Web3
+import requests
+
+class CustomHTTPProvider(HTTPProvider):
+    def __init__(self, endpoint_uri, request_kwargs=None):
+        super().__init__(endpoint_uri, request_kwargs)
+        if 'headers' not in self._request_kwargs:
+            self._request_kwargs['headers'] = {}
+        rpcToken = os.getenv("RPC_TOKEN")
+        if rpcToken != None:
+            self._request_kwargs['headers']['Authorization'] = f'Bearer {rpcToken}'
+
 class EthereumClient:
-    def __init__(self, ip, port, protocol='https'):
+    def __init__(self, ip, port, protocol='http'):
         self.ip = ip
         self.port = port
 
-        self.w3 = Web3(Web3.HTTPProvider(f'{protocol}://{self.ip}:{self.port}/rpc/v1'))
+        self.w3 = Web3(CustomHTTPProvider(f'{protocol}://{self.ip}:{self.port}/rpc/v1'))
         print(self.w3.is_connected())
 
         self.addresses = []
@@ -36,17 +48,20 @@ class EthereumClient:
     def exit(self):
         return
 
-    def transaction(self, from_address, data, value, to_address):
-        return str(self.w3.eth.send_transaction({
-            "from": from_address,
-            "to": to_address,
-            "data": data,
-            "value": value,
-            # "gasLimit": 10000000000/2,
-            # 'maxFeePerGas': self.w3.to_wei(250, 'gwei'),
-            # 'maxPriorityFeePerGas': self.w3.web3.to_wei(2, 'gwei'),
-            # 'maxPriorityFeePerGas': self.w3.eth.max_priority_fee,
-        }).hex())
+    def transaction(self, from_address, data, value, to_address, try_=0):
+        if try_ > 5:
+            raise Exception(f"Too many tries calling transaction()")
+        try:
+            return str(self.w3.eth.send_transaction({
+                "from": from_address,
+                "to": to_address,
+                "data": data,
+                "value": value,
+            }).hex())
+        except Exception as e:
+            print(f"exception calling transaction(): {e}, sleeping 5s and retrying...")
+            sleep(5)
+            return self.transaction(from_address, data, value, to_address, try_+1)
 
     def accounts(self):
         if os.environ.get("PRIVATE_KEY_0") is not None:
@@ -58,27 +73,32 @@ class EthereumClient:
         r = self.w3.solidity_keccak(['string'], [string])
         return str(r.hex())
     
-    def command(self, method, params, verbose=False):
+    def command(self, method, params, verbose=False, try_=0):
+        if try_ > 5:
+            raise Exception(f"Too many tries calling transaction()")
         print(f"===> Web3EthereumClient command({method}, {str(params)[:100]})")
-        if method == "eth_estimateGas":
-            tx = params[0]
-            if "data" not in tx:
-                return 0
-            return self.w3.eth.estimate_gas(tx)
-        if method == "eth_sendTransaction":
-            tx = params[0]
-            # XXX this doesn't actually call transaction
-            print(f"===> Web3EthereumClient transaction({tx})")
-            return self.w3.eth.send_transaction(tx)
-        if method == "eth_getTransactionReceipt":
-            tx = params[0]
-            return self.w3.eth.get_transaction_receipt(tx)
-        if method == "eth_blockNumber":
-            return self.w3.eth.block_number
+        try:
+            if method == "eth_estimateGas":
+                tx = params[0]
+                if "data" not in tx:
+                    return 0
+                return self.w3.eth.estimate_gas(tx)
+            if method == "eth_sendTransaction":
+                tx = params[0]
+                return self.w3.eth.send_transaction(tx)
+            if method == "eth_getTransactionReceipt":
+                tx = params[0]
+                return self.w3.eth.get_transaction_receipt(tx)
+            if method == "eth_blockNumber":
+                return self.w3.eth.block_number
+        except Exception as e:
+            print(f"exception calling command(): {e}, sleeping 5s and retrying...")
+            sleep(5)
+            return self.command(method, params, try_+1)
         raise Exception(f"Unexpected method {method}")
 
     def new_filter(self):
-        self._filter = self.w3.eth.filter({"fromBlock": "0x1"})
+        self._filter = self.w3.eth.filter('latest')
         self.filter_id = self._filter.filter_id
         return self.filter_id
 
