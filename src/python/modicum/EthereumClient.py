@@ -49,6 +49,7 @@ class EthereumClient:
         return
 
     def transaction(self, from_address, data, value, to_address, try_=0):
+        print(f"===> Web3EthereumClient transaction(from={from_address}, data={str(data)[:100]}, to={to_address}, try={try_})")
         if try_ > 5:
             raise Exception(f"Too many tries calling transaction()")
         try:
@@ -73,10 +74,24 @@ class EthereumClient:
         r = self.w3.solidity_keccak(['string'], [string])
         return str(r.hex())
     
+    def summarize(self, params):
+        """
+        Summarize params for debug printing
+        """
+        try:
+            # Intentionally disregard any exceptions
+            if len(params) == 1 and "data" in params[0]:
+                s = dict(params[0])
+                s["data"] = s["data"][:50]
+                return str(s)
+        except Exception as e:
+            pass
+        return str(params)[:100]
+
     def command(self, method, params, verbose=False, try_=0):
         if try_ > 5:
             raise Exception(f"Too many tries calling command()")
-        print(f"===> Web3EthereumClient command({method}, {str(params)[:100]})")
+        print(f"===> Web3EthereumClient command({method}, {self.summarize(params)}")
         try:
             if method == "eth_estimateGas":
                 tx = params[0]
