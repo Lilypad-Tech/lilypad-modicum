@@ -70,10 +70,7 @@ Hit enter three times to use the defaults
 
 Now we adjust the values on the `src/python/.env` file paying note to the following:
 
- * `HOST` = `127.0.0.1`
  * `DIR` = `/home/YOURUSERNAME` (pointing to the parent directory of where you checked out MODICUM)
- * `MODICUMPATH` = `${DIR}/MODICUM`
- * `PROJECT` = `MODICUM`
  * `pubkey` = the public key we just generated
  * `sshkey` = the path to the private key we just generated
 
