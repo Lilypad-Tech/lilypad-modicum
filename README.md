@@ -4,7 +4,7 @@ Have docker, ngrok and node.js >= v16 installed.
 
 ### setup block explorer
 
-Login to https://app.tryethernal.com/settings?tab=workspace and click "RESET WORKSPACE" at the bottom.
+Login to https://app.tryethernal.com/settings?tab=workspace go to settings and click "RESET WORKSPACE" at the bottom.
 
 Open a new pane:
 
@@ -13,7 +13,7 @@ snap install ngrok
 ngrok http 10000
 ```
 
-Copy the https url from ngrok and paste it as the RPC Server field in ethereal then click "Update".
+Copy the https url from ngrok and paste it as the RPC Server field in ethereal (in settings) then click "Update".
 
 Then in another terminal we run the hardhat node:
 
