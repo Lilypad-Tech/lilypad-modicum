@@ -30,7 +30,7 @@ Then in another terminal we run the hardhat node:
 ```bash
 git clone git@github.com:bacalhau-project/MODICUM.git
 cd MODICUM/src/js
-npm install
+npm install --force
 export ETHERNAL_EMAIL=kaiyadavenport@gmail.com
 export ETHERNAL_PASSWORD=XXX
 npx hardhat node --port 10000
