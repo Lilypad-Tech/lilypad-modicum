@@ -1,64 +1,162 @@
-# MODiCuM
+## MODICUM demo
 
-## How to install and run:
+Have docker, ngrok and node.js >= v16 installed.
 
-### Step 1: Docker
+### setup block explorer
 
-Install docker as instructed in [here](https://docs.docker.com/install/linux/docker-ce/ubuntu/).
+Login to https://app.tryethernal.com/settings?tab=workspace and click "RESET WORKSPACE" at the bottom.
 
-### Step 2: Blockchain
+Open a new pane:
 
-* Install golang: `apt install golang-1.7-go` or `wget https://storage.googleapis.com/golang/go1.7.1.linux-amd64.tar.gz`
-* Download geth client 1.7.0 from `wget https://github.com/ethereum/go-ethereum/archive/v1.7.0.tar.gz`
-* unzip and make
-* in the bin folder add `genesis-data.json` and `password.txt`
-(`password.txt` is your desired password for the accounts)
-* init blockchain `./geth --datadir eth/  init genesis-data.json`
-* create the first account on the block chain: `./geth account new --password password.txt --datadir eth/`
-* start blockchain 
 ```bash
-./geth --datadir eth/ --rpc --rpcport 10000 --rpcaddr 127.0.0.1 --nodiscover --rpcapi 'eth,web3,admin,miner,net,db' --password password.txt --unlock 0 --networkid 15 --mine --targetgaslimit 200000000000000000 console
+ngrok http 10000
 ```
 
-It will need to run for some time so that there is ether in the wallet. And some of that ether will need to be transferred to the other accounts.
-Some useful commands that can be used from the console that was started with the above commands are:
+Copy the https url from ngrok and paste it as the RPC Server field in ethereal then click "Update".
 
-* current gas limit : `eth.getBlock("latest").gasLimit`
-* ether in account 8 : `web3.fromWei(eth.getBalance(eth.accounts[8]), "ether")`
-* send gas from account 0 to account 1 : `eth.sendTransaction({from:eth.accounts[0], to:eth.accounts[1], value: web3.toWei(10000, "ether")})`
+Then in another terminal we run the hardhat node:
 
-
-
-### Step 3: Run MODiCuM
-
-Make sure you have Python3 and pip installed
-
-* go to `src/python`
-* install the modicum command with: `sudo pip3 install -e .`
-* fix your `.env` file and replace `<>`s with correct path information.
-* set $CONTRACTSRC in the location of the contract: `export CONTRACTSRC=../MODiCuM/src/solidity`
-* create directory `../MODiCuM/src/solidity/output`
-* compile the smart contract with:
 ```bash
-sudo docker run -it --rm\
+git clone git@github.com:bacalhau-project/MODICUM.git
+cd MODICUM/src/js
+npm install
+export ETHERNAL_EMAIL=kaiyadavenport@gmail.com
+export ETHERNAL_PASSWORD=XXX
+npx hardhat node --port 10000
+```
+
+Visit https://app.tryethernal.com/blocks in the browser.
+
+IMPORTANT: each time you restart the demo - click "RESET WORKSPACE" at the bottom of the settings page on ethereal.
+
+### various system tasks
+
+Update your SSH config file to add an extra Port 222:
+```
+Port 22
+Port 222
+```
+
+```
+sudo systemctl restart ssh
+```
+
+Now we fix the version of python:
+
+```bash
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install -y python3.8-dev
+python3.8 -m pip install virtualenv
+```
+
+Then create a virtualenv:
+
+```bash
+cd MODICUM/src/python/
+python3.8 -m virtualenv venv
+. venv/bin/activate
+sudo apt install -y libcurl4-openssl-dev
+pip3 install -e .
+```
+
+Now activate the virtual env in all panes:
+
+```bash
+cd src/python
+. ./venv/bin/activate
+source .env
+```
+
+Then we create a new ssh keypair:
+
+```bash
+ssh-keygen -f ~/.ssh/modicum-demo
+```
+
+Now we adjust the values on the `src/python/.env` file paying note to the following:
+
+ * `HOST` = `127.0.0.1`
+ * `DIR` = `/home/kai/projects/protocol-labs`
+ * `MODICUMPATH` = `${DIR}/MODICUM`
+ * `PROJECT` = `MODICUM`
+ * `GETHPATH` = `/usr/local/bin`
+ * `pubkey` = the public key we just generated
+ * `sshkey` = the path to the private key we just generated
+
+### influx DB
+
+Then we setup influxDB - in another pane:
+
+```bash
+docker run -d \
+  --name influx \
+  -p 8086:8086 \
+  influxdb:1.8.10
+```
+
+Now we need to setup the database:
+
+```bash
+docker exec -ti influx influx
+> create database collectd;
+> show databases;
+exit
+```
+
+### compile contracts
+
+Then we source the file and compile the contracts:
+
+```bash
+cd MODICUM/src/python/
+source .env
+echo $CONTRACTSRC
+docker run -it --rm\
 		--name solcTest \
-		--mount type=bind,source="$(CONTRACTSRC)",target=/solidity/input \
-		--mount type=bind,source="$(CONTRACTSRC)/output",target=/solidity/output \
+		--mount type=bind,source="${CONTRACTSRC}",target=/solidity/input \
+		--mount type=bind,source="${CONTRACTSRC}/output",target=/solidity/output \
 		ethereum/solc:0.4.25 \
-		--overwrite --bin --bin-runtime --ast --asm -o /solidity/output /solidity/input/Modicum.sol
+		--overwrite --bin --bin-runtime --ast --abi --asm -o /solidity/output /solidity/input/Modicum.sol
 ```
-* run sample components in the following order:
-    1. `modicum runAsCM`
-    2. `modicum runAsSolver`
-    3. `modicum runAsMediator`
-    4. `modicum startJCDaemon`
-    5. `modicum startRPDaemon`
 
-_**ContractManager**_ is the entity who deploys the contract in the blockchain. Further, he has the responsibility to share the contract's address with other parties and entities.
+Ignore the warnings.
 
-Then you can start sending self designated messages with `modicum` command like `modicum JCaddMediator` and `modicum postJob`.
-Just try `modicum --help`
+### run services
 
-### Optional Step: Changing the Smart Contract
+Now we start the various processes (each in it's own pane):
 
-You can use the Solidity Wrapper to regenerate the wrapper class `ModicumContract.py` and `Enums.py` file.
+IMPORTANT: don't forget to activate the virtualenv in each pane!
+IMPORTANT: don't forget to `source .env` in each pane!
+IMPORTANT: run these in this exact order!
+
+```bash
+modicum runAsCM
+```
+
+```bash
+modicum runAsSolver
+```
+
+```bash
+sudo -E $(which modicum) runAsDir
+```
+(sudo because it will do a bunch of stuff like creating users :-O)
+
+```bash
+modicum runAsMediator
+```
+
+NOTE: replace this path with the absolute path on your system
+
+```bash
+modicum startRP --path $(realpath $PWD/../..)/0_experiments/demo/ --index 1
+```
+
+edit `0_experiments/demo/player0` to update the paths
+
+```bash
+modicum startJC --playerpath $(realpath $PWD/../..)/0_experiments/demo/ --index 0
+```
+
+Keep an eye out on the `startRP` pane - the bacalhau job ID will get printed there with a link to it on the dashboard.
