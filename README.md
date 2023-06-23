@@ -79,7 +79,7 @@ Now we adjust the values on the `src/python/.env` file paying note to the follow
 
 ### influx DB
 
-Then we setup influxDB - in another pane (install docker if you don't have it):
+Then we setup influxDB - in another pane (install docker and `sudo adduser $USER docker` and log out and log in again):
 
 ```bash
 docker run -d \
