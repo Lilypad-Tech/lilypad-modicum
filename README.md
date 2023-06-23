@@ -1,6 +1,10 @@
 ## MODICUM demo
 
 Have docker, ngrok and node.js >= v16 installed.
+```
+snap install ngrok
+sudo apt install docker.io nodejs
+```
 
 ### setup block explorer
 
