@@ -9,6 +9,7 @@ from web3 import Web3
 from web3.middleware import construct_sign_and_send_raw_middleware
 import os
 
+from hexbytes import HexBytes
 from web3 import HTTPProvider, Web3
 import requests
 
@@ -44,11 +45,25 @@ class EthereumClient:
         
         self._filter = None
         self.filter_id = None
+        self._i = 0
+        # Generate random string
+        self._random_string = "debug_" + os.urandom(32).hex()
+        # Create random folder
+        self._random_folder = os.path.join(os.getcwd(), self._random_string)
+        os.mkdir(self._random_folder)
 
     def exit(self):
         return
 
     def transaction(self, from_address, data, value, to_address, try_=0):
+        
+        self._i += 1
+        # pickle args into self._random_folder + f"/{self._i}.pkl"
+        print(f"--> transaction: {self._random_folder}/{self._i}.pkl")
+        with open(f"{self._random_folder}/{str(self._i).zfill(6)}.pkl", "wb") as f:
+            import pickle
+            pickle.dump((from_address, data, value, to_address), f)
+
         print(f"===> Web3EthereumClient transaction(from={from_address}, data={str(data)[:100]}, to={to_address}, try={try_})")
         if try_ > 5:
             raise Exception(f"Too many tries calling transaction()")
@@ -89,6 +104,22 @@ class EthereumClient:
         return str(params)[:100]
 
     def command(self, method, params, verbose=False, try_=0):
+
+        # Normalize strings starting with 0x, HexBytes instances and raw bytes
+        # all down to raw bytes
+        if len(params) == 1:
+            if isinstance(params[0], HexBytes):
+                params[0] = bytes(params[0])
+            if isinstance(params[0], str):
+                params[0] = bytes(HexBytes(params[0]))
+
+        self._i += 1
+        # pickle args into self._random_folder + f"/{self._i}.pkl"
+        print(f"--> transaction: {self._random_folder}/{self._i}.pkl")
+        with open(f"{self._random_folder}/{str(self._i).zfill(6)}.pkl", "wb") as f:
+            import pickle
+            pickle.dump(("command", method, params), f)
+
         if try_ > 5:
             raise Exception(f"Too many tries calling command()")
         print(f"===> Web3EthereumClient command({method}, {self.summarize(params)}")
@@ -103,6 +134,7 @@ class EthereumClient:
                 return self.w3.eth.send_transaction(tx)
             if method == "eth_getTransactionReceipt":
                 tx = params[0]
+                print(f"!!! --> get tx receipt --> {tx}")
                 return self.w3.eth.get_transaction_receipt(tx)
             if method == "eth_blockNumber":
                 return self.w3.eth.block_number
