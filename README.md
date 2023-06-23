@@ -6,7 +6,7 @@ Have docker, ngrok and node.js >= v16 installed.
 
 Login to https://app.tryethernal.com/settings?tab=workspace go to settings and click "RESET WORKSPACE" at the bottom.
 
-Open a new pane:
+Open a new terminal window:
 
 ```bash
 snap install ngrok
