@@ -31,25 +31,6 @@ IMPORTANT: each time you restart the demo - click "RESET WORKSPACE" at the botto
 
 ### various system tasks
 
-Update your SSH config file to add an extra Port 222:
-```
-Port 22
-Port 222
-```
-
-```
-sudo systemctl restart ssh
-```
-
-Now we fix the version of python:
-
-```bash
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt update
-sudo apt install -y python3.8-dev
-python3.8 -m pip install virtualenv
-```
-
 Then create a virtualenv:
 
 ```bash
@@ -86,7 +67,7 @@ Now we adjust the values on the `src/python/.env` file paying note to the follow
 
 ### influx DB
 
-Then we setup influxDB - in another pane:
+Then we setup influxDB - in another pane (install docker if you don't have it):
 
 ```bash
 docker run -d \
