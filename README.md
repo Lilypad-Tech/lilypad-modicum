@@ -66,6 +66,7 @@ Then we create a new ssh keypair:
 ```bash
 ssh-keygen -f ~/.ssh/modicum-demo
 ```
+Hit enter three times to use the defaults
 
 Now we adjust the values on the `src/python/.env` file paying note to the following:
 
