@@ -9,7 +9,7 @@ Login to https://app.tryethernal.com/settings?tab=workspace and click "RESET WOR
 Open a new pane:
 
 ```bash
-sudo snap install ngrok
+snap install ngrok
 ngrok http 10000
 ```
 
