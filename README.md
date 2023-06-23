@@ -74,7 +74,6 @@ Now we adjust the values on the `src/python/.env` file paying note to the follow
  * `DIR` = `/home/YOURUSERNAME` (pointing to the parent directory of where you checked out MODICUM)
  * `MODICUMPATH` = `${DIR}/MODICUM`
  * `PROJECT` = `MODICUM`
- * `GETHPATH` = `/usr/local/bin`
  * `pubkey` = the public key we just generated
  * `sshkey` = the path to the private key we just generated
 
