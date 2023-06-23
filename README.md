@@ -1,5 +1,7 @@
 ## MODICUM demo
 
+Tested on Ubuntu 22.04
+
 Have docker, ngrok and node.js >= v16 installed.
 ```
 snap install ngrok
@@ -46,7 +48,7 @@ Then create a virtualenv:
 
 ```bash
 cd MODICUM/src/python/
-python3.8 -m virtualenv venv
+python3 -m virtualenv venv
 . venv/bin/activate
 sudo apt install -y libcurl4-openssl-dev
 pip3 install -e .
