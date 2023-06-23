@@ -1,25 +1,38 @@
 ## MODICUM demo
 
+Tested on Ubuntu 22.04
+
 Have docker, ngrok and node.js >= v16 installed.
+```
+snap install ngrok
+sudo apt install docker.io curl python3-pip python3-virtualenv python3-dev libssl-dev
+```
+```
+cd ~
+curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
+sudo bash /tmp/nodesource_setup.sh
+sudo apt install nodejs
+```
 
 ### setup block explorer
 
-Login to https://app.tryethernal.com/settings?tab=workspace and click "RESET WORKSPACE" at the bottom.
+Login to https://app.tryethernal.com/settings?tab=workspace go to settings and click "RESET WORKSPACE" at the bottom.
 
-Open a new pane:
+Open a new terminal window:
 
 ```bash
+snap install ngrok
 ngrok http 10000
 ```
 
-Copy the https url from ngrok and paste it as the RPC Server field in ethereal then click "Update".
+Copy the https url from ngrok and paste it as the RPC Server field in ethereal (in settings) then click "Update".
 
 Then in another terminal we run the hardhat node:
 
 ```bash
 git clone git@github.com:bacalhau-project/MODICUM.git
 cd MODICUM/src/js
-npm install
+npm install --force
 export ETHERNAL_EMAIL=kaiyadavenport@gmail.com
 export ETHERNAL_PASSWORD=XXX
 npx hardhat node --port 10000
@@ -31,36 +44,16 @@ IMPORTANT: each time you restart the demo - click "RESET WORKSPACE" at the botto
 
 ### various system tasks
 
-Update your SSH config file to add an extra Port 222:
-```
-Port 22
-Port 222
-```
-
-```
-sudo systemctl restart ssh
-```
-
-Now we fix the version of python:
-
-```bash
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt update
-sudo apt install -y python3.8-dev
-python3.8 -m pip install virtualenv
-```
-
 Then create a virtualenv:
 
 ```bash
 cd MODICUM/src/python/
-python3.8 -m virtualenv venv
+python3 -m virtualenv venv
 . venv/bin/activate
-sudo apt install -y libcurl4-openssl-dev
 pip3 install -e .
 ```
 
-Now activate the virtual env in all panes:
+From now on, activate the virtual env in any new panes where you run a python process, like this:
 
 ```bash
 cd src/python
@@ -73,20 +66,17 @@ Then we create a new ssh keypair:
 ```bash
 ssh-keygen -f ~/.ssh/modicum-demo
 ```
+Hit enter three times to use the defaults
 
 Now we adjust the values on the `src/python/.env` file paying note to the following:
 
- * `HOST` = `127.0.0.1`
- * `DIR` = `/home/kai/projects/protocol-labs`
- * `MODICUMPATH` = `${DIR}/MODICUM`
- * `PROJECT` = `MODICUM`
- * `GETHPATH` = `/usr/local/bin`
+ * `DIR` = `/home/YOURUSERNAME` (pointing to the parent directory of where you checked out MODICUM)
  * `pubkey` = the public key we just generated
  * `sshkey` = the path to the private key we just generated
 
 ### influx DB
 
-Then we setup influxDB - in another pane:
+Then we setup influxDB - in another pane (install docker and `sudo adduser $USER docker` and log out and log in again):
 
 ```bash
 docker run -d \
@@ -99,8 +89,14 @@ Now we need to setup the database:
 
 ```bash
 docker exec -ti influx influx
-> create database collectd;
-> show databases;
+```
+```
+create database collectd;
+```
+```
+show databases;
+```
+```
 exit
 ```
 
@@ -126,9 +122,9 @@ Ignore the warnings.
 
 Now we start the various processes (each in it's own pane):
 
-IMPORTANT: don't forget to activate the virtualenv in each pane!
-IMPORTANT: don't forget to `source .env` in each pane!
-IMPORTANT: run these in this exact order!
+* IMPORTANT: don't forget to activate the virtualenv in each pane! `. venv/bin/activate` inside `src/python`
+* IMPORTANT: don't forget to `source .env` in each pane!
+* IMPORTANT: run these in this exact order!
 
 ```bash
 modicum runAsCM
