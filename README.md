@@ -5,7 +5,7 @@ Tested on Ubuntu 22.04
 Have docker, ngrok and node.js >= v16 installed.
 ```
 snap install ngrok
-sudo apt install docker.io curl python3-pip
+sudo apt install docker.io curl python3-pip python3-virtualenv python3-dev libssl-dev
 ```
 ```
 cd ~
@@ -50,7 +50,6 @@ Then create a virtualenv:
 cd MODICUM/src/python/
 python3 -m virtualenv venv
 . venv/bin/activate
-sudo apt install -y libcurl4-openssl-dev
 pip3 install -e .
 ```
 
