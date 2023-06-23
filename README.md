@@ -122,9 +122,9 @@ Ignore the warnings.
 
 Now we start the various processes (each in it's own pane):
 
-IMPORTANT: don't forget to activate the virtualenv in each pane!
-IMPORTANT: don't forget to `source .env` in each pane!
-IMPORTANT: run these in this exact order!
+* IMPORTANT: don't forget to activate the virtualenv in each pane! `. venv/bin/activate` inside `src/python`
+* IMPORTANT: don't forget to `source .env` in each pane!
+* IMPORTANT: run these in this exact order!
 
 ```bash
 modicum runAsCM
