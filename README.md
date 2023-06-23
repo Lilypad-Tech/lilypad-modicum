@@ -92,8 +92,14 @@ Now we need to setup the database:
 
 ```bash
 docker exec -ti influx influx
-> create database collectd;
-> show databases;
+```
+```
+create database collectd;
+```
+```
+show databases;
+```
+```
 exit
 ```
 
