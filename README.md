@@ -3,7 +3,13 @@
 Have docker, ngrok and node.js >= v16 installed.
 ```
 snap install ngrok
-sudo apt install docker.io nodejs
+sudo apt install docker.io
+```
+```
+cd ~
+curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
+sudo bash /tmp/nodesource_setup.sh
+sudo apt install nodejs
 ```
 
 ### setup block explorer
