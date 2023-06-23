@@ -53,7 +53,7 @@ python3 -m virtualenv venv
 pip3 install -e .
 ```
 
-Now activate the virtual env in all panes:
+From now on, activate the virtual env in any new panes where you run a python process, like this:
 
 ```bash
 cd src/python
