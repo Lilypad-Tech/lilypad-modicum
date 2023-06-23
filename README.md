@@ -71,7 +71,7 @@ Hit enter three times to use the defaults
 Now we adjust the values on the `src/python/.env` file paying note to the following:
 
  * `HOST` = `127.0.0.1`
- * `DIR` = `/home/kai/projects/protocol-labs`
+ * `DIR` = `/home/YOURUSERNAME` (pointing to the parent directory of where you checked out MODICUM)
  * `MODICUMPATH` = `${DIR}/MODICUM`
  * `PROJECT` = `MODICUM`
  * `GETHPATH` = `/usr/local/bin`
