@@ -3,7 +3,7 @@
 Have docker, ngrok and node.js >= v16 installed.
 ```
 snap install ngrok
-sudo apt install docker.io curl
+sudo apt install docker.io curl python3-pip
 ```
 ```
 cd ~
