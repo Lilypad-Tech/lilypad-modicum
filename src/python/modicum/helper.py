@@ -234,7 +234,7 @@ def hashTar(path):
 
 
 def wait4receipt(ethclient,txHash,getReceipt=True):
-    print(f">>> In wait4receipt, waiting for {txHash.hex() if isinstance(txHash, HexBytes) else txHash}, getReceipt={getReceipt}")
+    print(f">>> In wait4receipt, waiting for {txHash}, getReceipt={getReceipt}")
     
     if not getReceipt:
         receipt = {}

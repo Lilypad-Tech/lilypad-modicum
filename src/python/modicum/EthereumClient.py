@@ -112,15 +112,15 @@ class EthereumClient:
 
     def command(self, method, params, verbose=False, try_=0):
 
-        # Normalize strings starting with 0x, HexBytes instances and raw bytes
-        # all down to raw bytes
-        if len(params) == 1:
-            if isinstance(params[0], bytes):
-                params[0] = HexBytes(params[0])
-            # if isinstance(params[0], HexBytes):
-            #     params[0] = bytes(params[0])
-            if isinstance(params[0], str):
-                params[0] = HexBytes(params[0])
+        # # Normalize strings starting with 0x, HexBytes instances and raw bytes
+        # # all down to raw bytes
+        # if len(params) == 1:
+        #     if isinstance(params[0], bytes):
+        #         params[0] = HexBytes(params[0])
+        #     # if isinstance(params[0], HexBytes):
+        #     #     params[0] = bytes(params[0])
+        #     if isinstance(params[0], str):
+        #         params[0] = HexBytes(params[0])
 
         self._i += 1
         # pickle args into self._random_folder + f"/{self._i}.pkl"
@@ -145,7 +145,7 @@ class EthereumClient:
                 return self.w3.eth.send_transaction(tx)
             if method == "eth_getTransactionReceipt":
                 tx = params[0]
-                print(f"!!! --> get tx receipt --> {tx.hex()}")
+                print(f"!!! --> get tx receipt --> {tx}")
                 return self.w3.eth.get_transaction_receipt(tx)
             if method == "eth_blockNumber":
                 return self.w3.eth.block_number
