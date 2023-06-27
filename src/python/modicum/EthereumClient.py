@@ -23,9 +23,15 @@ class CustomHTTPProvider(HTTPProvider):
             self._request_kwargs['headers']['Authorization'] = f'Bearer {rpcToken}'
 
 class EthereumClient:
-    def __init__(self, ip, port, protocol='http'):
+    def __init__(self, ip, port, protocol=None):
         self.ip = ip
         self.port = port
+        if protocol is None:
+            # do some guessing
+            if port == "443":
+                protocol = "https"
+            else:
+                protocol = "http"
 
         self.w3 = Web3(CustomHTTPProvider(f'{protocol}://{self.ip}:{self.port}/rpc/v1'))
         print(self.w3.is_connected())
