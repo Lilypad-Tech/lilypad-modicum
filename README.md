@@ -52,12 +52,11 @@ python3 -m virtualenv venv
 pip3 install -e .
 ```
 
-From now on, activate the virtual env in any new panes where you run a python process, like this:
+### fill in .env file
 
-```bash
-cd src/python
-. ./venv/bin/activate
-source .env
+We'll copy the .env file sample and then fill in the details for your one. Note the .env file is in .gitignore because it will contain private keys...
+```
+cp src/python/.env.sample src/python/.env
 ```
 
 Then we create a new ssh keypair:
@@ -72,6 +71,8 @@ Now we adjust the values on the `src/python/.env` file paying note to the follow
  * `DIR` = `/home/YOURUSERNAME` (pointing to the parent directory of where you checked out MODICUM)
  * `pubkey` = the public key we just generated
  * `sshkey` = the path to the private key we just generated
+
+If you are deploying to a real blockchain and have your private key, also fill in the `PRIVATE_KEY_0` (and optionally, `RPC_TOKEN` to send a Bearer token to the RPC endpoint if your provider requires it)
 
 ### influx DB
 
@@ -97,6 +98,16 @@ show databases;
 ```
 ```
 exit
+```
+
+### env and virtualenv files
+
+From now on, activate the virtual env and source the environment variables in any new panes where you run a python process, like this:
+
+```bash
+cd src/python
+. ./venv/bin/activate
+source .env
 ```
 
 ### compile contracts

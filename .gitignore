@@ -2,3 +2,4 @@
 *.tar
 *.egg-info
 node_modules
+src/python/.env
