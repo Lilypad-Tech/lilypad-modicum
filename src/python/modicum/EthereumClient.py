@@ -156,7 +156,7 @@ class EthereumClient:
         raise Exception(f"Unexpected method {method}")
 
     def new_filter(self):
-        self._filter = self.w3.eth.filter({"fromBlock": "0x1"})
+        self._filter = self.w3.eth.filter("pending")
         self.filter_id = self._filter.filter_id
         return self.filter_id
 
