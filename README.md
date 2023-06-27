@@ -21,7 +21,6 @@ Login to https://app.tryethernal.com/settings?tab=workspace go to settings and c
 Open a new terminal window:
 
 ```bash
-snap install ngrok
 ngrok http 10000
 ```
 
