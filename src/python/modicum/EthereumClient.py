@@ -156,12 +156,7 @@ class EthereumClient:
         raise Exception(f"Unexpected method {method}")
 
     def new_filter(self):
-        # read contractAddress out of contract.json
-        contract_address = None
-        with open('contract.json','r') as f:
-            contract = json.load(f)
-            contract_address = contract['contractAddress']
-        self._filter = self.w3.eth.filter({"address": contract_address})
+        self._filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
         self.filter_id = self._filter.filter_id
         return self.filter_id
 
