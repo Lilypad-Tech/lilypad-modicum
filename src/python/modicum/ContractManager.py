@@ -199,7 +199,7 @@ class ContractManager:
             print("write json")
             contractjson['hash'] = contractHash 
 
-            contractjson['condtractAddress'] = self.deploy_contract(BYTECODE,TRANSACTION_GAS,verbose) 
+            contractjson['contractAddress'] = self.deploy_contract(BYTECODE,TRANSACTION_GAS,verbose) 
 
             print("\n")  
             print(contractjson)     
