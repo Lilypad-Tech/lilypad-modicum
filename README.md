@@ -1,8 +1,8 @@
 ## MODICUM demo
 
-Tested on Ubuntu 22.04
+Tested on Ubuntu 22.04 & 23.04
 
-Have docker, ngrok and node.js >= v16 installed.
+Have docker, ngrok and node.js >= v16 installed:
 ```
 snap install ngrok
 sudo apt install docker.io curl python3-pip python3-virtualenv python3-dev libssl-dev
@@ -21,7 +21,6 @@ Login to https://app.tryethernal.com/settings?tab=workspace go to settings and c
 Open a new terminal window:
 
 ```bash
-snap install ngrok
 ngrok http 10000
 ```
 
