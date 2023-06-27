@@ -75,6 +75,7 @@ class EthereumClient:
             raise Exception(f"Too many tries calling transaction()")
         try:
             return str(self.w3.eth.send_transaction({
+                "gasPrice": self.w3.eth.gas_price,
                 "from": from_address,
                 "to": to_address,
                 "data": data,
@@ -139,6 +140,8 @@ class EthereumClient:
                 return self.w3.eth.estimate_gas(tx)
             if method == "eth_sendTransaction":
                 tx = params[0]
+                if "gasPrice" not in tx:
+                    tx["gasPrice"] = self.w3.eth.gas_price
                 return self.w3.eth.send_transaction(tx)
             if method == "eth_getTransactionReceipt":
                 tx = params[0]
