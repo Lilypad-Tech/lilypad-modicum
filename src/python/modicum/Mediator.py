@@ -57,8 +57,9 @@ class Mediator(PlatformClient):
         JID = JO.jobCreator
         ijoid = JO.ijoid
         uri = JO.uri
+        extras = JO.extras
 
-        print(f" 👉👉👉👉👉👉👉 len={len(uri)}, uri={uri}")
+        print(f" 👉👉👉👉👉👉👉 len={len(extras)}, extras={extras}")
 
         _DIRIP_ = os.environ.get('DIRIP')
         _DIRPORT_ = os.environ.get('DIRPORT')
