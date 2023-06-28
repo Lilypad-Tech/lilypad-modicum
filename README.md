@@ -30,7 +30,10 @@ Then in another terminal we run the hardhat node:
 
 ```bash
 git clone git@github.com:bacalhau-project/MODICUM.git
-cd MODICUM/src/js
+cd MODICUM
+```
+```
+cd src/js
 npm install --force
 export ETHERNAL_EMAIL=kaiyadavenport@gmail.com
 export ETHERNAL_PASSWORD=XXX
@@ -46,7 +49,7 @@ IMPORTANT: each time you restart the demo - click "RESET WORKSPACE" at the botto
 Then create a virtualenv:
 
 ```bash
-cd MODICUM/src/python/
+cd src/python/
 python3 -m virtualenv venv
 . venv/bin/activate
 pip3 install -e .
@@ -115,7 +118,7 @@ source .env
 Then we source the file and compile the contracts:
 
 ```bash
-cd MODICUM/src/python/
+cd src/python/
 source .env
 echo $CONTRACTSRC
 docker run -it --rm\
