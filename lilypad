@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+import sys
+import subprocess
+import tempfile
+import requests
+
+
+if __name__ == "__main__":
+    args = sys.argv
+    if args[1:3] == ["docker", "run"]:
+        y = subprocess.check_output(["bacalhau"] + args[1:3] + ["--dry-run"] + args[3:])
+        # workaround https://github.com/bacalhau-project/bacalhau/issues/2607
+        if y.startswith(b"Using default tag: latest. Please specify a tag/digest for better reproducibility."):
+            y = b"\n".join(y.split(b"\n")[1:])
+        # print(f"Whee docker run interception, got yaml:\n\n{y.decode('utf-8')}")
+        # pass yaml as stdin
+
+        # gzip and base64 encode y
+        y = subprocess.check_output(["gzip", "-c"], input=y)
+        y = subprocess.check_output(["base64", "-w0"], input=y)
+        y = y.decode("utf-8")
+
+        # post to lilypad
+        r = requests.post("http://localhost:31338", data=y)
+        r.raise_for_status()
+        print(r.text)
+
+        print(f"y = {y}")
+
+        # subprocess.run(["bacalhau", "create"], input=y)
+    else:
+        # spawn subprocess with same arguments as this script
+        subprocess.run(["bacalhau"] + args[1:])
+

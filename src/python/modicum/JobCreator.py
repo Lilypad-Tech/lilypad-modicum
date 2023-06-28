@@ -119,7 +119,8 @@ class JobCreator(PlatformClient):
             msg['uri'],
             msg['directory'],
             msg['hash'],
-            msg['arch']
+            msg['arch'],
+            "01234567890" * 10,
             )
 
         self.helper.logInflux(now=datetime.datetime.now(), 

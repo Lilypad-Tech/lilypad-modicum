@@ -70,6 +70,7 @@ contract Modicum {
         address directory;
         uint256 jobHash;
         Architecture arch;
+        string extras;
     }
 
     struct ResourceOffer {

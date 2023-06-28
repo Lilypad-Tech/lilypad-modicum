@@ -130,7 +130,7 @@ class ModicumContract(Contract):
 			"uint256", matchIncentive
 		)
 
-	def postJobOfferPartTwo(self, from_account, getReceipt, ijoid, firstLayerHash, ramLimit, localStorageLimit, uri, directory, jobHash, arch):
+	def postJobOfferPartTwo(self, from_account, getReceipt, ijoid, firstLayerHash, ramLimit, localStorageLimit, uri, directory, jobHash, arch, extras):
 		event = "postJobOfferPartTwo"
 		self.helper.logTxn(self.aix, event, ijoid=ijoid)
 		return self.call_func(from_account, getReceipt, 0, event, 
@@ -141,7 +141,8 @@ class ModicumContract(Contract):
 			"bytes32", uri,
 			"address", directory,
 			"uint256", jobHash,
-			"Architecture", arch
+			"Architecture", arch,
+			"string", extras,
 		)
 
 	def cancelJobOffer(self, from_account, getReceipt, offerId):
