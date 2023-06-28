@@ -11,6 +11,7 @@ import os
 
 from hexbytes import HexBytes
 from web3 import HTTPProvider, Web3
+from web3.middleware import geth_poa_middleware
 import requests
 
 class CustomHTTPProvider(HTTPProvider):
@@ -33,7 +34,13 @@ class EthereumClient:
             else:
                 protocol = "http"
 
-        self.w3 = Web3(CustomHTTPProvider(f'{protocol}://{self.ip}:{self.port}/rpc/v1'))
+        if os.getenv("RPC_URL") is not None:
+            self.w3 = Web3(CustomHTTPProvider(os.getenv("RPC_URL")))
+        else:
+            self.w3 = Web3(CustomHTTPProvider(f'{protocol}://{self.ip}:{self.port}'))
+
+        # Polygon compatibility
+        self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
         print(self.w3.is_connected())
 
         self.addresses = []
