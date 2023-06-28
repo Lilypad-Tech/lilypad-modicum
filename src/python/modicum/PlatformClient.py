@@ -127,7 +127,7 @@ class PlatformClient():
 
     def getEthAccount(self,index):
         response = self.ethclient.accounts()
-        # self.logger.info("ALL ACCOUNTS: %s" %response)
+        self.logger.info("ALL ACCOUNTS: %s, idx=%s" % (response, index))
         if "ERROR" not in response:
           self.account = response[index] # use the first owned address
           self.logger.info("My account: %s" %self.account)
