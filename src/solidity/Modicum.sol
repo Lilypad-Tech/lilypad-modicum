@@ -191,7 +191,7 @@ contract Modicum {
                                 uint256 bandwidthLimit, uint256 instructionMaxPrice, uint256 bandwidthMaxPrice, uint256 completionDeadline, uint256 deposit, uint256 matchIncentive);
 
     event JobOfferPostedPartTwo(uint256 offerId, address addr, uint256 hash, uint256 firstLayerHash, bytes32 uri,
-                                address directory, Architecture arch, uint256 ramLimit, uint256 localStorageLimit);
+                                address directory, Architecture arch, uint256 ramLimit, uint256 localStorageLimit, string extras);
 
     event ResourceOfferPosted(uint256 offerId, address addr, uint256 instructionPrice,
                               uint256 instructionCap, uint256 memoryCap, uint256 localStorageCap,
@@ -521,7 +521,8 @@ contract Modicum {
         bytes32 uri,
         address directory,
         uint256 jobHash,
-        Architecture arch
+        Architecture arch,
+        string extras
     ) public {
 
         // require(jobCreators[msg.sender].trustedMediators.length != 0,
@@ -544,7 +545,8 @@ contract Modicum {
             uri: uri,
             directory: directory,
             jobHash: jobHash,
-            arch: arch
+            arch: arch,
+            extras: extras
         });
 
         jobOffersPartTwo[index] = joPTwo;
@@ -559,7 +561,8 @@ contract Modicum {
             directory,
             arch,
             ramLimit,
-            localStorageLimit
+            localStorageLimit,
+            extras
         );
     }
 
