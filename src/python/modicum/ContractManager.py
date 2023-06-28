@@ -40,7 +40,8 @@ class ContractManager:
 
     def getEthAccount(self,index):
         response = self.ethclient.accounts()
-        self.logger.debug("ethclient accounts: %s" %response)
+        # import pdb; pdb.set_trace()
+        self.logger.debug("ethclient accounts: %s" % response)
         if "ERROR" not in response:
           self.account = response[index] # use the first owned address
           return self.account
@@ -92,19 +93,20 @@ class ContractManager:
     def deploy_contract(self,BYTECODE,TRANSACTION_GAS,verbose=False):
         self.logger.info("Y: Deploying contract...")
 
-        gasEstimate = self.ethclient.command("eth_estimateGas", params=[{}], verbose=verbose)
-        self.logger.info("Estimate of gas requirement to submit contract: %s" %gasEstimate)
+        # gasEstimate = self.ethclient.command("eth_estimateGas", params=[{}], verbose=verbose)
+        # self.logger.info("Estimate of gas requirement to submit contract: %s" %gasEstimate)
 
         # gasEstimate = self.ethclient.command("eth_estimateGas", params=[{'data': BYTECODE, 'from':self.account, 'gas':'0x2C68AF0BB140000'}], verbose=verbose)
 
-        self.logger.info("Estimate of gas requirement to submit contract: %s" %gasEstimate)
+        # self.logger.info("Estimate of gas requirement to submit contract: %s" %gasEstimate)
 
 
-        gasEstimate = self.ethclient.command("eth_estimateGas", params=[{'data': BYTECODE, 'from':self.account, 'gas':TRANSACTION_GAS}], verbose=verbose)
+        # gasEstimate = self.ethclient.command("eth_estimateGas", params=[{'data': BYTECODE, 'from':self.account, 'gas':TRANSACTION_GAS}], verbose=verbose)
 
-        self.logger.info("Estimate of gas requirement to submit contract: %s" %gasEstimate)
+        # self.logger.info("Estimate of gas requirement to submit contract: %s" %gasEstimate)
 
-        txHash = self.ethclient.command("eth_sendTransaction", params=[{'data': BYTECODE, 'from': self.account, 'gas': TRANSACTION_GAS}], verbose=verbose)
+        # txHash = self.ethclient.command("eth_sendTransaction", params=[{'data': BYTECODE, 'from': self.account, 'gas': TRANSACTION_GAS}], verbose=verbose)
+        txHash = self.ethclient.command("eth_sendTransaction", params=[{'data': BYTECODE, 'from': self.account}], verbose=verbose)
 
         receipt = helper.wait4receipt(self.ethclient,txHash,getReceipt=True)
         self.contract_address = receipt['contractAddress']
@@ -197,7 +199,7 @@ class ContractManager:
             print("write json")
             contractjson['hash'] = contractHash 
 
-            contractjson['condtractAddress'] = self.deploy_contract(BYTECODE,TRANSACTION_GAS,verbose) 
+            contractjson['contractAddress'] = self.deploy_contract(BYTECODE,TRANSACTION_GAS,verbose) 
 
             print("\n")  
             print(contractjson)     

@@ -5,18 +5,181 @@ from io import BytesIO
 from time import time, sleep
 from threading import Thread, RLock
 from . import config as cfg
+from web3 import Web3
+from web3.middleware import construct_sign_and_send_raw_middleware
+import os
+
+from hexbytes import HexBytes
+from web3 import HTTPProvider, Web3
+import requests
+
+class CustomHTTPProvider(HTTPProvider):
+    def __init__(self, endpoint_uri, request_kwargs=None):
+        super().__init__(endpoint_uri, request_kwargs)
+        if 'headers' not in self._request_kwargs:
+            self._request_kwargs['headers'] = {}
+        rpcToken = os.getenv("RPC_TOKEN")
+        if rpcToken != None:
+            self._request_kwargs['headers']['Authorization'] = f'Bearer {rpcToken}'
+
+class EthereumClient:
+    def __init__(self, ip, port, protocol=None):
+        self.ip = ip
+        self.port = port
+        if protocol is None:
+            # do some guessing
+            if port == "443":
+                protocol = "https"
+            else:
+                protocol = "http"
+
+        self.w3 = Web3(CustomHTTPProvider(f'{protocol}://{self.ip}:{self.port}/rpc/v1'))
+        print(self.w3.is_connected())
+
+        self.addresses = []
+        for i in range(5):
+            pk = os.environ.get(f'PRIVATE_KEY_{i}')
+            if pk is not None:
+                acct = self.w3.eth.account.from_key(pk)
+                self.addresses.append(acct.address)
+
+                print(f"--> Loaded private key for {acct} from env PRIVATE_KEY_{i}")
+                # Add acct as auto-signer:
+                self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
+                # Transactions from `acct` will then be signed, under the hood, in
+                # the middleware.
+        
+        self._filter = None
+        self.filter_id = None
+        self._i = 0
+        # Generate random string
+        self._random_string = "debug_" + os.urandom(32).hex()
+        # Create random folder
+        self._random_folder = os.path.join(os.getcwd(), self._random_string)
+        os.mkdir(self._random_folder)
+
+    def exit(self):
+        return
+
+    def transaction(self, from_address, data, value, to_address, try_=0):
+        
+        self._i += 1
+        # pickle args into self._random_folder + f"/{self._i}.pkl"
+        print(f"--> transaction: {self._random_folder}/{self._i}.pkl")
+        with open(f"{self._random_folder}/{str(self._i).zfill(6)}.pkl", "wb") as f:
+            import pickle
+            pickle.dump((from_address, data, value, to_address), f)
+
+        print(f"===> Web3EthereumClient transaction(from={from_address}, data={str(data)[:100]}, to={to_address}, try={try_})")
+        if try_ > 5:
+            raise Exception(f"Too many tries calling transaction()")
+        try:
+            return str(self.w3.eth.send_transaction({
+                # "gasPrice": self.w3.eth.gas_price,
+                "from": from_address,
+                "to": to_address,
+                "data": data,
+                "value": value,
+            }).hex())
+        except Exception as e:
+            print(f"exception calling transaction(): {e}, sleeping 5s and retrying, try {try_}...")
+            sleep(5)
+            return self.transaction(from_address, data, value, to_address, try_+1)
+
+    def accounts(self):
+        if os.environ.get("PRIVATE_KEY_0") is not None:
+            print(f"--> addresses = {self.addresses}")
+            return self.addresses
+        return self.w3.eth.accounts
+
+    def keccak256(self, string):
+        r = self.w3.solidity_keccak(['string'], [string])
+        return str(r.hex())
+    
+    def summarize(self, params):
+        """
+        Summarize params for debug printing
+        """
+        try:
+            # Intentionally disregard any exceptions
+            if len(params) == 1 and "data" in params[0]:
+                s = dict(params[0])
+                s["data"] = s["data"][:50]
+                return str(s)
+        except Exception as e:
+            pass
+        return str(params)[:100]
+
+    def command(self, method, params, verbose=False, try_=0):
+
+        # # Normalize strings starting with 0x, HexBytes instances and raw bytes
+        # # all down to raw bytes
+        # if len(params) == 1:
+        #     if isinstance(params[0], bytes):
+        #         params[0] = HexBytes(params[0])
+        #     # if isinstance(params[0], HexBytes):
+        #     #     params[0] = bytes(params[0])
+        #     if isinstance(params[0], str):
+        #         params[0] = HexBytes(params[0])
+
+        self._i += 1
+        # pickle args into self._random_folder + f"/{self._i}.pkl"
+        print(f"--> transaction: {self._random_folder}/{self._i}.pkl")
+        with open(f"{self._random_folder}/{str(self._i).zfill(6)}.pkl", "wb") as f:
+            import pickle
+            pickle.dump(("command", method, params), f)
+
+        if try_ > 5:
+            raise Exception(f"Too many tries calling command()")
+        print(f"===> Web3EthereumClient command({method}, {self.summarize(params)}")
+        try:
+            if method == "eth_estimateGas":
+                tx = params[0]
+                if "data" not in tx:
+                    return 0
+                return self.w3.eth.estimate_gas(tx)
+            if method == "eth_sendTransaction":
+                tx = params[0]
+                # if "gasPrice" not in tx:
+                #     tx["gasPrice"] = self.w3.eth.gas_price
+                return self.w3.eth.send_transaction(tx)
+            if method == "eth_getTransactionReceipt":
+                tx = params[0]
+                print(f"!!! --> get tx receipt --> {tx}")
+                return self.w3.eth.get_transaction_receipt(tx)
+            if method == "eth_blockNumber":
+                return self.w3.eth.block_number
+        except Exception as e:
+            print(f"exception calling command(): {e}, sleeping 5s and retrying, try {try_}...")
+            sleep(5)
+            return self.command(method, params, try_+1)
+        raise Exception(f"Unexpected method {method}")
+
+    def new_filter(self):
+        self._filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
+        self.filter_id = self._filter.filter_id
+        return self.filter_id
+
+    def get_filter_changes(self, filter_id):
+        # XXX filter_id is not used, remove it from all callers and then from here
+        ch = self._filter.get_new_entries()
+        # print(f"--> in get_filter_changes({filter_id}), got {ch}")
+        return ch
+
 
 CHECK_INTERVAL = 1  # check for receipts every second
 PENDING_TIMEOUT = 120  # if a transaction has been pending for more than 120 seconds, submit it again
 CLIENT_TIMEOUT = 600  # if a transaction has been stuck for more than 600 seconds, restart the client
 
 
-class EthereumClient:
+
+class OldEthereumClient:
+# class EthereumClient:
     def __init__(self, ip, port):
         self.logger = logging.getLogger("EthereumClient")
         self.logger.setLevel(logging.INFO)
 
-        # ch = logging.StreamHandler()
+        # ch = logging.StreamHandler()platformListener
         # formatter = logging.Formatter("---%(name)s---: \n%(message)s\n\r")
         # ch.setFormatter(formatter)
         # self.logger.addHandler(ch)
@@ -82,7 +245,7 @@ class EthereumClient:
             }]
 
             self.logger.info("Estimate gas")
-            gasEstimate = self.command("eth_estimateGas", params=params)            
+            gasEstimate = self.command("eth_estimateGas", params=params)
             self.logger.info("Estimate of gas requirement to submit transaction: %s" %gasEstimate)
 
             trans_hash = self.command("eth_sendTransaction", params=params)
@@ -157,7 +320,7 @@ class EthereumClient:
         buffer = BytesIO()
         # start building curl command to process
         c = pycurl.Curl()
-        c.setopt(pycurl.URL, ip_port)
+        c.setopt(pycurl.URL, ip_port+"/rpc/v1")
         c.setopt(pycurl.HTTPHEADER, ['Content-type:application/json'])
         c.setopt(pycurl.WRITEFUNCTION, buffer.write)
         data2 = {"jsonrpc": str(jsonrpc), "method": str(method), "params": params, "id": str(id)}

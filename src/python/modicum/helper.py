@@ -12,6 +12,7 @@ import requests
 
 import influxdb.exceptions
 import json
+from hexbytes import HexBytes
 
 class helper():
     def __init__(self):
@@ -233,6 +234,7 @@ def hashTar(path):
 
 
 def wait4receipt(ethclient,txHash,getReceipt=True):
+    print(f">>> In wait4receipt, waiting for {txHash}, getReceipt={getReceipt}")
     
     if not getReceipt:
         receipt = {}
@@ -241,13 +243,40 @@ def wait4receipt(ethclient,txHash,getReceipt=True):
         print("Did not wait for receipt")
         return receipt
 
-    receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])       
-    while receipt is None or "ERROR" in receipt:
+
+
+    is_error = False
+    try:
+        receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
+        is_error = False
+    except Exception as e:
+        is_error = True
+        print(f"Got error {e}, retrying..")
+
+    while is_error or receipt is None or "ERROR" in receipt:
         
         print("Waiting for tx to be mined... (block number: {})".format(ethclient.command("eth_blockNumber", params=[])))
         sleep(5) 
 
-        receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
+        is_error = False
+        try:
+            receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
+            is_error = False
+        except Exception as e:
+            is_error = True
+            print(f"Got error {e}, retrying..")
+        # receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
+
+
+
+
+    # receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
+    # while receipt is None or "ERROR" in receipt:
+
+    #     print("Waiting for tx to be mined... (block number: {})".format(ethclient.command("eth_blockNumber", params=[])))
+    #     sleep(5)
+
+    #     receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
 
     if receipt['gasUsed'] == cfg.TRANSACTION_GAS:
         print("Transaction may have failed. gasUsed = gasLimit")

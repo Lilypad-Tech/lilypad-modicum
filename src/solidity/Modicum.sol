@@ -1,5 +1,5 @@
 pragma solidity ^0.4.25;
-import "./console.sol";
+// import "./console.sol";
 
 contract Modicum {
 
@@ -326,7 +326,7 @@ contract Modicum {
         Architecture arch,
         uint256 timePerInstruction
     ) public {
-        console.log("-----------------------------> RUNNING: ResourceProviderRegistered CHANGE1");
+        // console.log("-----------------------------> RUNNING: ResourceProviderRegistered CHANGE1");
         address[] memory trustedMediators;
         address[] memory trustedDirectories;
         uint256[] memory supportedFirstLayers;
@@ -337,13 +337,13 @@ contract Modicum {
             timePerInstruction: timePerInstruction,
             trustedDirectories: trustedDirectories
         });
-        console.log("-----------------------------> ABOUT TO EMIT EVENT: ResourceProviderRegistered");
+        // console.log("-----------------------------> ABOUT TO EMIT EVENT: ResourceProviderRegistered");
         emit ResourceProviderRegistered(msg.sender,
             arch,
             timePerInstruction,
             penaltyRate
         );
-        console.log("-----------------------------> EVENT EMITTED: ResourceProviderRegistered");
+        // console.log("-----------------------------> EVENT EMITTED: ResourceProviderRegistered");
     }
 
     function resourceProviderAddTrustedMediator(address mediator) public {

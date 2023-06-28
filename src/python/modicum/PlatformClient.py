@@ -115,7 +115,7 @@ class PlatformClient():
             #     self.DC.getData(msg["host"],msg["sftport"],msg["ijoid"],msg["iroid"],msg["job"],msg["localpath"],msg["sshpath"])
             #     self.cliSocket.send_pyobj("got result")
 
-    def platformConnect(self, manager_ip, geth_ip, geth_port,index):
+    def platformConnect(self, manager_ip, geth_ip, geth_port, index):
         self.managerSocket = zmq.Context().socket(zmq.REQ)
         self.managerSocket.connect(f"tcp://{manager_ip}:10001")
         self.contract_address=self.query_contract_address(index)
@@ -123,7 +123,7 @@ class PlatformClient():
         self.getEthAccount(index)
         self.contract = ModicumContract.ModicumContract(index, self.ethclient, self.contract_address)
         self.platformListenerThread.start()
-        return self.ethclient,self.contract
+        return self.ethclient, self.contract
 
     def getEthAccount(self,index):
         response = self.ethclient.accounts()

@@ -2,7 +2,15 @@ import logging
 import importlib
 from binascii import unhexlify, hexlify
 from .. import helper
+from web3.datastructures import AttributeDict
+from web3 import Web3
+from hexbytes import HexBytes
 
+def maybe_hex(x):
+    if isinstance(x, HexBytes):
+        return x.hex()
+    else:
+        return x
 
 class Contract:
     def __init__(self, client, address, events):
@@ -80,7 +88,7 @@ class Contract:
 
         for array in arrays:
             print(array)
-            if array[0] is not "0":
+            if array[0] != "0":
                 try:
                     string += unhexlify(array).decode('utf-8')
                 except UnicodeDecodeError as e:
@@ -202,15 +210,16 @@ class Contract:
             self.logger.debug("Log: %s" %log)
         for item in log:
             try:
-                if not isinstance(item, dict):
+                if not isinstance(item, dict) and not isinstance(item, AttributeDict):
                     self.logger.info(f"[poll_events] Skipping processing {item} since it is not a dict")
                     continue
                 if self.address == item['address']:
-                    if item['topics'][0] in self.topics:
-                        topic = self.topics[item['topics'][0]]
+                    # XXX figure out how web3-python can do this low level crap for us
+                    if maybe_hex(item['topics'][0]) in self.topics:
+                        topic = self.topics[maybe_hex(item['topics'][0])]
                         event = {'name': topic['name']}
                         params = {}
-                        data = item['data'][2:]
+                        data = maybe_hex(item['data'])[2:]
                         data_pos = 0
                         for (ptype, pname) in topic['params']:
                             if "uint" in ptype:
@@ -222,7 +231,12 @@ class Contract:
                             elif ptype == "int64":
                                 params[pname] = Contract.decode_int(data, data_pos)
                             elif ptype == "address":
-                                params[pname] = Contract.decode_address(data, data_pos)
+                                x = Contract.decode_address(data, data_pos)
+                                if isinstance(item['data'], HexBytes):
+                                    # We are in web3-python mode, need to checksum address our addresses!
+                                    params[pname] = Web3.to_checksum_address(x)
+                                else:
+                                    params[pname] = x
                             elif ptype == "bool":
                                 params[pname] = Contract.decode_bool(data, data_pos)
                             elif ptype == "bytes32":
@@ -236,7 +250,7 @@ class Contract:
                             data_pos += 1
                         
                         event['params'] = params
-                        event['transactionHash'] = item['transactionHash']
+                        event['transactionHash'] = maybe_hex(item['transactionHash'])
                         events.append(event)                
             except TypeError as err:
                 self.logger.info("EXCEPTION: %s" %err)
