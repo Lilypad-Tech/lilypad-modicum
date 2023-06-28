@@ -160,7 +160,7 @@ def runAsSolver(index):
 
 @click.command('stopSolver')
 def stopSolver():
-    eventSender =ctxt.socket(zmq.REQ)
+    eventSender = ctxt.socket(zmq.REQ)
     eventSender.connect("tcp://%s:%s" %('localhost',7654))
     msg = {"request": "stop"}
     eventSender.send_pyobj(msg)
@@ -248,6 +248,10 @@ def startJC(playerpath,index,host,sim):
     exitcode = JC.addMediator(JC.account, mediator)
     while not JC.mediator:
         time.sleep(1)
+
+
+    # TODO: implement a super naive rest api here which SOMEHOW plumbs a Bacalhau job spec all the way through to the RP
+
 
     if sim =="True":  
         # postOffer /home/riaps/projects/MODiCuM/workloads/stress-ng/job stress-ng run 2 False END      
