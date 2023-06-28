@@ -113,14 +113,13 @@ class JobCreator(PlatformClient):
             self.account,
             getReceipt,
             msg['ijoid'],
-            msg['firstLayerHash'],
             msg['ramLimit'],
             msg['localStorageLimit'],
             msg['uri'],
             msg['directory'],
             msg['hash'],
             msg['arch'],
-            "01234567890" * 10,
+            "01234567890",
             )
 
         self.helper.logInflux(now=datetime.datetime.now(), 
