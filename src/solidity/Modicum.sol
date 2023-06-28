@@ -63,7 +63,6 @@ contract Modicum {
 
     struct JobOfferPartTwo {
         address jobCreator;
-        uint256 firstLayerHash;
         uint256 ramLimit;
         uint256 localStorageLimit;
         bytes32 uri;
@@ -515,7 +514,6 @@ contract Modicum {
 
     function postJobOfferPartTwo(
         uint256 ijoid,
-        uint256 firstLayerHash,
         uint256 ramLimit,
         uint256 localStorageLimit,
         bytes32 uri,
@@ -539,7 +537,6 @@ contract Modicum {
 
         JobOfferPartTwo memory joPTwo = JobOfferPartTwo({
             jobCreator: msg.sender,
-            firstLayerHash: firstLayerHash,
             ramLimit: ramLimit,
             localStorageLimit: localStorageLimit,
             uri: uri,

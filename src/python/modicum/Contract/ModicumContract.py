@@ -135,7 +135,6 @@ class ModicumContract(Contract):
 		self.helper.logTxn(self.aix, event, ijoid=ijoid)
 		return self.call_func(from_account, getReceipt, 0, event, 
 			"uint256", ijoid,
-			"uint256", firstLayerHash,
 			"uint256", ramLimit,
 			"uint256", localStorageLimit,
 			"bytes32", uri,
