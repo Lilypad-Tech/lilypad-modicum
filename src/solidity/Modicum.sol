@@ -190,12 +190,12 @@ contract Modicum {
     event JobOfferPostedPartOne(uint256 offerId, uint256 ijoid, address addr, uint256 instructionLimit,
                                 uint256 bandwidthLimit, uint256 instructionMaxPrice, uint256 bandwidthMaxPrice, uint256 completionDeadline, uint256 deposit, uint256 matchIncentive);
 
-    event JobOfferPostedPartTwo(uint256 offerId, address addr, uint256 hash, uint256 firstLayerHash, bytes32 uri,
+    event JobOfferPostedPartTwo(uint256 offerId, address addr, uint256 hash, bytes32 uri,
                                 address directory, Architecture arch, uint256 ramLimit, uint256 localStorageLimit, string extras);
 
     event ResourceOfferPosted(uint256 offerId, address addr, uint256 instructionPrice,
                               uint256 instructionCap, uint256 memoryCap, uint256 localStorageCap,
-                              uint256 bandwidthCap, uint256 bandwidthPrice, uint256 deposit,uint256 iroid);
+                              uint256 bandwidthCap, uint256 bandwidthPrice, uint256 deposit, uint256 iroid);
 
     event JobOfferCanceled(uint256 offerId);
     event ResourceOfferCanceled(uint256 resOfferId);
@@ -556,7 +556,6 @@ contract Modicum {
             index,
             msg.sender,
             jobHash,
-            firstLayerHash,
             uri,
             directory,
             arch,
