@@ -78,7 +78,7 @@ class EthereumClient:
             pickle.dump((from_address, data, value, to_address), f)
 
         print(f"===> Web3EthereumClient transaction(from={from_address}, data={str(data)[:100]}, to={to_address}, try={try_})")
-        if try_ > 5:
+        if try_ > 30:
             raise Exception(f"Too many tries calling transaction()")
         try:
             return str(self.w3.eth.send_transaction({
@@ -89,8 +89,8 @@ class EthereumClient:
                 "value": value,
             }).hex())
         except Exception as e:
-            print(f"exception calling transaction(): {e}, sleeping 5s and retrying, try {try_}...")
-            sleep(5)
+            print(f"exception calling transaction(): {e}, sleeping 1s and retrying, try {try_}...")
+            sleep(1)
             return self.transaction(from_address, data, value, to_address, try_+1)
 
     def accounts(self):
@@ -136,7 +136,7 @@ class EthereumClient:
             import pickle
             pickle.dump(("command", method, params), f)
 
-        if try_ > 5:
+        if try_ > 30:
             raise Exception(f"Too many tries calling command()")
         print(f"===> Web3EthereumClient command({method}, {self.summarize(params)}")
         try:
@@ -157,8 +157,8 @@ class EthereumClient:
             if method == "eth_blockNumber":
                 return self.w3.eth.block_number
         except Exception as e:
-            print(f"exception calling command(): {e}, sleeping 5s and retrying, try {try_}...")
-            sleep(5)
+            print(f"exception calling command(): {e}, sleeping 1s and retrying, try {try_}...")
+            sleep(1)
             return self.command(method, params, try_+1)
         raise Exception(f"Unexpected method {method}")
 
