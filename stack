@@ -1,0 +1,23 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export IMAGE_BASE=${IMAGE_BASE:="bravo-docker"}
+export IMAGE_PYTHON=${IMAGE_PYTHON:="${IMAGE_BASE}-python"}
+export IMAGE_JS=${IMAGE_JS:="${IMAGE_BASE}-js"}
+
+function build-python() {
+  docker build -t $IMAGE_PYTHON src/python
+}
+
+function build-js() {
+  docker build -t $IMAGE_JS src/js
+}
+
+function build() {
+  build-python
+  build-js
+}
+
+eval "$@"

@@ -1,5 +1,5 @@
 pragma solidity ^0.4.25;
-// import "./console.sol";
+import "hardhat/console.sol";
 
 contract Modicum {
 
@@ -687,6 +687,7 @@ contract Modicum {
         uint256 instructionCount,
         uint256 bandwidthUsage
     ) public returns (uint256) {
+        require(jobOfferId >= 0);
         // require (resourceOffers[matches[matchId].resourceOffer].resProvider == msg.sender,
         //     "You are not supposed to publish result for this match.");
 
@@ -722,6 +723,7 @@ contract Modicum {
     }
 
     function rejectResult(uint256 resultId, uint256 jobOfferId) public {
+        require(jobOfferId >= 0);
         // require(jobOffersPartOne[matches[results[resultId].matchId].jobOffer].jobCreator == msg.sender,
         //     "You cannot reject a result which is not yours.");
         // require(results[resultId].reacted == Reaction.None,
@@ -740,6 +742,7 @@ contract Modicum {
     }
 
     function acceptResult(uint256 resultId, uint256 jobOfferId) public returns (uint256) {
+        require(jobOfferId >= 0);
         //require(jobOffers[matches[results[resultId].matchId].jobOffer].jobCreator == msg.sender ||
         //    (resourceOffers[matches[results[resultId].matchId].resourceOffer].resProvider == msg.sender && results[resultId].timestamp + reactionDeadline > now),
         //    "You cannot reject a result which is not yours or deadline has not been missed yet.");
@@ -773,6 +776,7 @@ contract Modicum {
         Verdict verdict,
         Party faultyParty
     ) public returns (Party) {
+        require(jobOfferId >= 0);
         // require(matches[matchId].mediator == msg.sender, "You are not this job's mediator");
         // require(mediationRequested[matchId] == true, "JC did not request mediation for this match.");
         // require(mediated[matchId] == false, "You have already mediated this match.");
@@ -871,6 +875,7 @@ contract Modicum {
     }
 
     function timeout(uint256 matchId, uint256 jobOfferId) public {
+        require(jobOfferId >= 0);
         // require(jobOffersPartOne[matches[matchId].jobOffer].jobCreator == msg.sender,
         //     "You cannot make a timeout on this offer");
         // require(jobOffersPartOne[matches[matchId].jobOffer].completionDeadline < now,
