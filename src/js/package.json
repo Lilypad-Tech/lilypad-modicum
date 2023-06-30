@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "scripts": {},
   "devDependencies": {
-    "@openzeppelin/contracts": "^4.0.0",
     "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "@openzeppelin/contracts": "^4.0.0",
     "hardhat": "^2.12.6",
     "web3": "^1.10.0"
+  },
+  "dependencies": {
+    "hardhat-deploy": "^0.11.34"
   }
 }

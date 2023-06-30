@@ -6,6 +6,10 @@ export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export IMAGE_BASE=${IMAGE_BASE:="bravo-docker"}
 export IMAGE_PYTHON=${IMAGE_PYTHON:="${IMAGE_BASE}-python"}
 export IMAGE_JS=${IMAGE_JS:="${IMAGE_BASE}-js"}
+export IMAGE_INFLUX=${IMAGE_INFLUX:="influxdb:1.8.10"}
+export HARDHAT_IP=${HARDHAT_IP:="127.0.0.1"}
+export HARDHAT_PORT=${HARDHAT_PORT:="10000"}
+export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=""}
 
 function build-python() {
   docker build -t $IMAGE_PYTHON src/python
@@ -18,6 +22,38 @@ function build-js() {
 function build() {
   build-python
   build-js
+}
+
+function hardhat() {
+  docker run -ti --rm \
+    --name hardhat \
+    --net host \
+    -v $DIR/src/js/deployments:/app/deployments \
+    $IMAGE_JS npx hardhat node --hostname 0.0.0.0 --port $HARDHAT_PORT
+}
+
+function address() {
+  cat src/js/deployments/localhost/Modicum.json | jq -r .address
+}
+
+function influx() {
+  docker run -d \
+    --name influx \
+    --net host \
+    $IMAGE_INFLUX
+  sleep 1
+  echo -n 'create database collectd;' | docker exec -i influx influx
+}
+
+function python-container() {
+  docker run -ti --rm \
+    --net host \
+    -e CONTRACT_ADDRESS=$(address) \
+    $IMAGE_PYTHON "$@" 
+}
+
+function modicum() {
+  python-container modicum "$@" 
 }
 
 eval "$@"

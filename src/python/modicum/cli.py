@@ -75,46 +75,6 @@ def runEC():
     response = ethclient.accounts()
     print(response)
 
-
-################################################################################
-# CONTRACT MANAGER CLI
-################################################################################
-@click.command('runAsCM')
-@click.option('--index', default=0, show_default=True)
-@click.option('--sim',is_flag=True)
-def runAsCM(index,sim):
-    from modicum import ContractManager as CM
-    thisCM = CM.ContractManager(os.environ.get('CMIP'),index)
-
-    GETH_IP = os.environ.get('GETHIP')
-    GETH_PORT = os.environ.get('GETHPORT')
-
-    _CONTRACT_ = os.environ.get('CONTRACTPATH')
-    click.echo(_CONTRACT_)
-
-    thisCM.connect(GETH_IP,GETH_PORT,index)
-
-    print(sim,type(sim),)
-
-    if sim:
-        print("run simulation")
-        thisCM.testrun()
-    else:       
-        with open(_CONTRACT_) as f:
-            BYTECODE = "0x"+f.read()
-            thisCM.run(BYTECODE,cfg.CONTRACT_GAS,verbose=False)
-
-@click.command('stopCM')
-def stopCM():
-    cmeventSender = ctxt.socket(zmq.REQ)
-
-    _CMIP_ = os.environ.get('CMIP')
-    cmeventSender.connect("tcp://%s:%s" %(_CMIP_,"10001"))
-    msg = {"request": "stop"}
-    cmeventSender.send_pyobj(msg)
-    response = cmeventSender.recv_pyobj()
-    click.echo(response)
-
 ################################################################################
 # DIRECTORY CLI
 ################################################################################
@@ -148,7 +108,7 @@ def stopDir():
 @click.option('--index', default=0, show_default=True)
 def runAsSolver(index):
     from modicum import Solver as Solver
-    _CMIP_ = os.environ.get('CMIP')
+    _CONTRACT_ADDRESS_ = os.environ.get('CONTRACT_ADDRESS')
     _GETHIP_ = os.environ.get('GETHIP')
     _GETHPORT_ = os.environ.get('GETHPORT')
 
@@ -156,7 +116,7 @@ def runAsSolver(index):
 
     S.startCLIListener(7654)
 
-    S.platformConnect(_CMIP_, _GETHIP_,_GETHPORT_,index)
+    S.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_,_GETHPORT_,index)
 
 @click.command('stopSolver')
 def stopSolver():
@@ -175,7 +135,7 @@ def stopSolver():
 @click.option('--sim')
 def runAsMediator(index,sim):
     from modicum import Mediator as Mediator
-    _CMIP_ = os.environ.get('CMIP')
+    _CONTRACT_ADDRESS_ = os.environ.get('CONTRACT_ADDRESS')
     _GETHIP_ = os.environ.get('GETHIP')
     _GETHPORT_ = os.environ.get('GETHPORT')
 
@@ -183,7 +143,7 @@ def runAsMediator(index,sim):
 
     M.startCLIListener(8765)
 
-    M.platformConnect(_CMIP_, _GETHIP_, _GETHPORT_, index)
+    M.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, index)
 
     # exitcode = M.test(1)
 
@@ -220,15 +180,15 @@ def startJC(playerpath,index,host,sim):
     from modicum import JobCreator
 
     if host:
-        _CMIP_ = host
+        _CONTRACT_ADDRESS_ = host
         _GETHIP_ = host
         _GETHPORT_ = os.environ.get('GETHPORT')
     else:
-        _CMIP_ = os.environ.get('CMIP')
+        _CONTRACT_ADDRESS_ = os.environ.get('CONTRACT_ADDRESS')
         _GETHIP_ = os.environ.get('GETHIP')
         _GETHPORT_ = os.environ.get('GETHPORT')
 
-    click.echo(_CMIP_)
+    click.echo(_CONTRACT_ADDRESS_)
     click.echo(_GETHIP_)
     click.echo(_GETHPORT_)
 
@@ -237,7 +197,7 @@ def startJC(playerpath,index,host,sim):
 
     JC = JobCreator.JobCreator(index,sim=="True")
     JC.startCLIListener(cliport=7777)
-    JC.platformConnect(_CMIP_, _GETHIP_, _GETHPORT_,index)
+    JC.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_,index)
     click.echo("Job Creator Daemon is registering... ")
     JC.register(JC.account)
     while not JC.registered:
@@ -308,17 +268,17 @@ def startJC(playerpath,index,host,sim):
 @click.option('--index', default=0, show_default=True)
 def startJCDaemon(index):
     from modicum import JobCreator
-    _CMIP_ = os.environ.get('CMIP')
+    _CONTRACT_ADDRESS_ = os.environ.get('CONTRACT_ADDRESS')
     _GETHIP_ = os.environ.get('GETHIP')
     _GETHPORT_ = os.environ.get('GETHPORT')
 
-    click.echo(_CMIP_)
+    click.echo(_CONTRACT_ADDRESS_)
     click.echo(_GETHIP_)
     click.echo(_GETHPORT_)
 
     JC = JobCreator.JobCreator()
     JC.startCLIListener(cliport=7777)
-    JC.platformConnect(_CMIP_, _GETHIP_, _GETHPORT_,index)
+    JC.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_,index)
     print("Job Creator Daemon is registering... ")
     exitcode = JC.register(JC.account)
     print("exitcode: %s" %exitcode)
@@ -554,15 +514,15 @@ def startRP(path,index,host,sim):
     from modicum import ResourceProvider
 
     if host:
-        _CMIP_ = host
+        _CONTRACT_ADDRESS_ = host
         _GETHIP_ = host
         _GETHPORT_ = os.environ.get('GETHPORT')
     else:
-        _CMIP_ = os.environ.get('CMIP')
+        _CONTRACT_ADDRESS_ = os.environ.get('CONTRACT_ADDRESS')
         _GETHIP_ = os.environ.get('GETHIP')
         _GETHPORT_ = os.environ.get('GETHPORT')
 
-    click.echo(_CMIP_)
+    click.echo(_CONTRACT_ADDRESS_)
     click.echo(_GETHIP_)
     click.echo(_GETHPORT_)
 
@@ -570,7 +530,7 @@ def startRP(path,index,host,sim):
     RP.startCLIListener(cliport=9999)
     print("CLI is listening...")
 
-    RP.platformConnect(_CMIP_, _GETHIP_, _GETHPORT_,index)
+    RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_,index)
     print("Resource Provider Daemon is registering... ")
     exitcode = RP.register(RP.account,'armv7', 1)# ratio to 1Gz processor # XXX should this be arm64???
     print("exitcode:  %s" %exitcode)
@@ -636,11 +596,11 @@ def startRP(path,index,host,sim):
 @click.option('--index', default=0, show_default=True)
 def startRPDaemon(index):
     from modicum import ResourceProvider
-    _CMIP_ = os.environ.get('CMIP')
+    _CONTRACT_ADDRESS_ = os.environ.get('CONTRACT_ADDRESS')
     _GETHIP_ = os.environ.get('GETHIP')
     _GETHPORT_ = os.environ.get('GETHPORT')
 
-    click.echo(_CMIP_)
+    click.echo(_CONTRACT_ADDRESS_)
     click.echo(_GETHIP_)
     click.echo(_GETHPORT_)
 
@@ -648,7 +608,7 @@ def startRPDaemon(index):
     RP.startCLIListener(cliport=9999)
     print("CLI is listening...")
 
-    RP.platformConnect(_CMIP_, _GETHIP_, _GETHPORT_,index)
+    RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_,index)
     print("Resource Provider Daemon is registering... ")
     exitcode = RP.register(RP.account,'armv7', 1)# ratio to 1Gz processor
     print("exitcode:  %s" %exitcode)
@@ -760,8 +720,6 @@ def main(ctx):
 main.add_command(foo_command)
 main.add_command(build)
 main.add_command(run)
-main.add_command(runAsCM)
-main.add_command(stopCM)
 main.add_command(runAsDir)
 main.add_command(stopDir)
 main.add_command(runAsSolver)

@@ -5,3 +5,6 @@ node_modules
 src/python/.env
 src/python/contract.json
 src/python/debug_*
+src/js/artifacts
+src/js/cache
+src/js/deployments
