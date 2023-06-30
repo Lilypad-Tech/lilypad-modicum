@@ -48,6 +48,7 @@ function influx() {
 function python-container() {
   docker run -ti --rm \
     --net host \
+    -v /var/run/docker.sock:/var/run/docker.sock \
     -e CONTRACT_ADDRESS=$(address) \
     $IMAGE_PYTHON "$@" 
 }
