@@ -323,6 +323,7 @@ class JobCreator(PlatformClient):
                 elif name == "Matched":
                     joid = params['jobOfferId']
                     if joid in self.job_offers:
+                        import pdb; pdb.set_trace()
                         self.logger.info("%s matchId= %s" % (name, params['matchId']))
                         self.logger.info("%s offerId= %s" % (name, params['jobOfferId']))
                         self.logger.info("Job offer %s = %s" %(name, self.job_offers[params['jobOfferId']].ijoid))

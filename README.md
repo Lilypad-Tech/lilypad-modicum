@@ -2,16 +2,45 @@
 
 Tested on Ubuntu 22.04 & 23.04
 
-Have docker, ngrok and node.js >= v16 installed:
+Have docker, ngrok, python, ssh, bacalhau and node.js >= v16 installed:
+
+ngrok:
+
 ```
-snap install ngrok
-sudo apt install docker.io curl python3-pip python3-virtualenv python3-dev libssl-dev
+curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install -y ngrok
 ```
+
+docker:
+
+```
+sudo apt install -y docker.io
+```
+
+python:
+
+```
+sudo apt install -y curl python3-pip python3-virtualenv python3-dev libssl-dev libcurl4-openssl-dev
+```
+
+node:
+
 ```
 cd ~
 curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
 sudo bash /tmp/nodesource_setup.sh
-sudo apt install nodejs
+sudo apt install -y nodejs
+```
+
+ssh:
+
+```
+sudo apt install -y ssh
+```
+
+bacalhau:
+
+```
+curl -sL https://get.bacalhau.org/install.sh | bash
 ```
 
 ### setup block explorer
@@ -32,6 +61,7 @@ Then in another terminal we run the hardhat node:
 git clone git@github.com:bacalhau-project/MODICUM.git
 cd MODICUM
 ```
+
 ```
 cd src/js
 npm install --force
@@ -39,6 +69,8 @@ export ETHERNAL_EMAIL=kaiyadavenport@gmail.com
 export ETHERNAL_PASSWORD=XXX
 npx hardhat node --port 10000
 ```
+
+NOTE: you might be able to grab the `ETHERNAL_PASSWORD` value from the `src/python/.env` file (read below)
 
 Visit https://app.tryethernal.com/blocks in the browser.
 
@@ -131,12 +163,15 @@ docker run -it --rm\
 
 Ignore the warnings.
 
+### update paths
+
+You need to change all instances of `/home/luke/pb` in the `0_experiments/demo` directory to your own username and path to parent directory of MODICUM.
+
 ### run services
 
 Now we start the various processes (each in it's own pane):
 
 * IMPORTANT: don't forget to activate the virtualenv in each pane! `. venv/bin/activate` inside `src/python`
-* IMPORTANT: don't forget to `source .env` in each pane!
 * IMPORTANT: run these in this exact order!
 
 ```bash

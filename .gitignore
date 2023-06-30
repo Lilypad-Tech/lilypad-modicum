@@ -4,3 +4,4 @@
 node_modules
 src/python/.env
 src/python/contract.json
+src/python/debug_*
