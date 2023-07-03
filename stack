@@ -45,7 +45,9 @@ function influx() {
   echo -n 'create database collectd;' | docker exec -i influx influx
 }
 
-function lilypad-container() {
+# this means run ipfs, bacalhau and the modicum resource provider
+# in the same container - it is what nodes will run on their hardware
+function lilypad-node() {
   docker run --name lilypad-node -ti --rm \
     --net host \
     -v /tmp:/tmp \
@@ -54,8 +56,14 @@ function lilypad-container() {
     $IMAGE_LILYPAD "$@" 
 }
 
-function modicum() {
-  lilypad-container modicum "$@" 
+# run a single modicum process without ipfs or bacalhau
+function lilypad-modicum-process() {
+  docker run --name lilypad-$1 -ti --rm \
+    --net host \
+    --entrypoint "/usr/local/bin/modicum" \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -e CONTRACT_ADDRESS=$(address) \
+    $IMAGE_LILYPAD "$@" 
 }
 
 eval "$@"

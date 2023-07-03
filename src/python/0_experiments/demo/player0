@@ -1,0 +1,2 @@
+publish /app/workloads/stress-ng/job stress-ng run 1 NA END
+postOffer /app/workloads/stress-ng/job stress-ng run 1 False END

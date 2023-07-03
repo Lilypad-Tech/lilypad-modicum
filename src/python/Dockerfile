@@ -18,5 +18,5 @@ RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-a
 ADD . /app
 ADD ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN pip3 install -e .
-ENV BACALHAU_HOST=localhost
+ENV BACALHAU_API_HOST=localhost
 ENTRYPOINT ["/usr/local/bin/supervisord"]
