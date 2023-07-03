@@ -7,7 +7,8 @@ RUN apt-get update && \
       python3-virtualenv \
       python3-dev \
       libssl-dev \
-      libcurl4-openssl-dev
+      libcurl4-openssl-dev \
+      jq
 RUN curl -sL https://get.bacalhau.org/install.sh | bash
 RUN pip3 install supervisor
 RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-amd64.tar.gz && \
@@ -15,5 +16,7 @@ RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-a
     cd kubo && \
     bash install.sh
 ADD . /app
+ADD ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN pip3 install -e .
 ENV BACALHAU_HOST=localhost
+ENTRYPOINT ["/usr/local/bin/supervisord"]

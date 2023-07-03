@@ -4,15 +4,15 @@ IFS=$'\n\t'
 
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export IMAGE_BASE=${IMAGE_BASE:="bravo-docker"}
-export IMAGE_MODICUM=${IMAGE_MODICUM:="${IMAGE_BASE}-python"}
+export IMAGE_LILYPAD=${IMAGE_LILYPAD:="${IMAGE_BASE}-python"}
 export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-js"}
 export IMAGE_INFLUX=${IMAGE_INFLUX:="influxdb:1.8.10"}
 export HARDHAT_IP=${HARDHAT_IP:="127.0.0.1"}
 export HARDHAT_PORT=${HARDHAT_PORT:="10000"}
 export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=""}
 
-function build-modicum() {
-  docker build -t $IMAGE_MODICUM src/python
+function build-lilypad() {
+  docker build -t $IMAGE_LILYPAD src/python
 }
 
 function build-hardhat() {
@@ -20,7 +20,7 @@ function build-hardhat() {
 }
 
 function build() {
-  build-modicum
+  build-lilypad
   build-hardhat
 }
 
@@ -45,16 +45,17 @@ function influx() {
   echo -n 'create database collectd;' | docker exec -i influx influx
 }
 
-function modicum-container() {
-  docker run -ti --rm \
+function lilypad-container() {
+  docker run --name lilypad-node -ti --rm \
     --net host \
+    -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e CONTRACT_ADDRESS=$(address) \
-    $IMAGE_MODICUM "$@" 
+    $IMAGE_LILYPAD "$@" 
 }
 
 function modicum() {
-  python-container modicum "$@" 
+  lilypad-container modicum "$@" 
 }
 
 eval "$@"
