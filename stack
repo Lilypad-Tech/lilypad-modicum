@@ -4,24 +4,24 @@ IFS=$'\n\t'
 
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export IMAGE_BASE=${IMAGE_BASE:="bravo-docker"}
-export IMAGE_PYTHON=${IMAGE_PYTHON:="${IMAGE_BASE}-python"}
-export IMAGE_JS=${IMAGE_JS:="${IMAGE_BASE}-js"}
+export IMAGE_MODICUM=${IMAGE_MODICUM:="${IMAGE_BASE}-python"}
+export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-js"}
 export IMAGE_INFLUX=${IMAGE_INFLUX:="influxdb:1.8.10"}
 export HARDHAT_IP=${HARDHAT_IP:="127.0.0.1"}
 export HARDHAT_PORT=${HARDHAT_PORT:="10000"}
 export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=""}
 
-function build-python() {
-  docker build -t $IMAGE_PYTHON src/python
+function build-modicum() {
+  docker build -t $IMAGE_MODICUM src/python
 }
 
-function build-js() {
-  docker build -t $IMAGE_JS src/js
+function build-hardhat() {
+  docker build -t $IMAGE_HARDHAT src/js
 }
 
 function build() {
-  build-python
-  build-js
+  build-modicum
+  build-hardhat
 }
 
 function hardhat() {
@@ -29,7 +29,7 @@ function hardhat() {
     --name hardhat \
     --net host \
     -v $DIR/src/js/deployments:/app/deployments \
-    $IMAGE_JS npx hardhat node --hostname 0.0.0.0 --port $HARDHAT_PORT
+    $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port $HARDHAT_PORT
 }
 
 function address() {
@@ -45,12 +45,12 @@ function influx() {
   echo -n 'create database collectd;' | docker exec -i influx influx
 }
 
-function python-container() {
+function modicum-container() {
   docker run -ti --rm \
     --net host \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e CONTRACT_ADDRESS=$(address) \
-    $IMAGE_PYTHON "$@" 
+    $IMAGE_MODICUM "$@" 
 }
 
 function modicum() {
