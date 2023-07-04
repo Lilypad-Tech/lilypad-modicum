@@ -8,3 +8,4 @@ src/python/debug_*
 src/js/artifacts
 src/js/cache
 src/js/deployments
+__pycache__
