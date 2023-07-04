@@ -18,69 +18,17 @@ class helper():
     def __init__(self):
         pass
 
-
     def logTxn(self, aix, event, joid=-1, ijoid=-1):
         pass
 
     def logEvent(self, aix, event, ethclient, txHash, joid=-1, ijoid=-1, value=0):
-        try:
-            receipt = ethclient.command("eth_getTransactionReceipt", params=[txHash])
-           
-            influxID = self.eventDict[event]
-            self.logInflux(now=datetime.datetime.now(), 
-                           tag_dict={"aix":aix, "event":event, "influxID":influxID, "joid":joid, "ijoid":ijoid, "gasUsed": receipt['gasUsed']},
-                           seriesname="events", 
-                           value=value)
-        except KeyError as e:
-            self.logger.warning("Did you forget to add %s as an event?" %event)
-            self.logger.warning(e)
+        pass
 
     def logInflux(self, now, tag_dict, seriesname, value):
-        records = []
-
-        floatvalue = None
-
-        if value is not None:
-            try:
-                floatvalue = float(value)
-            except:
-                floatvalue = None
-
-        if floatvalue is not None:
-            # ---------------------------------------------------------------------------------
-
-            tag_dict["sim"] = 36
-            tag_dict["exec"] = True
-            record = {"time": now,
-                      "measurement": seriesname,
-                      "tags": tag_dict,
-                      "fields": {"value": floatvalue},
-                      }
-            records.append(record)
-        self.logger.info("writing: %s" % str(records))
-        try:
-            res = self.client.write_points(records)  # , retention_policy=self.retention_policy)
-        except requests.exceptions.ConnectionError as e:
-            self.logger.warning("CONNECTION ERROR %s" % e)
-            self.logger.warning("try again")
-        except influxdb.exceptions.InfluxDBServerError as err:
-            '''Added this because this error came up once. 
-            I think it was because I was dumping cpu_value from the collectd database, but if it comes up again I want more info'''
-            self.logger.warning(err)
-            a = json.loads(err.args[0].decode('utf8'))['error']
-            self.logger.warning(type(a))
-            self.logger.warning(a)
-            if "timeout" in a:
-                self.logger.info("Try to write points again")
-                res = logInflux(now, tag_dict, seriesname, value)
+        pass
 
     def getPendingTx(self, ethclient):
-        txns = ethclient.command("eth_pendingTransactions")  
-        self.logInflux(now=datetime.datetime.now(), 
-                       tag_dict={},
-                       seriesname="txnsPending", 
-                       value=len(txns))
-
+        pass
 
 
 def getSize(start_path):
