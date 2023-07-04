@@ -16,112 +16,11 @@ from hexbytes import HexBytes
 
 class helper():
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
-        influx_ip = os.environ.get('INFLUX')
-        print(influx_ip)
-        db = "collectd"
-        self.client = influxdb.InfluxDBClient(influx_ip, 8086, db)
-        self.client.switch_database("collectd")
-
-        self.eventDict = {
-            'test'                                     : 0,
-            'check'                                    : 0,
-            'Debug'                                    : 0,
-            'DebugArch'                                : 0,
-            'DebugUint'                                : 0,
-            'DebugString'                              : 0,
-            
-            'setPenaltyRate'                           : 1,
-            'penaltyRateSet'                           : 1,
-
-            'setReactionDeadline'                      : 2,
-            'reactionDeadlineSet'                      : 2,
-
-            'acceptResult'                             : 3,
-            'MatchClosed'                              : 3,
-            
-            
-
-            'rejectResult'                             : 21,           
-            'JobAssignedForMediation'                  : 21,
-                        
-            
-            'postResult'                               : 4,
-            'ResultPosted'                             : 4,
-
-            'postMatch'                                : 5,
-            'Matched'                                  : 5,
-
-            'postJobOfferPartOne'                      : 6,
-            'JobOfferPostedPartOne'                    : 6,
-
-            'postJobOfferPartTwo'                      : 7,
-            'JobOfferPostedPartTwo'                    : 7,
-
-            'postResOffer'                             : 8,
-            'ResourceOfferPosted'                      : 8,
-
-            'cancelJobOffer'                           : 9,
-            'JobOfferCanceled'                         : 9,
-
-            'cancelResOffer'                           : 10,
-            'ResourceOfferCanceled'                    : 10,
-
-            
-            'registerMediator'                         : 11,
-            'MediatorRegistered'                       : 11,
-
-            'mediatorAddSupportedFirstLayer'           : 12,
-            'MediatorAddedSupportedFirstLayer'         : 12,
-
-            'GotMediator'                              : 99, # Not used
-            'close'                                    : 100,
-            'ResultReaction'                           : 101, 
-            
-            'registerResourceProvider'                 : 13,
-            'ResourceProviderRegistered'               : 13,
-
-            'resourceProviderAddTrustedMediator'       : 14,
-            'ResourceProviderAddedTrustedMediator'     : 14,
-
-            'registerJobCreator'                       : 15,
-            'JobCreatorRegistered'                     : 15,
-
-            'jobCreatorAddTrustedMediator'             : 16,
-            'JobCreatorAddedTrustedMediator'           : 16,
-
-            'mediatorAddTrustedDirectory'              : 17,
-            'MediatorAddedTrustedDirectory'            : 17,
-
-            'resourceProviderAddTrustedDirectory'      : 18,
-            'ResourceProviderAddedTrustedDirectory'    : 18,
-
-            'resourceProviderAddSupportedFirstLayer'   : 19,
-            'ResourceProviderAddedSupportedFirstLayer' : 19,
-
-            'postMediationResult'                      : 20,
-            'MediationResultPosted'                    : 20,
-
-            
-
-            'timeout'                                  : 22,
-            'punish'                                   : 23,
-            'EtherTransferred'                         : 24,
-            'receiveValues'                            : 25
-        }
-
+        pass
 
 
     def logTxn(self, aix, event, joid=-1, ijoid=-1):
-        try:
-            influxID = self.eventDict[event]
-            self.logInflux(now=datetime.datetime.now(), 
-                           tag_dict={"aix":aix, "event":event, "influxID":influxID, "joid":joid, "ijoid":ijoid},
-                           seriesname="events", 
-                           value=1)
-        except KeyError as e:
-            self.logger.warning("Did you forget to add %s as an event?" %event)
-            self.logger.warning(e)
+        pass
 
     def logEvent(self, aix, event, ethclient, txHash, joid=-1, ijoid=-1, value=0):
         try:
