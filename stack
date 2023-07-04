@@ -56,6 +56,15 @@ function lilypad-node() {
     $IMAGE_LILYPAD "$@" 
 }
 
+function lilypad-logs() {
+  docker exec -ti lilypad-node supervisorctl tail -f bacalhau-serve stdout &
+  docker exec -ti lilypad-node supervisorctl tail -f bacalhau-serve stderr &
+  docker exec -ti lilypad-node supervisorctl tail -f ipfs stdout &
+  docker exec -ti lilypad-node supervisorctl tail -f ipfs stderr &
+  docker exec -ti lilypad-node supervisorctl tail -f modicum-resource-provider stdout &
+  docker exec -ti lilypad-node supervisorctl tail -f modicum-resource-provider stderr
+}
+
 # run a single modicum process without ipfs or bacalhau
 function lilypad-modicum-process() {
   docker run --name lilypad-$1 -ti --rm \

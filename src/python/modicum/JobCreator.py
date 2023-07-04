@@ -491,7 +491,7 @@ class JobCreator(PlatformClient):
           "bandwidthLimit":100,
           "instructionMaxPrice":1,
           "bandwidthMaxPrice":1,
-          "completionDeadline":100,
+          "completionDeadline":999999999999,
           "matchIncentive":1,
           "firstLayerHash":113999295367852254009166015506792353752063354354430764033672538180027823374984,
           "ramLimit":100,
@@ -571,7 +571,7 @@ class JobCreator(PlatformClient):
             "arf",
             Web3.to_checksum_address(msg['directory']),
             Web3.to_int(msg['hash']),
-            Web3.to_int(0),
+            Web3.to_int(1),
             jsonData,
         ).transact()
 
