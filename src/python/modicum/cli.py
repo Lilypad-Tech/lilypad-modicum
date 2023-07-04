@@ -209,10 +209,6 @@ def startJC(playerpath,index,host,sim):
     while not JC.mediator:
         time.sleep(1)
 
-
-    # TODO: implement a super naive rest api here which SOMEHOW plumbs a Bacalhau job spec all the way through to the RP
-
-
     if sim =="True":  
         # postOffer /home/riaps/projects/MODiCuM/workloads/stress-ng/job stress-ng run 2 False END      
         path = "/home/riaps/projects/MODiCuM/workloads/stress-ng/job"
