@@ -26,8 +26,8 @@ class JobCreator():
 class JobOffer():
     #JobOfferPosted(uint offerId, address jobCreator, uint size, Architecture arch, uint instructionLimit, uint ramLimit, uint localStorageLimit, uint bandwidthLimit, uint instructionMaxPrice, uint bandwidthMaxPrice, uint dockerBandwidthMaxPrice, uint256 completionDeadline);
   def __init__(self,offerId=0,ijoid=0,jobCreator="",instructionLimit=0,bandwidthLimit=0,instructionMaxPrice=0,
-                    bandwidthMaxPrice=0,completionDeadline=0,deposit=0,matchIncentive=0, hash=0,firstLayerHash=0,
-                    uri="",directory="",arch="",ramLimit=0,localStorageLimit=0):
+                    bandwidthMaxPrice=0,completionDeadline=0,deposit=0,matchIncentive=0, hash=0,
+                    uri="",directory="",arch="",ramLimit=0,localStorageLimit=0, extras=""):
 
     self.offerId = offerId 
     self.ijoid = ijoid 
@@ -41,12 +41,12 @@ class JobOffer():
     self.matchIncentive = matchIncentive 
 
     self.hash = hash
-    self.firstLayerHash = firstLayerHash
     self.uri = uri
     self.directory = directory
     self.arch = arch
     self.ramLimit = ramLimit
     self.localStorageLimit = localStorageLimit
+    self.extras = extras
 
     
 

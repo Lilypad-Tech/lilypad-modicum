@@ -368,24 +368,24 @@ def storeJobOffer(event,job_offers):
             print("WHAT IS URI?: %s" %params['uri'])
             offer = Pstruct.JobOffer(
                 hash              = params['hash'],
-                firstLayerHash    = params['firstLayerHash'],
                 uri               = params['uri'],
                 directory         = params['directory'],
                 arch              = params['arch'],
                 ramLimit          = params['ramLimit'],
-                localStorageLimit = params['localStorageLimit'])
+                localStorageLimit = params['localStorageLimit'],
+                extras            = params['extras'])
 
             job_offers[params['offerId']] = offer
 
         else:
             offerId                               = params['offerId']
             job_offers[offerId].hash              = params['hash']
-            job_offers[offerId].firstLayerHash    = params['firstLayerHash']
             job_offers[offerId].uri               = params['uri']
             job_offers[offerId].directory         = params['directory']
             job_offers[offerId].arch              = params['arch']
             job_offers[offerId].ramLimit          = params['ramLimit']
             job_offers[offerId].localStorageLimit = params['localStorageLimit']
+            job_offers[offerId].extras            = params['extras']
 
     return job_offers
 
