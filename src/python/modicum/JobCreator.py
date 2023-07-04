@@ -4,6 +4,7 @@ import subprocess
 import time
 import traceback
 import random
+import json
 
 import dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -93,7 +94,6 @@ class JobCreator(PlatformClient):
 
         self.logger.info("reject this job result %s? : %s" %(msg['ijoid'], msg['reject']))
 
-
         txHash = self.contract.postJobOfferPartOne(
             self.account,
             getReceipt,
@@ -130,8 +130,6 @@ class JobCreator(PlatformClient):
 
         # self.cliSocket.send_pyobj("job offer part one?: %s" %txHash)
         return 0
-
-
 
     def getResult(self,user, tag,name,joid, ijoid, resultID,RID, hash):
         _DIRIP_ = os.environ.get('DIRIP')
@@ -482,3 +480,74 @@ class JobCreator(PlatformClient):
                         self.logger.info("M: %s Resource = %s" %(name, iroid))
 
             self.wait()
+
+    def postLilypadOffer(self, template, params):
+
+        self.jobsPending += 1
+
+        msg = {
+          "ijoid":1,
+          "cpuTime":800000,
+          "bandwidthLimit":100,
+          "instructionMaxPrice":1,
+          "bandwidthMaxPrice":1,
+          "completionDeadline":-1,
+          "matchIncentive":1,
+          "firstLayerHash":113999295367852254009166015506792353752063354354430764033672538180027823374984,
+          "ramLimit":100,
+          "localStorageLimit":1000,
+          "uri":-1,
+          "directory":"0xc590dd7eed9f093d88d2f3c894b769c746bc8c9b",
+          "hash":66153838227408534191608590763201001504128600065912625980963590518282769258064,
+          "arch":"armv7"
+        }
+
+        self.logger.info("cpuTime: %s Type: %s" %(msg["cpuTime"],type(msg["cpuTime"])))
+        self.logger.info("instructionMaxPrice: %s Type: %s" %(msg["instructionMaxPrice"],type(msg["instructionMaxPrice"])))
+        self.logger.info("bandwidthLimit: %s Type: %s" %(msg["bandwidthLimit"],type(msg["bandwidthLimit"])))
+        self.logger.info("bandwidthMaxPrice: %s Type: %s" %(msg["bandwidthMaxPrice"],type(msg["bandwidthMaxPrice"])))
+        self.logger.info("self.penaltyRate: %s Type: %s" %(self.penaltyRate,type(self.penaltyRate)))
+        self.logger.info("arch: %s Type: %s" %(msg['arch'],type(msg['arch'])))
+
+        deposit = (msg["cpuTime"]*msg["instructionMaxPrice"] +
+                   msg["bandwidthLimit"]*msg["bandwidthMaxPrice"])*self.penaltyRate
+        self.logger.info("Deposit: %s" %deposit)
+
+        self.logger.info("D: postJobOfferPartOne = %s" %msg["ijoid"])
+
+        txHash = self.contract.postJobOfferPartOne(
+            self.account,
+            True,
+            deposit,
+            msg['ijoid'],
+            msg['cpuTime'],
+            msg['bandwidthLimit'],
+            msg['instructionMaxPrice'],
+            msg['bandwidthMaxPrice'],
+            msg['completionDeadline'],
+            msg['matchIncentive']
+        )
+
+        self.logger.info("D: postJobOfferPartTwo = %s" %msg["ijoid"])
+
+        # make a JSON string from a single object that has template and params
+        # as attributes
+        jsonData = json.dumps({
+          "template": template,
+          "params": params
+        })
+
+        txHash = self.contract.postJobOfferPartTwo(
+            self.account,
+            True,
+            msg['ijoid'],
+            msg['ramLimit'],
+            msg['localStorageLimit'],
+            msg['uri'],
+            msg['directory'],
+            msg['hash'],
+            msg['arch'],
+            jsonData,
+        )
+
+        return 0

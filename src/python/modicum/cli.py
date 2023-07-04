@@ -263,47 +263,6 @@ def startJC(playerpath,index,host,sim):
                 else:
                     pass
 
-
-# TODO: new runLilypadCLI subcommand for 'lilypad' cli to exec into.
-# borrow the bacalhau-wrapping code from below to extract the job spec yaml...
-"""
-#!/usr/bin/env python3
-
-import sys
-import subprocess
-import tempfile
-import requests
-
-
-if __name__ == "__main__":
-    args = sys.argv
-    if args[1:3] == ["docker", "run"]:
-        y = subprocess.check_output(["bacalhau"] + args[1:3] + ["--dry-run"] + args[3:])
-        # workaround https://github.com/bacalhau-project/bacalhau/issues/2607
-        if y.startswith(b"Using default tag: latest. Please specify a tag/digest for better reproducibility."):
-            y = b"\n".join(y.split(b"\n")[1:])
-        # print(f"Whee docker run interception, got yaml:\n\n{y.decode('utf-8')}")
-        # pass yaml as stdin
-
-        # gzip and base64 encode y
-        y = subprocess.check_output(["gzip", "-c"], input=y)
-        y = subprocess.check_output(["base64", "-w0"], input=y)
-        y = y.decode("utf-8")
-
-        # post to lilypad
-        r = requests.post("http://localhost:31338", data=y)
-        r.raise_for_status()
-        print(r.text)
-
-        print(f"y = {y}")
-
-        # subprocess.run(["bacalhau", "create"], input=y)
-    else:
-        # spawn subprocess with same arguments as this script
-        subprocess.run(["bacalhau"] + args[1:])
-"""
-
-
 @click.command('startJCDaemon')
 @click.option('--index', default=0, show_default=True)
 def startJCDaemon(index):
@@ -757,6 +716,36 @@ def main(ctx):
     else:
         click.echo('I am about to invoke %s' % ctx.invoked_subcommand)
 
+
+# TODO: new runLilypadCLI subcommand for 'lilypad' cli to exec into.
+@click.command('runLilypadCLI')
+@click.option('--template', default="stable-diffusion", show_default=True)
+@click.option('--params', default="", show_default=True)
+def runLilypadCLI(template, params):
+    print("template: %s - params: %s" % (template, params))
+    from modicum import JobCreator
+    index = 0
+    JC = JobCreator.JobCreator(index, False)
+
+    _CONTRACT_ADDRESS_ = os.environ.get('CONTRACT_ADDRESS')
+    _GETHIP_ = os.environ.get('GETHIP')
+    _GETHPORT_ = os.environ.get('GETHPORT')
+    JC.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, index)
+    
+    JC.register(JC.account)
+    while not JC.registered:
+        time.sleep(1)
+    click.echo("JC has registered")
+
+    exitcode = JC.addMediator(JC.account, mediator)
+    while not JC.mediator:
+        time.sleep(1)
+    click.echo("Mediator has registered")
+    
+    exitcode = JC.postLilypadOffer(template, params)
+
+    sys.exit(0)
+
 main.add_command(foo_command)
 main.add_command(build)
 main.add_command(run)
@@ -782,5 +771,6 @@ main.add_command(loadImage)
 main.add_command(getResult)
 main.add_command(runEC)
 main.add_command(getSize)
+main.add_command(runLilypadCLI)
 
 # main.add_command(profile)

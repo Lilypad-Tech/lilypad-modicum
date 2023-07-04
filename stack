@@ -62,6 +62,7 @@ function lilypad-modicum-process() {
     --net host \
     --entrypoint "/usr/local/bin/modicum" \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    -v $DIR/src/python:/app \
     -e CONTRACT_ADDRESS=$(address) \
     $IMAGE_LILYPAD "$@" 
 }
