@@ -1335,12 +1335,12 @@ class EthereumClient:
 
     def transaction(self, from_address, data, value, to_address, try_=0):
         
-        self._i += 1
-        # pickle args into self._random_folder + f"/{self._i}.pkl"
-        print(f"--> transaction: {self._random_folder}/{self._i}.pkl")
-        with open(f"{self._random_folder}/{str(self._i).zfill(6)}.pkl", "wb") as f:
-            import pickle
-            pickle.dump((from_address, data, value, to_address), f)
+        # self._i += 1
+        # # pickle args into self._random_folder + f"/{self._i}.pkl"
+        # print(f"--> transaction: {self._random_folder}/{self._i}.pkl")
+        # with open(f"{self._random_folder}/{str(self._i).zfill(6)}.pkl", "wb") as f:
+        #     import pickle
+        #     pickle.dump((from_address, data, value, to_address), f)
 
         print(f"===> Web3EthereumClient transaction(from={from_address}, data={str(data)[:100]}, to={to_address}, try={try_})")
         if try_ > 30:
@@ -1396,10 +1396,10 @@ class EthereumClient:
 
         self._i += 1
         # pickle args into self._random_folder + f"/{self._i}.pkl"
-        print(f"--> transaction: {self._random_folder}/{self._i}.pkl")
-        with open(f"{self._random_folder}/{str(self._i).zfill(6)}.pkl", "wb") as f:
-            import pickle
-            pickle.dump(("command", method, params), f)
+        # print(f"--> transaction: {self._random_folder}/{self._i}.pkl")
+        # with open(f"{self._random_folder}/{str(self._i).zfill(6)}.pkl", "wb") as f:
+        #     import pickle
+        #     pickle.dump(("command", method, params), f)
 
         if try_ > 30:
             raise Exception(f"Too many tries calling command()")
