@@ -65,7 +65,7 @@ contract Modicum {
         address jobCreator;
         uint256 ramLimit;
         uint256 localStorageLimit;
-        bytes32 uri;
+        string uri;
         address directory;
         uint256 jobHash;
         Architecture arch;
@@ -114,7 +114,7 @@ contract Modicum {
 
     struct JobResult {
         ResultStatus status;
-        bytes32 uri;
+        string uri;
 
         uint256 matchId;
 
@@ -129,7 +129,7 @@ contract Modicum {
 
     struct MediatorResult {
         ResultStatus status;
-        bytes32 uri;
+        string uri;
 
         uint256 matchId;
 
@@ -177,19 +177,19 @@ contract Modicum {
     event Debug(uint64 value);
     event DebugArch(Architecture arch);
     event DebugUint(uint256 value);
-    event DebugString(bytes32 str);
+    event DebugString(string str);
     event penaltyRateSet(uint256 penaltyRate);
     event reactionDeadlineSet(uint256 reactionDeadline);
 
     event ResultReaction(address addr, uint256 resultId, uint256 matchId, uint256 ResultReaction);
-    event ResultPosted(address addr, uint256 resultId, uint256 matchId, ResultStatus status, bytes32 uri,
+    event ResultPosted(address addr, uint256 resultId, uint256 matchId, ResultStatus status, string uri,
                        uint256 hash, uint256 instructionCount, uint256 bandwidthUsage);
     event Matched(address addr, uint256 matchId, uint256 jobOfferId, uint256 resourceOfferId, address mediator); //the same as job assigned.
 
     event JobOfferPostedPartOne(uint256 offerId, uint256 ijoid, address addr, uint256 instructionLimit,
                                 uint256 bandwidthLimit, uint256 instructionMaxPrice, uint256 bandwidthMaxPrice, uint256 completionDeadline, uint256 deposit, uint256 matchIncentive);
 
-    event JobOfferPostedPartTwo(uint256 offerId, address addr, uint256 hash, bytes32 uri,
+    event JobOfferPostedPartTwo(uint256 offerId, address addr, uint256 hash, string uri,
                                 address directory, Architecture arch, uint256 ramLimit, uint256 localStorageLimit, string extras);
 
     event ResourceOfferPosted(uint256 offerId, address addr, uint256 instructionPrice,
@@ -214,7 +214,7 @@ contract Modicum {
     event ResourceProviderAddedSupportedFirstLayer(address addr, uint256 firstLayer);
 
     event MediationResultPosted(uint256 matchId, address addr, uint256 result, Party faultyParty, Verdict verdict, ResultStatus status,
-                                bytes32 uri, uint256 hash, uint256 instructionCount, uint256 mediationCost);
+                                string uri, uint256 hash, uint256 instructionCount, uint256 mediationCost);
 
     event MatchClosed(uint256 matchId, uint256 cost);
 
@@ -516,7 +516,7 @@ contract Modicum {
         uint256 ijoid,
         uint256 ramLimit,
         uint256 localStorageLimit,
-        bytes32 uri,
+        string uri,
         address directory,
         uint256 jobHash,
         Architecture arch,
@@ -682,7 +682,7 @@ contract Modicum {
         uint256 matchId,
         uint256 jobOfferId,
         ResultStatus status,
-        bytes32 uri,
+        string uri,
         uint256 hash,
         uint256 instructionCount,
         uint256 bandwidthUsage
@@ -766,7 +766,7 @@ contract Modicum {
         uint256 matchId,
         uint256 jobOfferId,
         ResultStatus status,
-        bytes32 uri,
+        string uri,
 
         uint256 hash,
 

@@ -13,6 +13,7 @@ from . import DockerWrapper
 from . import PlatformStructs as Pstruct
 from .PlatformClient import PlatformClient
 from . import helper
+from web3 import Web3
 
 import datetime
 
@@ -286,7 +287,7 @@ class JobCreator(PlatformClient):
         self.active = True
         while self.active:
             events = self.contract.poll_events()
-            self.logger.info(f"poll contract events, got {events}")
+            # self.logger.info(f"poll contract events, got {events}")
             for event in events:
                 params = event['params']
                 name = event['name']
@@ -321,7 +322,6 @@ class JobCreator(PlatformClient):
                 elif name == "Matched":
                     joid = params['jobOfferId']
                     if joid in self.job_offers:
-                        import pdb; pdb.set_trace()
                         self.logger.info("%s matchId= %s" % (name, params['matchId']))
                         self.logger.info("%s offerId= %s" % (name, params['jobOfferId']))
                         self.logger.info("Job offer %s = %s" %(name, self.job_offers[params['jobOfferId']].ijoid))
@@ -491,12 +491,12 @@ class JobCreator(PlatformClient):
           "bandwidthLimit":100,
           "instructionMaxPrice":1,
           "bandwidthMaxPrice":1,
-          "completionDeadline":-1,
+          "completionDeadline":100,
           "matchIncentive":1,
           "firstLayerHash":113999295367852254009166015506792353752063354354430764033672538180027823374984,
           "ramLimit":100,
           "localStorageLimit":1000,
-          "uri":-1,
+          "uri":1,
           "directory":"0xc590dd7eed9f093d88d2f3c894b769c746bc8c9b",
           "hash":66153838227408534191608590763201001504128600065912625980963590518282769258064,
           "arch":"armv7"
@@ -513,12 +513,7 @@ class JobCreator(PlatformClient):
                    msg["bandwidthLimit"]*msg["bandwidthMaxPrice"])*self.penaltyRate
         self.logger.info("Deposit: %s" %deposit)
 
-        self.logger.info("D: postJobOfferPartOne = %s" %msg["ijoid"])
-
-        txHash = self.contract.postJobOfferPartOne(
-            self.account,
-            True,
-            deposit,
+        txHash = self.ethclient.contract.functions.postJobOfferPartOne(
             msg['ijoid'],
             msg['cpuTime'],
             msg['bandwidthLimit'],
@@ -526,9 +521,24 @@ class JobCreator(PlatformClient):
             msg['bandwidthMaxPrice'],
             msg['completionDeadline'],
             msg['matchIncentive']
-        )
+        ).transact()
 
-        self.logger.info("D: postJobOfferPartTwo = %s" %msg["ijoid"])
+        self.logger.info("D: postJobOfferPartOne = %s" % (txHash,))
+
+        # txHash = self.contract.postJobOfferPartOne(
+        #     self.account,
+        #     True,
+        #     deposit,
+        #     msg['ijoid'],
+        #     msg['cpuTime'],
+        #     msg['bandwidthLimit'],
+        #     msg['instructionMaxPrice'],
+        #     msg['bandwidthMaxPrice'],
+        #     msg['completionDeadline'],
+        #     msg['matchIncentive']
+        # )
+
+        
 
         # make a JSON string from a single object that has template and params
         # as attributes
@@ -537,17 +547,44 @@ class JobCreator(PlatformClient):
           "params": params
         })
 
-        txHash = self.contract.postJobOfferPartTwo(
-            self.account,
-            True,
-            msg['ijoid'],
-            msg['ramLimit'],
-            msg['localStorageLimit'],
-            msg['uri'],
-            msg['directory'],
-            msg['hash'],
-            msg['arch'],
+        # int,int,int,int,str,int,str,str = what python saw
+        # uint256,uint256,uint256,bytes32,address,uint256,uint8,string = what it saw in the contract
+        #  `int,int,int,int,str,int,str,str`
+        # ['postJobOfferPartTwo(,,,,,,,)'
+        # uint256,uint256,uint256,bytes32,address,uint256,uint8,string
+        """
+        ,,,,,,,
+        (Pdb) pp args
+        (1,uint256
+        100,uint256
+        1000,uint256
+        b'arf',bytes32
+        '0xc590dd7eed9f093d88d2f3c894b769c746bc8c9b',address
+        66153838227408534191608590763201001504128600065912625980963590518282769258064,uint256
+        0,uint8
+        '{"template": "stable-diffusion", "params": ""}')string
+        """
+        txHash = self.ethclient.contract.functions.postJobOfferPartTwo(
+            Web3.to_int(msg['ijoid']),
+            Web3.to_int(msg['ramLimit']),
+            Web3.to_int(msg['localStorageLimit']),
+            "arf",
+            Web3.to_checksum_address(msg['directory']),
+            Web3.to_int(msg['hash']),
+            Web3.to_int(0),
             jsonData,
-        )
+        ).transact()
+
+#         (1,
+#  100,
+#  1000,
+#  1,
+#  '0xc590dd7eed9f093d88d2f3c894b769c746bc8c9b',
+#  66153838227408534191608590763201001504128600065912625980963590518282769258064,
+#  'armv7',
+#  '{"template": "stable-diffusion", "params": ""}')
+
+
+        self.logger.info("D: postJobOfferPartTwo = %s" % (txHash,))
 
         return 0

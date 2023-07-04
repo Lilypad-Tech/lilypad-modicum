@@ -356,7 +356,7 @@ class Mediator(PlatformClient):
         self.active = True
         while self.active:
             events = self.contract.poll_events()
-            self.logger.info(f"poll contract events, got {events}")
+            # self.logger.info(f"poll contract events, got {events}")
             for event in events:
                 params = event['params']
                 name = event['name']
