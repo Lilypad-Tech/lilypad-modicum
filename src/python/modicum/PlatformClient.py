@@ -12,7 +12,6 @@ from .DirectoryClient import DirectoryClient
 from . import DockerWrapper
 from .EthereumClient import EthereumClient
 
-import influxdb
 import requests
 from . import helper
 
@@ -40,8 +39,8 @@ class PlatformClient():
         influx_ip = os.environ.get('INFLUX')
         print(influx_ip)
         db = "collectd_db"
-        self.client = influxdb.InfluxDBClient(influx_ip, 8086, db)
-        self.client.switch_database("collectd")
+        # self.client = influxdb.InfluxDBClient(influx_ip, 8086, db)
+        # self.client.switch_database("collectd")
 
         self.helper = helper.helper()
 
@@ -65,11 +64,11 @@ class PlatformClient():
                       }
             records.append(record)
         self.logger.info("writing: %s" % str(records))
-        try:
-            res = self.client.write_points(records)  # , retention_policy=self.retention_policy)
-        except requests.exceptions.ConnectionError as e:
-            self.logger.warning("CONNECTION ERROR %s" % e)
-            self.logger.warning("try again")
+        # try:
+        #     res = self.client.write_points(records)  # , retention_policy=self.retention_policy)
+        # except requests.exceptions.ConnectionError as e:
+        #     self.logger.warning("CONNECTION ERROR %s" % e)
+        #     self.logger.warning("try again")
 
 
 

@@ -8,3 +8,4 @@ web3==6.4.0
 PyYAML==6.0
 pyzmq==25.1.0
 pycurl==7.45.2
+influxdb==5.3.1
