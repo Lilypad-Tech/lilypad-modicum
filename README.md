@@ -8,7 +8,6 @@ In first pane:
 
 ```bash
 ./stack build
-./stack influx
 ./stack hardhat
 ```
 
@@ -21,10 +20,6 @@ The command `./stack modicum` will run the modicum python process in a Docker co
 ```
 
 ```bash
-./stack lilypad-modicum-process runAsDir
-```
-
-```bash
 ./stack lilypad-modicum-process runAsMediator
 ```
 
@@ -32,9 +27,15 @@ The command `./stack modicum` will run the modicum python process in a Docker co
 ./stack lilypad-node
 ```
 
+To watch the logs from the node (which is multiple processes running inside one docker container):
 ```bash
-./stack lilypad-modicum-process startJC --playerpath /app/0_experiments/demo/ --index 0
+./stack lilypad-logs
 ```
+
+```bash
+./stack lilypad-modicum-process runLilypadCLI --template stable-diffusion --params "hello"
+```
+
 
 ## old
 

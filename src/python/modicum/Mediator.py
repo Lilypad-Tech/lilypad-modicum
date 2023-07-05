@@ -73,7 +73,7 @@ class Mediator(PlatformClient):
         input_exists=False
         image_exits=False
         resultHash = "0000000000000000000000000000000000000000000000000000000000000000"
-        tag,name = uri.split('_')
+        # tag,name = uri.split('_')
         urix = uri+"_"+str(ijoid)
 
         # RUN BACALHAU JOB AND GET THE ID
@@ -94,28 +94,25 @@ class Mediator(PlatformClient):
 
         print(a)
 
+        # if self.sim:
+        #     self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
+        #     return 0 
 
+        # self.logger.info("L: Requesting Permission to get job = %s" %ijoid)
 
-        if self.sim:
-            self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-            return 0 
+        # self.user = msg['user']
+        # self.groups = msg['groups']
 
-        self.logger.info("L: Requesting Permission to get job = %s" %ijoid)
-        msg = self.DC.getPermission(_DIRIP_, _DIRPORT_, self.account, tag, _KEY_)
+        # self.logger.info("L: permission granted? : %s = %s" %(msg['exitcode']==0, ijoid))
 
-        self.user = msg['user']
-        self.groups = msg['groups']
+        # if msg['exitcode'] != 0 :
+        #     self.logger.info("Done.. but permission denied")
+        #     statusJob=9
+        #     endStatus="DirectoryUnavailable"
+        #     self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
+        #     return endStatus
 
-        self.logger.info("L: permission granted? : %s = %s" %(msg['exitcode']==0, ijoid))
-
-        if msg['exitcode'] != 0 :
-            self.logger.info("Done.. but permission denied")
-            statusJob=9
-            endStatus="DirectoryUnavailable"
-            self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-            return endStatus
-
-        remote_user = self.DC.getUsername(_DIRIP_, _DIRPORT_, JID)
+        # remote_user = self.DC.getUsername(_DIRIP_, _DIRPORT_, JID)
         
         # self.logger.info("Check job size")
         # result = self.DC.getSize(_DIRIP_, _SSHPORT_, self.user, remote_user, tag, _SSHKEY_)
@@ -163,23 +160,8 @@ class Mediator(PlatformClient):
         #     self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
         #     return endStatus
 
-        data = "*"
-
-        self.logger.info([_DIRIP_,_SSHPORT_,self.user, JID, tag,_WORKPATH_ ,_SSHKEY_])
-        localPath = "%s/%s/" %(_WORKPATH_, tag)
-        # if os.path.isfile("%s/%s.tar" %(localPath,tag)):
-        #     self.logger.info("image exists, skip downloading it.")
-        #     localPath = "%s/input" %localPath
-        #     data = "input.tar"
-        os.makedirs(localPath, exist_ok=True) #HACK
-        # self.logger.info("localPath: %s" %localPath)
-        # self.logger.info("data: %s" %data)
-        self.logger.info("K: get job = %s" %ijoid)
-        self.DC.getData(host=_DIRIP_,sshport=_SSHPORT_,user=self.user,remote_user=remote_user,tag=tag,name=name,ijoid=ijoid,localPath=localPath,sshpath=_SSHKEY_)
-        self.logger.info("K: got job = %s" %ijoid)
-
-        try:
-            if execute and statusJob==0:
+        # try:
+        #     if execute and statusJob==0:
                 # images = self.dockerClient.images.list(name=tag)
 
                 # if not images:
@@ -198,87 +180,87 @@ class Mediator(PlatformClient):
                 #     return endStatus
 
 
-                jobname = "%s_%s" %(tag, matchID)
+                # jobname = "%s_%s" %(tag, matchID)
                 
-                xdictPath = localPath+name+str(ijoid)+"/"+name+".json"
-                self.logger.info("xdictPath: %s" %xdictPath)
-                with open(xdictPath) as f:
-                    xdict = json.load(f)
+                # xdictPath = localPath+name+str(ijoid)+"/"+name+".json"
+                # self.logger.info("xdictPath: %s" %xdictPath)
+                # with open(xdictPath) as f:
+                #     xdict = json.load(f)
 
-                xdict["command"] = "echo hello"
-                xdict["mounts"] = {}
+                # xdict["command"] = "echo hello"
+                # xdict["mounts"] = {}
 
-                self.logger.info(f"==== XDICT {xdict}")
+                # self.logger.info(f"==== XDICT {xdict}")
 
-                self.logger.info("Starting Docker for job = %s" %ijoid)
-                container = DockerWrapper.runContainer(self.dockerClient, "ubuntu:latest", jobname, xdict)
+                # self.logger.info("Starting Docker for job = %s" %ijoid)
+                # container = DockerWrapper.runContainer(self.dockerClient, "ubuntu:latest", jobname, xdict)
                 
-                # container.reload()
-                lid = container.attrs["Id"]
-                self.logger.info("container ID for job %s: %s" %(lid, ijoid))
+                # # container.reload()
+                # lid = container.attrs["Id"]
+                # self.logger.info("container ID for job %s: %s" %(lid, ijoid))
 
-                self.logger.info("G: running job = %s" %ijoid)
-                cpu_old = -1
-                stopping = False
-                cmd = "cat /sys/fs/cgroup/cpuacct/docker/%s/cpuacct.stat | grep -oP '(?<=user ).*'" %lid
+                # self.logger.info("G: running job = %s" %ijoid)
+                # cpu_old = -1
+                # stopping = False
+                # cmd = "cat /sys/fs/cgroup/cpuacct/docker/%s/cpuacct.stat | grep -oP '(?<=user ).*'" %lid
 
-                try:
-                    self.logger.info("status: %s" %container.status)
-                    while container.status != "running":
-                        time.sleep(1)
-                        container.reload()
-                        self.logger.info(container.status)
+                # try:
+                #     self.logger.info("status: %s" %container.status)
+                #     while container.status != "running":
+                #         time.sleep(1)
+                #         container.reload()
+                #         self.logger.info(container.status)
 
-                    while container.status == "running":
-                        try:
-                            completedprocess = subprocess.getoutput(cmd) #HACK the internet says something else should be used
-                            cpuTime = int(completedprocess) * 10
-                            if cpuTime > JO.instructionLimit:
-                                statusJob = 6
-                                endStatus = "InstructionsExceeded"
-                                self.logger.info("Job exceeded alloted cpu time %s>%s" %(cpuTime,JO.instructionLimit))
-                                self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-                                return endStatus
+                #     while container.status == "running":
+                #         try:
+                #             completedprocess = subprocess.getoutput(cmd) #HACK the internet says something else should be used
+                #             cpuTime = int(completedprocess) * 10
+                #             if cpuTime > JO.instructionLimit:
+                #                 statusJob = 6
+                #                 endStatus = "InstructionsExceeded"
+                #                 self.logger.info("Job exceeded alloted cpu time %s>%s" %(cpuTime,JO.instructionLimit))
+                #                 self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
+                #                 return endStatus
 
-                        except ValueError as err:
-                            self.logger.info("Process is done... probably")
-                            self.logger.info("error is : %s" %err)
-                            self.logger.info("error type is : %s" %type(err))
-                            self.logger.info("G: %s to run job = %s" %(cpuTime, ijoid))
-                            self.logger.info("Stopping Docker for job = %s" %ijoid)
-                            stopping = True
-                            # if lid in err:
-                            #     self.logger.info("Process is done")
+                #         except ValueError as err:
+                #             self.logger.info("Process is done... probably")
+                #             self.logger.info("error is : %s" %err)
+                #             self.logger.info("error type is : %s" %type(err))
+                #             self.logger.info("G: %s to run job = %s" %(cpuTime, ijoid))
+                #             self.logger.info("Stopping Docker for job = %s" %ijoid)
+                #             stopping = True
+                #             # if lid in err:
+                #             #     self.logger.info("Process is done")
 
-                        startReload = time.time()
-                        container.reload()
-                        reloadDuration = time.time() - startReload
-                        self.logger.info("reload took: %s" %reloadDuration)
-                        self.logger.info("Container is : %s" %container.status)
-                        self.logger.info("duration: %s ms" %cpuTime)
+                #         startReload = time.time()
+                #         container.reload()
+                #         reloadDuration = time.time() - startReload
+                #         self.logger.info("reload took: %s" %reloadDuration)
+                #         self.logger.info("Container is : %s" %container.status)
+                #         self.logger.info("duration: %s ms" %cpuTime)
 
-                        if cpu_old == cpuTime or container.status != "running":
-                            if not stopping:
-                                self.logger.info("G: %s to run job = %s" %(cpuTime, ijoid))
-                                self.logger.info("Stopping Docker for job = %s" %ijoid)
-                                stopping = True
-                        else:
-                            cpu_old = cpuTime
-                            time.sleep(1)
-                except docker.errors.DockerException as err:
-                    self.logger.info("Process was too fast to monitor")
-                    self.logger.info("error is : %s" %err)
-                    self.logger.info("error type is : %s" %type(err))
+                #         if cpu_old == cpuTime or container.status != "running":
+                #             if not stopping:
+                #                 self.logger.info("G: %s to run job = %s" %(cpuTime, ijoid))
+                #                 self.logger.info("Stopping Docker for job = %s" %ijoid)
+                #                 stopping = True
+                #         else:
+                #             cpu_old = cpuTime
+                #             time.sleep(1)
+                # except docker.errors.DockerException as err:
+                #     self.logger.info("Process was too fast to monitor")
+                #     self.logger.info("error is : %s" %err)
+                #     self.logger.info("error type is : %s" %type(err))
 
 
-                self.logger.info("Docker stopped for job = %s" %ijoid)
+                # self.logger.info("Docker stopped for job = %s" %ijoid)
 
 
                 
-                self.logger.info("Hash result for job = %s" %ijoid)
+                # self.logger.info("Hash result for job = %s" %ijoid)
                 
-                output_filename = "%s/output.tar" %(localPath) #_WORKPATH_/tag/output.tar
-                self.logger.info("output_filename = %s" %output_filename)
+                # output_filename = "%s/output.tar" %(localPath) #_WORKPATH_/tag/output.tar
+                # self.logger.info("output_filename = %s" %output_filename)
                
                 # output = next(iter(xdict['mounts']))
                 # self.logger.info("output directory = %s" %output)
@@ -290,30 +272,30 @@ class Mediator(PlatformClient):
                 #     os.makedirs(output, exist_ok=True) #HACK
                 #     helper.tar(output_filename,output)
 
-                fp = open(output_filename, "w")
-                fp.write("APPLES")
-                fp.close()
+                # fp = open(output_filename, "w")
+                # fp.write("APPLES")
+                # fp.close()
 
-                resultHash = helper.hashTar(output_filename)
-                self.logger.info("outputTarHash = %s" %resultHash)
+                # resultHash = helper.hashTar(output_filename)
+                # self.logger.info("outputTarHash = %s" %resultHash)
 
-                self.logger.info("J: DC publishData = %s" %ijoid)
+                # self.logger.info("J: DC publishData = %s" %ijoid)
 
-                # TODO: define output
+                # # TODO: define output
 
-                self.DC.publishResult(host=_DIRIP_,port=_SSHPORT_,user=self.user,localpath=output,tag=tag,name=name,ijoid=ijoid,sshpath=_SSHKEY_)
-                self.logger.info("J: DC dataPublished = %s" %ijoid)
+                # self.DC.publishResult(host=_DIRIP_,port=_SSHPORT_,user=self.user,localpath=output,tag=tag,name=name,ijoid=ijoid,sshpath=_SSHKEY_)
+                # self.logger.info("J: DC dataPublished = %s" %ijoid)
 
-                if self.account:
-                    self.logger.info([matchID, endStatus, urix, resultHash, cpuTime, 0])
-                    self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
+                # if self.account:
+                #     self.logger.info([matchID, endStatus, urix, resultHash, cpuTime, 0])
+                #     self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
 
-                self.logger.info("Done")
-                return endStatus
-        except :
-            self.logger.info(traceback.format_exc())
-            statusJob=8
-            endStatus="ExceptionOccured"
+        #         self.logger.info("Done")
+        #         return endStatus
+        # except :
+        #     self.logger.info(traceback.format_exc())
+        #     statusJob=8
+        #     endStatus="ExceptionOccured"
 
         if statusJob!=0:
             if self.account:
