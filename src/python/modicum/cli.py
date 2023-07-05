@@ -2,14 +2,9 @@ import click
 import os
 import sys
 import time
-import influxdb
 import zmq
-import tarfile
-import hashlib
 import logging
 import json
-import math
-from . import LoggerWriter
 
 # logFormatter = logging.Formatter('%(levelname)s - %(threadName)s - %(asctime)s - %(name)s - %(message)s')
 logFormatter = logging.Formatter('%(asctime)s;%(name)s;%(message)s')

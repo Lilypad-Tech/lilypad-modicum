@@ -2,7 +2,6 @@
 #DIRECTORY_ADDRESS = 'tcp://127.0.0.1:10001'
 import sys
 import os
-import fabric.api as fabi
 
 # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 

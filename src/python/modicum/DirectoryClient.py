@@ -1,5 +1,4 @@
 import logging
-import fabric.api as fabi
 import zmq
 import subprocess
 import pwd

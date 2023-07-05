@@ -5,6 +5,7 @@ import subprocess
 import docker.errors
 from . import DockerWrapper
 from .PlatformClient import PlatformClient
+from .Modules import get_bacalhau_jobspec
 from . import PlatformStructs as Pstruct
 from . import helper
 import dotenv
@@ -12,6 +13,8 @@ import time
 import traceback
 import json
 import datetime
+import tempfile
+import yaml
 
 
 
@@ -59,6 +62,12 @@ class Mediator(PlatformClient):
         uri = JO.uri
         extras = JO.extras
 
+        extrasData = json.loads(extras)
+        bacalhauJobSpec = get_bacalhau_jobspec(
+            extras["template_name"],
+            extras["params"]
+        )
+
         _DIRIP_ = os.environ.get('DIRIP')
         _DIRPORT_ = os.environ.get('DIRPORT')
         _KEY_ = os.environ.get('pubkey')
@@ -74,26 +83,50 @@ class Mediator(PlatformClient):
         # tag,name = uri.split('_')
         urix = uri+"_"+str(ijoid)
 
+        # write bacalhauJobSpec to yaml file in temporary directory
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            tmpfile = tmpdirname + "/job.yaml"
+            with open(tmpfile, 'w') as f:
+                yaml.dump(bacalhauJobSpec, f)
+                f.close()
 
-        # TODO: unpack extras and template stuff
+                # RUN BACALHAU JOB AND GET THE ID
+                result = subprocess.run(['bacalhau', 'create', '--id-only', tmpfile], text=True, capture_output=True)
+                jobID = result.stdout
 
-        # RUN BACALHAU JOB AND GET THE ID
-        result = subprocess.run(['bacalhau', 'docker', 'run', '--wait', '--id-only', 'ubuntu', 'echo', 'hello'], text=True, capture_output=True)
-        jobID = result.stdout
+                print(f"""
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
 
-        a = f"""
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        
-        https://dashboard.bacalhau.org/jobs/{jobID}
+                {yaml.dumps(bacalhauJobSpec)}
 
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        """
+                https://dashboard.bacalhau.org/jobs/{jobID}
 
-        print(a)
+                Get stdout, status:
+                docker exec -ti lilypad-node bacalhau describe ${jobID}
+
+                Download results CID from IPFS:
+                docker exec -ti lilypad-node bacalhau get ${jobID}
+
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                """)
+
+                describe = subprocess.run(['bacalhau', 'describe', jobID], text=True, capture_output=True)
+                print(f"""
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+
+                {describe}
+
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                """)
+
 
         if statusJob != 0:
             if self.account:

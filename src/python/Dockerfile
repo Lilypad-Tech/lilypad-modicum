@@ -15,6 +15,8 @@ RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-a
     tar -xzf kubo.tar.gz && \
     cd kubo && \
     bash install.sh
+ADD ./modicum/requirements.txt /tmp
+RUN pip3 install -r /tmp/requirements.txt
 ADD . /app
 ADD ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN pip3 install -e .
