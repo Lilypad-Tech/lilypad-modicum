@@ -3,7 +3,6 @@ import pwd
 import grp
 from threading import Thread
 import logging
-import fabric as fabi
 import zmq
 
 from . import DockerWrapper as DW
