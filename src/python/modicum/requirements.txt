@@ -6,3 +6,5 @@ python-dotenv==1.0.0
 tqdm==4.65.0
 web3==6.4.0
 PyYAML==6.0
+pyzmq==25.1.0
+pycurl==7.45.2
