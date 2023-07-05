@@ -9,6 +9,8 @@
     "web3": "^1.10.0"
   },
   "dependencies": {
-    "hardhat-deploy": "^0.11.34"
+    "hardhat-deploy": "^0.11.34",
+    "keythereum": "^2.0.0",
+    "minimist": "^1.2.8"
   }
 }
