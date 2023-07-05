@@ -13,6 +13,8 @@ import time
 import traceback
 import json
 import datetime
+import tempfile
+import yaml
 
 
 
@@ -81,30 +83,50 @@ class Mediator(PlatformClient):
         # tag,name = uri.split('_')
         urix = uri+"_"+str(ijoid)
 
-        # RUN BACALHAU JOB AND GET THE ID
-        result = subprocess.run(['bacalhau', 'docker', 'run', '--wait', '--id-only', 'ubuntu', 'echo', 'hello'], text=True, capture_output=True)
-        jobID = result.stdout
+        # write bacalhauJobSpec to yaml file in temporary directory
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            tmpfile = tmpdirname + "/job.yaml"
+            with open(tmpfile, 'w') as f:
+                yaml.dump(bacalhauJobSpec, f)
+                f.close()
 
-        a = f"""
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        
-        https://dashboard.bacalhau.org/jobs/{jobID}
+                # RUN BACALHAU JOB AND GET THE ID
+                result = subprocess.run(['bacalhau', 'create', '--id-only', tmpfile], text=True, capture_output=True)
+                jobID = result.stdout
 
-        Get stdout, status:
-        docker exec -ti lilypad-node bacalhau describe ${jobID}
+                print(f"""
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
 
-        Download results CID from IPFS:
-        docker exec -ti lilypad-node bacalhau get ${jobID}
+                {yaml.dumps(bacalhauJobSpec)}
 
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        """
+                https://dashboard.bacalhau.org/jobs/{jobID}
 
-        print(a)
-        # result = subprocess.run(['bacalhau', 'get', jobID], text=True, capture_output=True)
+                Get stdout, status:
+                docker exec -ti lilypad-node bacalhau describe ${jobID}
+
+                Download results CID from IPFS:
+                docker exec -ti lilypad-node bacalhau get ${jobID}
+
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                """)
+
+                describe = subprocess.run(['bacalhau', 'describe', jobID], text=True, capture_output=True)
+                print(f"""
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+
+                {describe}
+
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                """)
+
 
         if statusJob != 0:
             if self.account:
