@@ -1,3 +1,12 @@
-pycurl
-zmq
+antlr4-python3-runtime
+apscheduler
+click
 docker
+Fabric3
+influxdb
+pycurl
+python-dotenv
+pyzmq
+tqdm
+web3==6.4.0
+zmq
