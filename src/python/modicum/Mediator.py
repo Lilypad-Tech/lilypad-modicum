@@ -5,6 +5,7 @@ import subprocess
 import docker.errors
 from . import DockerWrapper
 from .PlatformClient import PlatformClient
+from .Modules import get_bacalhau_jobspec
 from . import PlatformStructs as Pstruct
 from . import helper
 import dotenv
@@ -59,6 +60,12 @@ class Mediator(PlatformClient):
         uri = JO.uri
         extras = JO.extras
 
+        extrasData = json.loads(extras)
+        bacalhauJobSpec = get_bacalhau_jobspec(
+            extras["template_name"],
+            extras["params"]
+        )
+
         _DIRIP_ = os.environ.get('DIRIP')
         _DIRPORT_ = os.environ.get('DIRPORT')
         _KEY_ = os.environ.get('pubkey')
@@ -74,9 +81,6 @@ class Mediator(PlatformClient):
         # tag,name = uri.split('_')
         urix = uri+"_"+str(ijoid)
 
-
-        # TODO: unpack extras and template stuff
-
         # RUN BACALHAU JOB AND GET THE ID
         result = subprocess.run(['bacalhau', 'docker', 'run', '--wait', '--id-only', 'ubuntu', 'echo', 'hello'], text=True, capture_output=True)
         jobID = result.stdout
@@ -88,12 +92,19 @@ class Mediator(PlatformClient):
         
         https://dashboard.bacalhau.org/jobs/{jobID}
 
+        Get stdout, status:
+        docker exec -ti lilypad-node bacalhau describe ${jobID}
+
+        Download results CID from IPFS:
+        docker exec -ti lilypad-node bacalhau get ${jobID}
+
         ---------------------------------------------------------------------------------------
         ---------------------------------------------------------------------------------------
         ---------------------------------------------------------------------------------------
         """
 
         print(a)
+        # result = subprocess.run(['bacalhau', 'get', jobID], text=True, capture_output=True)
 
         if statusJob != 0:
             if self.account:
