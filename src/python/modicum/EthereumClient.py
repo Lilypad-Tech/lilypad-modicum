@@ -1302,6 +1302,7 @@ class EthereumClient:
         else:
             self.w3 = Web3(CustomHTTPProvider(f'{protocol}://{self.ip}:{self.port}'))
 
+        self.abi = ABI
         self.contract = self.w3.eth.contract(address=os.environ.get("CONTRACT_ADDRESS"), abi=ABI)
 
         # Polygon compatibility
@@ -1428,6 +1429,9 @@ class EthereumClient:
         raise Exception(f"Unexpected method {method}")
 
     def new_filter(self):
+        # TODO: now we have self.contract, should we use it like
+        #     event_filter = mycontract.events.myEvent.create_filter(fromBlock='latest', argument_filters={'arg1':10})
+        # ?
         self._filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
         self.filter_id = self._filter.filter_id
         return self.filter_id

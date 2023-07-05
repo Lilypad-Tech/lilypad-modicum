@@ -744,6 +744,7 @@ def runLilypadCLI(template, params):
     
     exitcode = JC.postLilypadOffer(template, params)
 
+    # TODO: why doesn't this work?
     sys.exit(0)
 
 main.add_command(foo_command)

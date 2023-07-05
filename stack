@@ -47,10 +47,13 @@ function influx() {
 
 # this means run ipfs, bacalhau and the modicum resource provider
 # in the same container - it is what nodes will run on their hardware
+#
+# NB: Bind-mounting the code is debug trim, take this out for prod
 function lilypad-node() {
   docker run --name lilypad-node -ti --rm \
     --net host \
     -v /tmp:/tmp \
+    -v $DIR/src/python:/app \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e CONTRACT_ADDRESS=$(address) \
     $IMAGE_LILYPAD "$@" 
@@ -66,6 +69,8 @@ function lilypad-logs() {
 }
 
 # run a single modicum process without ipfs or bacalhau
+#
+# NB: Bind-mounting the code is debug trim, take this out for prod
 function lilypad-modicum-process() {
   docker run --name lilypad-$1 -ti --rm \
     --net host \
