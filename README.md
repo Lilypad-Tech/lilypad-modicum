@@ -33,7 +33,7 @@ To watch the logs from the node (which is multiple processes running inside one 
 ```
 
 ```bash
-./stack lilypad-modicum-process runLilypadCLI --template stable-diffusion --params "hello"
+./stack lilypad-modicum-process runLilypadCLI --template stable_diffusion --params "hello"
 ```
 
 

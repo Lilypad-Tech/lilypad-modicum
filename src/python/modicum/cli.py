@@ -719,7 +719,7 @@ def main(ctx):
 
 # TODO: new runLilypadCLI subcommand for 'lilypad' cli to exec into.
 @click.command('runLilypadCLI')
-@click.option('--template', default="stable-diffusion", show_default=True)
+@click.option('--template', default="stable_diffusion", show_default=True)
 @click.option('--params', default="", show_default=True)
 def runLilypadCLI(template, params):
     print("template: %s - params: %s" % (template, params))
