@@ -8,6 +8,7 @@ def get_bacalhau_jobspec(template_name, params):
     """
     return modules[template_name](params)
 
+
 def _stable_diffusion(params):
     return {
         "APIVersion": "V1beta1",
@@ -17,32 +18,32 @@ def _stable_diffusion(params):
         },
         "Spec": {
             "Deal": {
-            "Concurrency": 1
+                "Concurrency": 1
             },
             "Docker": {
-            "Entrypoint": [
-                "echo",
-                params
-            ],
-            "Image": "ubuntu"
+                "Entrypoint": [
+                    "echo",
+                    params,
+                ],
+                "Image": "ubuntu"
             },
             "Engine": "Docker",
             "Language": {
-            "JobContext": {}
+                "JobContext": {}
             },
             "Network": {
-            "Type": "None"
+                "Type": "None"
             },
             "PublisherSpec": {
-            "Type": "Estuary"
+                "Type": "Estuary"
             },
             "Resources": {
-            "GPU": ""
+                "GPU": ""
             },
             "Timeout": 1800,
             "Verifier": "Noop",
             "Wasm": {
-            "EntryModule": {}
+                "EntryModule": {}
             },
             "outputs": [
                 {
