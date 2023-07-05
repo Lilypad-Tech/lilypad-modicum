@@ -218,12 +218,8 @@ class Contract:
                     if len(zs) != 1:
                         raise Exception('oh no the universe exploded')
                     event_abi = zs[0]
-                    print('😍😍😍😍😍😍😍😍')
-                    import pprint; pprint.pprint(event_abi)
                     from web3 import _utils
                     raw_event = dict(_utils.events.get_event_data(self.client.w3.codec, event_abi, item))
-                    print('😍😍😍😍😍😍😍😍😍😍😍😍😍😍😍😍')
-                    import pprint; pprint.pprint(raw_event)
                     raw_event["params"] = raw_event["args"]
                     raw_event["name"] = event_name
                     del raw_event["args"]

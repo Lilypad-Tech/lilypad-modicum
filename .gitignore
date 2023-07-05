@@ -9,3 +9,5 @@ src/js/artifacts
 src/js/cache
 src/js/deployments
 __pycache__
+supervisord.log
+supervisord.pid
