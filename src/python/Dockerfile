@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:22.04 AS modicum
 WORKDIR /app
 RUN apt-get update && \
     apt-get install -y \
@@ -18,7 +18,14 @@ RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-a
 ADD ./modicum/requirements.txt /tmp
 RUN pip3 install -r /tmp/requirements.txt
 ADD . /app
-ADD ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN pip3 install -e .
 ENV BACALHAU_API_HOST=localhost
+ENTRYPOINT ["/usr/local/bin/modicum"]
+
+FROM modicum AS resource-provider
+ADD ./supervisord.resourceProvider.conf /etc/supervisor/conf.d/supervisord.conf
+ENTRYPOINT ["/usr/local/bin/supervisord"]
+
+FROM modicum AS mediator
+ADD ./supervisord.mediator.conf /etc/supervisor/conf.d/supervisord.conf
 ENTRYPOINT ["/usr/local/bin/supervisord"]
