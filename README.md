@@ -1,5 +1,7 @@
 ## MODICUM demo
 
+### development
+
 We need the following installed:
 
  * docker
@@ -36,24 +38,83 @@ To watch the logs from the node (which is multiple processes running inside one 
 ./stack lilypad-modicum-process runLilypadCLI --template stable_diffusion --params "hello"
 ```
 
-## production node
+### production initial node setup
 
 We use the terraform scripts to run a single google cloud node.
 
-### production geth
+```bash
+gcloud auth application-default login
+gcloud config set project bacalhau-production
+cd ops/testnet
+terraform init
+terraform apply
+gcloud compute instances list
+gcloud compute ssh bravo-testnet-vm-0 --zone us-central1-a
+sudo docker ps -a
+exit
+```
 
 We are running geth in [developer mode](https://geth.ethereum.org/docs/developers/dapp-developer/dev-mode).
 
-#### private key
-
-Once we have started geth the first time - the `/data/geth/keystore` folder will have a single file inside.
-
-Copy the contents of this file locally to `/tmp/bravo-geth/keystore.json` - also copy `/data/password.txt` to `/tmp/bravo-geth/password.txt`.
-
-Then we use the node script to extract the private key of the account that has funds on the production node:
+This is how to run geth on the vm:
 
 ```bash
-node src/js/scripts/extract-private-key-from-keystore.js --file /tmp/bravo-geth/keystore.json --password $(cat /tmp/bravo-geth/password.txt)
+cd ops/testnet
+bash deploy.sh run-geth
 ```
 
-We then use this private key with hardhat to deploy the smart contract.
+#### root account
+
+The `--dev` flag we pass to geth means we have a single node eth node without any peers, will mine blocks as soon as transactions are in the mempool and will pre-fund a single, unlocked account.  We have mounted the geth data dir onto the google disk mounted to the vm.
+
+The root account is unlocked - to prevent someone rocking up and draining that account - we move all the funds to another account which we have an offline private key for.
+
+NOTE: this is a record of what was done - it doesn't need to be done again
+
+First we generate an account address and private key:
+
+```bash
+cd src/js
+node scripts/create-new-account.js
+```
+
+NOTE: this is just generating a new address and private key - it's not actually doing anything on the blockchain
+
+We then add these values to the `src/js/.env` file - which hardhat-deploy uses to deploy the smart contract.
+
+```
+ADMIN_ADDRESS=0x85eae6e6a316eab840ac82d83684bae8e369e64d
+ADMIN_PRIVATE_KEY=...
+```
+
+Now - we need to transfer funds from the root unlocked account to our admin address:
+
+First we get into the geth container on the vm:
+
+```bash
+gcloud compute ssh bravo-testnet-vm-0 --zone us-central1-a
+docker exec -ti geth sh
+```
+
+Then we run the commands to transfer funds from the root account to our admin address:
+
+```bash
+geth --exec 'eth.coinbase' attach /data/geth/geth.ipc
+geth --exec 'eth.sendTransaction({from: eth.coinbase, to: "0x85eae6e6a316eab840ac82d83684bae8e369e64d", value: web3.toWei(10000000000000, "ether")})' attach /data/geth/geth.ipc
+geth --exec 'eth.getBalance("0x85eae6e6a316eab840ac82d83684bae8e369e64d")/1e18' attach /data/geth/geth.ipc
+```
+
+Now we have a private key for a locked account with funds - this means we can deploy the contract from this address and no-one can then use the fact the account is unlocked to drain the funds or mess with the contract.
+
+#### deploy contract
+
+Now we have the `.env` file with the `ADMIN_PRIVATE_KEY` for our address that has funds - we can deploy the contract using hardhat:
+
+```bash
+cd src/js
+npx hardhat compile
+# this will deploy to the local geth
+npx hardhat deploy --network localgeth
+# this will deploy to the production geth
+npx hardhat deploy --network production
+```

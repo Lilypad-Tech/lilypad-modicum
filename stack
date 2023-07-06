@@ -33,18 +33,15 @@ function hardhat() {
 }
 
 function geth() {
-  echo password > /tmp/geth-password.txt
   docker run --rm -ti \
     --name geth \
     -p 8545:8545 \
-    -v /tmp/geth-password.txt:/password.txt \
-    -v /tmp/geth:/tmp/geth \
+    -v /tmp/geth:/data/geth \
     ethereum/client-go \
-      --datadir /tmp/geth \
+      --datadir /data/geth \
       --dev --http \
       --http.api web3,eth,net \
-      --http.addr 0.0.0.0 \
-      --password /password.txt
+      --http.addr 0.0.0.0
 }
 
 function address() {
