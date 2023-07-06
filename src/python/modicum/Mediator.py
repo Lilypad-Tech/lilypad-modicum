@@ -64,8 +64,8 @@ class Mediator(PlatformClient):
 
         extrasData = json.loads(extras)
         bacalhauJobSpec = get_bacalhau_jobspec(
-            extras["template_name"],
-            extras["params"]
+            extrasData["template"],
+            extrasData["params"]
         )
 
         _DIRIP_ = os.environ.get('DIRIP')
@@ -92,14 +92,14 @@ class Mediator(PlatformClient):
 
                 # RUN BACALHAU JOB AND GET THE ID
                 result = subprocess.run(['bacalhau', 'create', '--id-only', tmpfile], text=True, capture_output=True)
-                jobID = result.stdout
+                jobID = result.stdout.strip()
 
                 print(f"""
                 ---------------------------------------------------------------------------------------
                 ---------------------------------------------------------------------------------------
                 ---------------------------------------------------------------------------------------
 
-                {yaml.dumps(bacalhauJobSpec)}
+                {open(tmpfile).read()}
 
                 https://dashboard.bacalhau.org/jobs/{jobID}
 
@@ -114,7 +114,7 @@ class Mediator(PlatformClient):
                 ---------------------------------------------------------------------------------------
                 """)
 
-                describe = subprocess.run(['bacalhau', 'describe', jobID], text=True, capture_output=True)
+                describe = subprocess.run(['bacalhau', 'describe', jobID], text=True, capture_output=True).stdout
                 print(f"""
                 ---------------------------------------------------------------------------------------
                 ---------------------------------------------------------------------------------------
