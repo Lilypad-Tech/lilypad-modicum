@@ -32,6 +32,18 @@ function hardhat() {
     $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port $HARDHAT_PORT
 }
 
+function geth() {
+  docker run --rm -ti \
+    --name geth \
+    -p 8545:8545 \
+    -v /tmp/geth:/data/geth \
+    ethereum/client-go \
+      --datadir /data/geth \
+      --dev --http \
+      --http.api web3,eth,net \
+      --http.addr 0.0.0.0
+}
+
 function address() {
   cat src/js/deployments/localhost/Modicum.json | jq -r .address
 }
