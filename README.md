@@ -172,11 +172,12 @@ alias lilypad-run='docker run -ti --rm --net host --entrypoint "/usr/local/bin/m
 lilypad-run --template stable_diffusion --params "blue frog"
 ```
 
-# TODO: fine tuning stable diffusion with LoRA
-# TODO: inference on a fine-tuned LoRA
-# TODO: t2i sketch, depth & pose
-# TODO: controlnet
-# TODO: support some subset of https://platform.stability.ai/docs/features
+TODO:
+* fine tuning stable diffusion with LoRA
+* inference on a fine-tuned LoRA
+* t2i sketch, depth & pose
+* controlnet
+* support some subset of https://platform.stability.ai/docs/features
 
 ## filecoin data prep
 
@@ -186,11 +187,11 @@ lilypad-run --template filecoin_data_prep \
 	           "s3_key": "ABI-L1b-RadC/2000/001/12/OR_ABI-L1b-RadC-M3C01*"}'
 ```
 
-# TODO: read results from http rather than ipfs for high performance
+* TODO: read results from http rather than ipfs for high performance
 
 ## arbitrary wasm (run in a deterministic env)
 
-TODO: the following seems to be a `csv2parquet` program that requires a CSV as input - need to also provide a CSV as input! (but it runs, giving the error message rn)
+* TODO: the following seems to be a `csv2parquet` program that requires a CSV as input - need to also provide a CSV as input! (but it runs, giving the error message rn)
 
 ```
 lilypad-run --template deterministic_wasm \
