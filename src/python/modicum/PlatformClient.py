@@ -12,7 +12,6 @@ from .DirectoryClient import DirectoryClient
 from . import DockerWrapper
 from .EthereumClient import EthereumClient
 
-import influxdb
 import requests
 from . import helper
 
@@ -40,8 +39,8 @@ class PlatformClient():
         influx_ip = os.environ.get('INFLUX')
         print(influx_ip)
         db = "collectd_db"
-        self.client = influxdb.InfluxDBClient(influx_ip, 8086, db)
-        self.client.switch_database("collectd")
+        # self.client = influxdb.InfluxDBClient(influx_ip, 8086, db)
+        # self.client.switch_database("collectd")
 
         self.helper = helper.helper()
 
@@ -65,11 +64,11 @@ class PlatformClient():
                       }
             records.append(record)
         self.logger.info("writing: %s" % str(records))
-        try:
-            res = self.client.write_points(records)  # , retention_policy=self.retention_policy)
-        except requests.exceptions.ConnectionError as e:
-            self.logger.warning("CONNECTION ERROR %s" % e)
-            self.logger.warning("try again")
+        # try:
+        #     res = self.client.write_points(records)  # , retention_policy=self.retention_policy)
+        # except requests.exceptions.ConnectionError as e:
+        #     self.logger.warning("CONNECTION ERROR %s" % e)
+        #     self.logger.warning("try again")
 
 
 
@@ -115,10 +114,8 @@ class PlatformClient():
             #     self.DC.getData(msg["host"],msg["sftport"],msg["ijoid"],msg["iroid"],msg["job"],msg["localpath"],msg["sshpath"])
             #     self.cliSocket.send_pyobj("got result")
 
-    def platformConnect(self, manager_ip, geth_ip, geth_port, index):
-        self.managerSocket = zmq.Context().socket(zmq.REQ)
-        self.managerSocket.connect(f"tcp://{manager_ip}:10001")
-        self.contract_address=self.query_contract_address(index)
+    def platformConnect(self, contract_address, geth_ip, geth_port, index):
+        self.contract_address=contract_address
         self.ethclient = EthereumClient(ip=geth_ip, port=geth_port)
         self.getEthAccount(index)
         self.contract = ModicumContract.ModicumContract(index, self.ethclient, self.contract_address)
@@ -134,29 +131,6 @@ class PlatformClient():
           return self.account
         else:
           return "ERROR: Failed to fetch account"
-
-    # def platformDisconnect(self):
-    #     msg = {
-    #       'request': "stop"
-    #     }
-    #     self.managerSocket.send_pyobj(msg)
-    #     response = self.managerSocket.recv_pyobj()
-    #     self.logger.info("manager Response: %s" %response)
-    #     self.ethclient.exit()
-
-    def query_contract_address(self,index):
-      msg = {
-        'request': "query_contract_address",
-        'index' : index
-      }
-      self.logger.info("Z: Get Contract address")
-      self.logger.info("Message to manager: {}".format(msg))
-      self.managerSocket.send_pyobj(msg)
-      response = self.managerSocket.recv_pyobj()
-      self.contract_address = response['contract']
-      self.logger.info("Contract address: " + self.contract_address)
-      self.logger.info("Z: Got Contract address")
-      return self.contract_address
 
     def wait(self):
         time.sleep(1)

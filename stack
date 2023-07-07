@@ -1,0 +1,146 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+<<<<<<< HEAD
+export IMAGE_BASE=${IMAGE_BASE:="lilypad-docker"}
+export IMAGE_LILYPAD=${IMAGE_LILYPAD:="${IMAGE_BASE}-python"}
+=======
+export IMAGE_BASE=${IMAGE_BASE:="bravo-docker"}
+>>>>>>> a52f818ccd2a76a756dccc1b76a90c1233fc0f4a
+export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-js"}
+export IMAGE_MODICUM=${IMAGE_MODICUM:="${IMAGE_BASE}-modicum"}
+export IMAGE_RESOURCE_PROVIDER=${IMAGE_RESOURCE_PROVIDER:="${IMAGE_BASE}-resource-provider"}
+export IMAGE_MEDIATOR=${IMAGE_MEDIATOR:="${IMAGE_BASE}-mediator"}
+export IMAGE_INFLUX=${IMAGE_INFLUX:="influxdb:1.8.10"}
+export HARDHAT_IP=${HARDHAT_IP:="127.0.0.1"}
+export HARDHAT_PORT=${HARDHAT_PORT:="10000"}
+export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=""}
+
+function build-hardhat() {
+  docker build -t $IMAGE_HARDHAT src/js
+}
+
+function build-modicum() {
+  docker build -t $IMAGE_MODICUM --target modicum src/python
+}
+
+function build-resource-provider() {
+  docker build -t $IMAGE_RESOURCE_PROVIDER --target resource-provider src/python
+}
+
+function build-mediator() {
+  docker build -t $IMAGE_MEDIATOR --target mediator src/python
+}
+
+function build() {
+  build-hardhat
+  build-modicum
+  build-resource-provider
+  build-mediator
+}
+
+function contract-address() {
+  cat src/js/deployments/localgeth/Modicum.json | jq -r .address
+}
+
+function geth() {
+  docker run --rm -ti \
+    --name geth \
+    -p 8545:8545 \
+    -v /tmp/geth:/data/geth \
+    ethereum/client-go \
+      --datadir /data/geth \
+      --dev --http \
+      --http.api web3,eth,net \
+      --http.addr 0.0.0.0
+}
+
+function geth-command() {
+  docker exec -ti geth geth --exec "$@" attach /data/geth/geth.ipc
+}
+
+function geth-balance() {
+  address="$1"
+  # check if address is defined
+  if [[ -z "$address" ]]; then
+    echo >&2 "address must be set"
+    exit 1
+  fi
+  geth-command "eth.getBalance(\"${address}\")/1e18"
+}
+
+function geth-fund() {
+  address="$1"
+  # check if address is defined
+  if [[ -z "$address" ]]; then
+    echo >&2 "address must be set"
+    exit 1
+  fi
+  geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${address}\", value: web3.toWei(10000000000000, \"ether\")})"
+}
+
+function influx() {
+  docker run -d \
+    --name influx \
+    --net host \
+    $IMAGE_INFLUX
+  sleep 1
+  echo -n 'create database collectd;' | docker exec -i influx influx
+}
+
+# this means run ipfs, bacalhau and the modicum resource provider
+# in the same service - it is what nodes will run on their hardware
+#
+# NB: Bind-mounting the code is debug trim, take this out for prod
+function lilypad-node() {
+  if [[ -z "$LILYPAD_NODE_IMAGE" ]]; then
+    echo >&2 "LILYPAD_NODE_IMAGE must be set"
+  fi
+  if [[ -z "$LILYPAD_NODE_NAME" ]]; then
+    echo >&2 "LILYPAD_NODE_NAME must be set"
+  fi
+  docker run --name $LILYPAD_NODE_NAME $LILYPAD_NODE_FLAGS \
+    --net host \
+    -v /tmp:/tmp \
+    -v $DIR/src/python:/app \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -e CONTRACT_ADDRESS=$(address) \
+    $LILYPAD_NODE_IMAGE "$@" 
+}
+
+function logs() {
+  service="$1"
+  docker exec -ti $service supervisorctl tail -f bacalhau-serve stdout &
+  docker exec -ti $service supervisorctl tail -f bacalhau-serve stderr &
+  docker exec -ti $service supervisorctl tail -f ipfs stdout &
+  docker exec -ti $service supervisorctl tail -f ipfs stderr &
+  docker exec -ti $service supervisorctl tail -f $service stdout &
+  docker exec -ti $service supervisorctl tail -f $service stderr
+}
+
+function resource-provider() {
+  LILYPAD_NODE_IMAGE=$IMAGE_RESOURCE_PROVIDER \
+  LILYPAD_NODE_NAME=resource-provider \
+  LILYPAD_NODE_FLAGS="-d" \
+  lilypad-node "$@"
+  logs resource-provider
+}
+
+function mediator() {
+  LILYPAD_NODE_IMAGE=$IMAGE_MEDIATOR \
+  LILYPAD_NODE_NAME=mediator \
+  LILYPAD_NODE_FLAGS="-d" \
+  lilypad-node "$@"
+  logs mediator
+}
+
+function solver() {
+  LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
+  LILYPAD_NODE_NAME=solver \
+  LILYPAD_NODE_FLAGS="-ti --rm" \
+  lilypad-node "runAsSolver"
+}
+
+eval "$@"

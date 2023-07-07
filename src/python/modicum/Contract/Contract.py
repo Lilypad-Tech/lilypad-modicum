@@ -206,56 +206,24 @@ class Contract:
     def poll_events(self):
         log = self.client.get_filter_changes(self.filter_id)
         events = []
-        if log:
-            self.logger.debug("Log: %s" %log)
         for item in log:
-            try:
-                if not isinstance(item, dict) and not isinstance(item, AttributeDict):
-                    self.logger.info(f"[poll_events] Skipping processing {item} since it is not a dict")
-                    continue
-                if self.address == item['address']:
-                    # XXX figure out how web3-python can do this low level crap for us
-                    if maybe_hex(item['topics'][0]) in self.topics:
-                        topic = self.topics[maybe_hex(item['topics'][0])]
-                        event = {'name': topic['name']}
-                        params = {}
-                        data = maybe_hex(item['data'])[2:]
-                        data_pos = 0
-                        for (ptype, pname) in topic['params']:
-                            if "uint" in ptype:
-                                params[pname] = Contract.decode_uint(data, data_pos)
-                            # elif ptype == "uint64":
-                            #     params[pname] = Contract.decode_uint(data, data_pos)
-                            # elif ptype == "uint256":
-                            #     params[pname] = Contract.decode_uint(data, data_pos)
-                            elif ptype == "int64":
-                                params[pname] = Contract.decode_int(data, data_pos)
-                            elif ptype == "address":
-                                x = Contract.decode_address(data, data_pos)
-                                if isinstance(item['data'], HexBytes):
-                                    # We are in web3-python mode, need to checksum address our addresses!
-                                    params[pname] = Web3.to_checksum_address(x)
-                                else:
-                                    params[pname] = x
-                            elif ptype == "bool":
-                                params[pname] = Contract.decode_bool(data, data_pos)
-                            elif ptype == "bytes32":
-                                params[pname] = Contract.decode_bytes32(data, data_pos)
-                            elif ptype == "string":
-                                params[pname] = Contract.decode_string(data, data_pos)
-                            elif Contract.is_enum_defined(ptype):
-                                params[pname] = Contract.get_enum_by_classname(ptype)(Contract.decode_uint(data, data_pos))
-                            else:
-                                raise NotImplementedError('Unknown type {}!'.format(params[pname]))
-                            data_pos += 1
-                        
-                        event['params'] = params
-                        event['transactionHash'] = maybe_hex(item['transactionHash'])
-                        events.append(event)                
-            except TypeError as err:
-                self.logger.info("EXCEPTION: %s" %err)
-                self.logger.info("info: %s" %info)
-                self.logger.info("type(info): %s" %type(info))
+            if not isinstance(item, dict) and not isinstance(item, AttributeDict):
+                self.logger.info(f"[poll_events] Skipping processing {item} since it is not a dict")
+                continue
+            if self.address == item['address']:
+                if maybe_hex(item['topics'][0]) in self.topics:
+                    topic = self.topics[maybe_hex(item['topics'][0])]
+                    event_name = topic['name']
+                    zs = [x for x in self.client.abi if x["type"] == "event" and x["name"] == event_name]
+                    if len(zs) != 1:
+                        raise Exception('oh no the universe exploded')
+                    event_abi = zs[0]
+                    from web3 import _utils
+                    raw_event = dict(_utils.events.get_event_data(self.client.w3.codec, event_abi, item))
+                    raw_event["params"] = raw_event["args"]
+                    raw_event["name"] = event_name
+                    del raw_event["args"]
+                    events.append(raw_event)
 
         return events
 

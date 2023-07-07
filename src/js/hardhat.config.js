@@ -1,36 +1,43 @@
-require('hardhat-ethernal');
+require('hardhat-deploy');
 require('@nomicfoundation/hardhat-toolbox');
+const dotenv = require('dotenv')
+dotenv.config({ path: process.env.DOTENV_CONFIG_PATH || './.env' })
 
-if(!process.env.ETHERNAL_EMAIL) {
-  console.error('Please set ETHERNAL_EMAIL environment variable')
-  process.exit(1)
-}
-
-if(!process.env.ETHERNAL_PASSWORD) {
-  console.error('Please set ETHERNAL_PASSWORD environment variable')
+if(!process.env.ADMIN_PRIVATE_KEY) {
+  console.error(`ADMIN_PRIVATE_KEY is not set in .env file`)
   process.exit(1)
 }
 
 const config = {
-  solidity: '0.8.17',
+  solidity: '0.4.25',
   defaultNetwork: 'hardhat',
-  ethernal: {
-    email: process.env.ETHERNAL_EMAIL,
-    password: process.env.ETHERNAL_PASSWORD,
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    }
   },
   networks: {
     hardhat: {
       blockGasLimit: 68719476736000,
     },
-    localhost: {}
+    localhost: {},
+    localgeth: {
+      url: 'http://localhost:8545',
+      chainId: 1337,
+      accounts: [
+        process.env.ADMIN_PRIVATE_KEY,
+      ],
+      blockGasLimit: 68719476736000,
+    },
+    production: {
+      url: 'http://34.30.95.3:8545',
+      chainId: 1337,
+      accounts: [
+        process.env.ADMIN_PRIVATE_KEY,
+      ],
+      blockGasLimit: 68719476736000,
+    }
   },
 };
-
-extendEnvironment((hre) => {
-  hre.ethernalSync = true;
-  hre.ethernalWorkspace = 'modicum-demo';
-  hre.ethernalTrace = false;
-  hre.ethernalResetOnStart = 'modicum-demo';
-});
 
 module.exports = config;

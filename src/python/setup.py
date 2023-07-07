@@ -1,5 +1,8 @@
 import setuptools
 
+with open('modicum/requirements.txt') as f:
+    required = f.read().splitlines()
+
 setuptools.setup(
     name='Modicum',
     version='0.01',
@@ -9,19 +12,7 @@ setuptools.setup(
     description='Mechanisms for an Outsourced Decentralized Computation Market',
     packages=['modicum'],
     include_package_data=True,
-    install_requires=[
-          'click',
-          'influxdb',
-          'tqdm',
-          'python-dotenv',
-          'pycurl',
-          'docker',
-          'pyzmq',
-          'Fabric3',
-          'apscheduler',
-          'antlr4-python3-runtime',
-          'web3==6.4.0'
-      ],
+    install_requires=required,
     extras_require={
         'dotenv': ['python-dotenv']
     },

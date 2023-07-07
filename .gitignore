@@ -4,3 +4,14 @@
 node_modules
 src/python/.env
 src/python/contract.json
+src/python/debug_*
+src/js/artifacts
+src/js/cache
+src/js/deployments/hardhat
+src/js/deployments/localhost
+src/js/deployments/localgeth
+__pycache__
+supervisord.log
+supervisord.pid
+.env
+ops/testnet/.terraform/providers

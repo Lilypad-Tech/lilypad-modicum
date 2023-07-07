@@ -5,6 +5,7 @@ import subprocess
 import docker.errors
 from . import DockerWrapper
 from .PlatformClient import PlatformClient
+from .Modules import get_bacalhau_jobspec
 from . import PlatformStructs as Pstruct
 from . import helper
 import dotenv
@@ -12,6 +13,8 @@ import time
 import traceback
 import json
 import datetime
+import tempfile
+import yaml
 
 
 
@@ -57,6 +60,14 @@ class Mediator(PlatformClient):
         JID = JO.jobCreator
         ijoid = JO.ijoid
         uri = JO.uri
+        extras = JO.extras
+
+        extrasData = json.loads(extras)
+        bacalhauJobSpec = get_bacalhau_jobspec(
+            extrasData["template"],
+            extrasData["params"]
+        )
+
         _DIRIP_ = os.environ.get('DIRIP')
         _DIRPORT_ = os.environ.get('DIRPORT')
         _KEY_ = os.environ.get('pubkey')
@@ -69,249 +80,55 @@ class Mediator(PlatformClient):
         input_exists=False
         image_exits=False
         resultHash = "0000000000000000000000000000000000000000000000000000000000000000"
-        tag,name = uri.split('_')
+        # tag,name = uri.split('_')
         urix = uri+"_"+str(ijoid)
 
-        # RUN BACALHAU JOB AND GET THE ID
-        result = subprocess.run(['bacalhau', 'docker', 'run', '--wait', '--id-only', 'ubuntu', 'echo', 'hello'], text=True, capture_output=True)
-        jobID = result.stdout
+        # write bacalhauJobSpec to yaml file in temporary directory
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            tmpfile = tmpdirname + "/job.yaml"
+            with open(tmpfile, 'w') as f:
+                yaml.dump(bacalhauJobSpec, f)
+                f.close()
 
-        a = f"""
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        
-        https://dashboard.bacalhau.org/jobs/{jobID}
+                # RUN BACALHAU JOB AND GET THE ID
+                result = subprocess.run(['bacalhau', 'create', '--id-only', tmpfile], text=True, capture_output=True)
+                jobID = result.stdout.strip()
 
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        """
+                print(f"""
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
 
-        print(a)
+                {open(tmpfile).read()}
 
+                https://dashboard.bacalhau.org/jobs/{jobID}
 
+                Get stdout, status:
+                docker exec -ti lilypad-node bacalhau describe ${jobID}
 
-        if self.sim:
-            self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-            return 0 
+                Download results CID from IPFS:
+                docker exec -ti lilypad-node bacalhau get ${jobID}
 
-        self.logger.info("L: Requesting Permission to get job = %s" %ijoid)
-        msg = self.DC.getPermission(_DIRIP_, _DIRPORT_, self.account, tag, _KEY_)
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                """)
 
-        self.user = msg['user']
-        self.groups = msg['groups']
+                describe = subprocess.run(['bacalhau', 'describe', jobID], text=True, capture_output=True).stdout
+                print(f"""
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
 
-        self.logger.info("L: permission granted? : %s = %s" %(msg['exitcode']==0, ijoid))
+                {describe}
 
-        if msg['exitcode'] != 0 :
-            self.logger.info("Done.. but permission denied")
-            statusJob=9
-            endStatus="DirectoryUnavailable"
-            self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-            return endStatus
-
-        remote_user = self.DC.getUsername(_DIRIP_, _DIRPORT_, JID)
-        
-        # self.logger.info("Check job size")
-        # result = self.DC.getSize(_DIRIP_, _SSHPORT_, self.user, remote_user, tag, _SSHKEY_)
-        # self.logger.info("Job size is: \n %s" %result)
-        # lines = result.split("\n")
-        # for line in lines:
-        #     self.logger.info(line)
-        #     if "json" in line and "input" in line:
-        #         inputSize = line.split("\t")[0]
-        #         input_exists=True
-        #     elif "tar" in line:
-        #         imageSize = line.split("\t")[0]
-        #         image_exits=True
-        #         # size = line.split("\t")[0]
-        #     elif "total" in line :
-        #         size = line.split("\t")[0]
-        #         self.logger.info("reported size: %s" %size)
-
-        # if int(inputSize) > JO.localStorageLimit:
-        #     statusJob = 5
-        #     endStatus = "StorageExceeded"
-        #     self.logger.info("input too big: %s %s>%s" %(endStatus,inputSize,JO.localStorageLimit))
-        #     self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-        #     return endStatus
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                """)
 
 
-        # if int(imageSize) > JO.size:
-        #     statusJob = 5
-        #     endStatus = "StorageExceeded"
-        #     self.logger.info("image too big: %s %s>%s" %(endStatus,imageSize,JO.size))
-        #     self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-        #     return endStatus
-
-        # if not image_exits:
-        #     statusJob = 3
-        #     endStatus = "JobNotFound"
-        #     self.logger.info("Image does not exist")
-        #     self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-        #     return endStatus
-
-        # if not input_exists:
-        #     statusJob = 3
-        #     endStatus = "JobNotFound"
-        #     self.logger.info("Input does not exist")
-        #     self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-        #     return endStatus
-
-        data = "*"
-
-        self.logger.info([_DIRIP_,_SSHPORT_,self.user, JID, tag,_WORKPATH_ ,_SSHKEY_])
-        localPath = "%s/%s/" %(_WORKPATH_, tag)
-        # if os.path.isfile("%s/%s.tar" %(localPath,tag)):
-        #     self.logger.info("image exists, skip downloading it.")
-        #     localPath = "%s/input" %localPath
-        #     data = "input.tar"
-        os.makedirs(localPath, exist_ok=True) #HACK
-        # self.logger.info("localPath: %s" %localPath)
-        # self.logger.info("data: %s" %data)
-        self.logger.info("K: get job = %s" %ijoid)
-        self.DC.getData(host=_DIRIP_,sshport=_SSHPORT_,user=self.user,remote_user=remote_user,tag=tag,name=name,ijoid=ijoid,localPath=localPath,sshpath=_SSHKEY_)
-        self.logger.info("K: got job = %s" %ijoid)
-
-        try:
-            if execute and statusJob==0:
-                # images = self.dockerClient.images.list(name=tag)
-
-                # if not images:
-                #     self.logger.info("Image not loaded. loading image... ")
-                #     images = DockerWrapper.loadImage(self.dockerClient, "%s/%s/%s.tar" %(_WORKPATH_, tag,tag))
-
-                # self.logger.info(images)
-                # self.logger.info("Image is loaded")
-                # jobHash_int = DockerWrapper.getImageHash(images[0])
-                
-                # if JO.hash != jobHash_int:
-                #     statusJob = 2
-                #     endStatus = "JobDescriptionError"
-                #     self.logger.info("Image hash mismatch")
-                #     self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-                #     return endStatus
-
-
-                jobname = "%s_%s" %(tag, matchID)
-                
-                xdictPath = localPath+name+str(ijoid)+"/"+name+".json"
-                self.logger.info("xdictPath: %s" %xdictPath)
-                with open(xdictPath) as f:
-                    xdict = json.load(f)
-
-                xdict["command"] = "echo hello"
-                xdict["mounts"] = {}
-
-                self.logger.info(f"==== XDICT {xdict}")
-
-                self.logger.info("Starting Docker for job = %s" %ijoid)
-                container = DockerWrapper.runContainer(self.dockerClient, "ubuntu:latest", jobname, xdict)
-                
-                # container.reload()
-                lid = container.attrs["Id"]
-                self.logger.info("container ID for job %s: %s" %(lid, ijoid))
-
-                self.logger.info("G: running job = %s" %ijoid)
-                cpu_old = -1
-                stopping = False
-                cmd = "cat /sys/fs/cgroup/cpuacct/docker/%s/cpuacct.stat | grep -oP '(?<=user ).*'" %lid
-
-                try:
-                    self.logger.info("status: %s" %container.status)
-                    while container.status != "running":
-                        time.sleep(1)
-                        container.reload()
-                        self.logger.info(container.status)
-
-                    while container.status == "running":
-                        try:
-                            completedprocess = subprocess.getoutput(cmd) #HACK the internet says something else should be used
-                            cpuTime = int(completedprocess) * 10
-                            if cpuTime > JO.instructionLimit:
-                                statusJob = 6
-                                endStatus = "InstructionsExceeded"
-                                self.logger.info("Job exceeded alloted cpu time %s>%s" %(cpuTime,JO.instructionLimit))
-                                self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-                                return endStatus
-
-                        except ValueError as err:
-                            self.logger.info("Process is done... probably")
-                            self.logger.info("error is : %s" %err)
-                            self.logger.info("error type is : %s" %type(err))
-                            self.logger.info("G: %s to run job = %s" %(cpuTime, ijoid))
-                            self.logger.info("Stopping Docker for job = %s" %ijoid)
-                            stopping = True
-                            # if lid in err:
-                            #     self.logger.info("Process is done")
-
-                        startReload = time.time()
-                        container.reload()
-                        reloadDuration = time.time() - startReload
-                        self.logger.info("reload took: %s" %reloadDuration)
-                        self.logger.info("Container is : %s" %container.status)
-                        self.logger.info("duration: %s ms" %cpuTime)
-
-                        if cpu_old == cpuTime or container.status != "running":
-                            if not stopping:
-                                self.logger.info("G: %s to run job = %s" %(cpuTime, ijoid))
-                                self.logger.info("Stopping Docker for job = %s" %ijoid)
-                                stopping = True
-                        else:
-                            cpu_old = cpuTime
-                            time.sleep(1)
-                except docker.errors.DockerException as err:
-                    self.logger.info("Process was too fast to monitor")
-                    self.logger.info("error is : %s" %err)
-                    self.logger.info("error type is : %s" %type(err))
-
-
-                self.logger.info("Docker stopped for job = %s" %ijoid)
-
-
-                
-                self.logger.info("Hash result for job = %s" %ijoid)
-                
-                output_filename = "%s/output.tar" %(localPath) #_WORKPATH_/tag/output.tar
-                self.logger.info("output_filename = %s" %output_filename)
-               
-                # output = next(iter(xdict['mounts']))
-                # self.logger.info("output directory = %s" %output)
-
-                # try :
-                #     helper.tar(output_filename,output)
-                # except FileNotFoundError: 
-                #     self.logger.warning("File does not exit = %s" %output)
-                #     os.makedirs(output, exist_ok=True) #HACK
-                #     helper.tar(output_filename,output)
-
-                fp = open(output_filename, "w")
-                fp.write("APPLES")
-                fp.close()
-
-                resultHash = helper.hashTar(output_filename)
-                self.logger.info("outputTarHash = %s" %resultHash)
-
-                self.logger.info("J: DC publishData = %s" %ijoid)
-
-                # TODO: define output
-
-                self.DC.publishResult(host=_DIRIP_,port=_SSHPORT_,user=self.user,localpath=output,tag=tag,name=name,ijoid=ijoid,sshpath=_SSHKEY_)
-                self.logger.info("J: DC dataPublished = %s" %ijoid)
-
-                if self.account:
-                    self.logger.info([matchID, endStatus, urix, resultHash, cpuTime, 0])
-                    self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-
-                self.logger.info("Done")
-                return endStatus
-        except :
-            self.logger.info(traceback.format_exc())
-            statusJob=8
-            endStatus="ExceptionOccured"
-
-        if statusJob!=0:
+        if statusJob != 0:
             if self.account:
                 self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
             return endStatus
@@ -352,7 +169,7 @@ class Mediator(PlatformClient):
         self.active = True
         while self.active:
             events = self.contract.poll_events()
-            self.logger.info(f"poll contract events, got {events}")
+            # self.logger.info(f"poll contract events, got {events}")
             for event in events:
                 params = event['params']
                 name = event['name']

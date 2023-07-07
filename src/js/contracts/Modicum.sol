@@ -1,5 +1,5 @@
 pragma solidity ^0.4.25;
-// import "./console.sol";
+import "hardhat/console.sol";
 
 contract Modicum {
 
@@ -63,13 +63,13 @@ contract Modicum {
 
     struct JobOfferPartTwo {
         address jobCreator;
-        uint256 firstLayerHash;
         uint256 ramLimit;
         uint256 localStorageLimit;
-        bytes32 uri;
+        string uri;
         address directory;
         uint256 jobHash;
         Architecture arch;
+        string extras;
     }
 
     struct ResourceOffer {
@@ -114,7 +114,7 @@ contract Modicum {
 
     struct JobResult {
         ResultStatus status;
-        bytes32 uri;
+        string uri;
 
         uint256 matchId;
 
@@ -129,7 +129,7 @@ contract Modicum {
 
     struct MediatorResult {
         ResultStatus status;
-        bytes32 uri;
+        string uri;
 
         uint256 matchId;
 
@@ -177,24 +177,24 @@ contract Modicum {
     event Debug(uint64 value);
     event DebugArch(Architecture arch);
     event DebugUint(uint256 value);
-    event DebugString(bytes32 str);
+    event DebugString(string str);
     event penaltyRateSet(uint256 penaltyRate);
     event reactionDeadlineSet(uint256 reactionDeadline);
 
     event ResultReaction(address addr, uint256 resultId, uint256 matchId, uint256 ResultReaction);
-    event ResultPosted(address addr, uint256 resultId, uint256 matchId, ResultStatus status, bytes32 uri,
+    event ResultPosted(address addr, uint256 resultId, uint256 matchId, ResultStatus status, string uri,
                        uint256 hash, uint256 instructionCount, uint256 bandwidthUsage);
     event Matched(address addr, uint256 matchId, uint256 jobOfferId, uint256 resourceOfferId, address mediator); //the same as job assigned.
 
     event JobOfferPostedPartOne(uint256 offerId, uint256 ijoid, address addr, uint256 instructionLimit,
                                 uint256 bandwidthLimit, uint256 instructionMaxPrice, uint256 bandwidthMaxPrice, uint256 completionDeadline, uint256 deposit, uint256 matchIncentive);
 
-    event JobOfferPostedPartTwo(uint256 offerId, address addr, uint256 hash, uint256 firstLayerHash, bytes32 uri,
-                                address directory, Architecture arch, uint256 ramLimit, uint256 localStorageLimit);
+    event JobOfferPostedPartTwo(uint256 offerId, address addr, uint256 hash, string uri,
+                                address directory, Architecture arch, uint256 ramLimit, uint256 localStorageLimit, string extras);
 
     event ResourceOfferPosted(uint256 offerId, address addr, uint256 instructionPrice,
                               uint256 instructionCap, uint256 memoryCap, uint256 localStorageCap,
-                              uint256 bandwidthCap, uint256 bandwidthPrice, uint256 deposit,uint256 iroid);
+                              uint256 bandwidthCap, uint256 bandwidthPrice, uint256 deposit, uint256 iroid);
 
     event JobOfferCanceled(uint256 offerId);
     event ResourceOfferCanceled(uint256 resOfferId);
@@ -214,7 +214,7 @@ contract Modicum {
     event ResourceProviderAddedSupportedFirstLayer(address addr, uint256 firstLayer);
 
     event MediationResultPosted(uint256 matchId, address addr, uint256 result, Party faultyParty, Verdict verdict, ResultStatus status,
-                                bytes32 uri, uint256 hash, uint256 instructionCount, uint256 mediationCost);
+                                string uri, uint256 hash, uint256 instructionCount, uint256 mediationCost);
 
     event MatchClosed(uint256 matchId, uint256 cost);
 
@@ -514,13 +514,13 @@ contract Modicum {
 
     function postJobOfferPartTwo(
         uint256 ijoid,
-        uint256 firstLayerHash,
         uint256 ramLimit,
         uint256 localStorageLimit,
-        bytes32 uri,
+        string uri,
         address directory,
         uint256 jobHash,
-        Architecture arch
+        Architecture arch,
+        string extras
     ) public {
 
         // require(jobCreators[msg.sender].trustedMediators.length != 0,
@@ -537,13 +537,13 @@ contract Modicum {
 
         JobOfferPartTwo memory joPTwo = JobOfferPartTwo({
             jobCreator: msg.sender,
-            firstLayerHash: firstLayerHash,
             ramLimit: ramLimit,
             localStorageLimit: localStorageLimit,
             uri: uri,
             directory: directory,
             jobHash: jobHash,
-            arch: arch
+            arch: arch,
+            extras: extras
         });
 
         jobOffersPartTwo[index] = joPTwo;
@@ -553,12 +553,12 @@ contract Modicum {
             index,
             msg.sender,
             jobHash,
-            firstLayerHash,
             uri,
             directory,
             arch,
             ramLimit,
-            localStorageLimit
+            localStorageLimit,
+            extras
         );
     }
 
@@ -682,11 +682,12 @@ contract Modicum {
         uint256 matchId,
         uint256 jobOfferId,
         ResultStatus status,
-        bytes32 uri,
+        string uri,
         uint256 hash,
         uint256 instructionCount,
         uint256 bandwidthUsage
     ) public returns (uint256) {
+        require(jobOfferId >= 0);
         // require (resourceOffers[matches[matchId].resourceOffer].resProvider == msg.sender,
         //     "You are not supposed to publish result for this match.");
 
@@ -722,6 +723,7 @@ contract Modicum {
     }
 
     function rejectResult(uint256 resultId, uint256 jobOfferId) public {
+        require(jobOfferId >= 0);
         // require(jobOffersPartOne[matches[results[resultId].matchId].jobOffer].jobCreator == msg.sender,
         //     "You cannot reject a result which is not yours.");
         // require(results[resultId].reacted == Reaction.None,
@@ -740,6 +742,7 @@ contract Modicum {
     }
 
     function acceptResult(uint256 resultId, uint256 jobOfferId) public returns (uint256) {
+        require(jobOfferId >= 0);
         //require(jobOffers[matches[results[resultId].matchId].jobOffer].jobCreator == msg.sender ||
         //    (resourceOffers[matches[results[resultId].matchId].resourceOffer].resProvider == msg.sender && results[resultId].timestamp + reactionDeadline > now),
         //    "You cannot reject a result which is not yours or deadline has not been missed yet.");
@@ -763,7 +766,7 @@ contract Modicum {
         uint256 matchId,
         uint256 jobOfferId,
         ResultStatus status,
-        bytes32 uri,
+        string uri,
 
         uint256 hash,
 
@@ -773,6 +776,7 @@ contract Modicum {
         Verdict verdict,
         Party faultyParty
     ) public returns (Party) {
+        require(jobOfferId >= 0);
         // require(matches[matchId].mediator == msg.sender, "You are not this job's mediator");
         // require(mediationRequested[matchId] == true, "JC did not request mediation for this match.");
         // require(mediated[matchId] == false, "You have already mediated this match.");
@@ -871,6 +875,7 @@ contract Modicum {
     }
 
     function timeout(uint256 matchId, uint256 jobOfferId) public {
+        require(jobOfferId >= 0);
         // require(jobOffersPartOne[matches[matchId].jobOffer].jobCreator == msg.sender,
         //     "You cannot make a timeout on this offer");
         // require(jobOffersPartOne[matches[matchId].jobOffer].completionDeadline < now,
