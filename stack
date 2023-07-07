@@ -98,6 +98,8 @@ function lilypad-node() {
     -v $DIR/src/python:/app \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e CONTRACT_ADDRESS=$(contract-address) \
+    -e RPC_URL=http://127.0.0.1:8545 \
+    -e CONTRACT_ABI_FILE=/Modicum.json \
     -e GETHIP=127.0.0.1 \
     -e GETHPORT=8545 \
     $LILYPAD_NODE_IMAGE "$@" 
