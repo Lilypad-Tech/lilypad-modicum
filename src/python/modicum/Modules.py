@@ -1,6 +1,11 @@
 # TODO write a guide here for how people should make modules FULLY DETERMINISTIC
 # TODO: include docker image hashes below
 
+from modules.cowsay import _cowsay
+from modules.deterministic_wasm import _deterministic_wasm
+from modules.filecoin_data_prep import _filecoin_data_prep
+from modules.stable_diffusion import _stable_diffusion
+
 def get_bacalhau_jobspec(template_name, params):
     """
     Given a template and arbitary parameters for it, return a bacalhau jobspec
@@ -11,143 +16,9 @@ def get_bacalhau_jobspec(template_name, params):
     """
     return modules[template_name](params)
 
-
-def _cowsay(params: str):
-    return {
-        "APIVersion": "V1beta1",
-        "Metadata": {
-            "CreatedAt": "0001-01-01T00:00:00Z",
-            "Requester": {}
-        },
-        "Spec": {
-            "Deal": {
-                "Concurrency": 1
-            },
-            "Docker": {
-                "Entrypoint": [
-                    "/usr/games/cowsay",
-                    params,
-                ],
-                "Image": "grycap/cowsay:latest"
-            },
-            "Engine": "Docker",
-            "Network": {
-                "Type": "None"
-            },
-            "PublisherSpec": {
-                "Type": "Estuary"
-            },
-            "Resources": {
-                "GPU": ""
-            },
-            "Timeout": 1800,
-            "Verifier": "Noop",
-            "outputs": [
-                {
-                    "Name": "outputs",
-                    "StorageSource": "IPFS",
-                    "path": "/outputs"
-                }
-            ]
-        }
-    }
-
-def _stable_diffusion(params: str):
-    return {
-        "APIVersion": "V1beta1",
-        "Metadata": {
-            "CreatedAt": "0001-01-01T00:00:00Z",
-            "Requester": {}
-        },
-        "Spec": {
-            "Deal": {
-                "Concurrency": 1
-            },
-            "Docker": {
-                "Entrypoint": [
-                    "echo",
-                    params,
-                ],
-                "Image": "ubuntu:22.04"
-            },
-            "Engine": "Docker",
-            "Language": {
-                "JobContext": {}
-            },
-            "Network": {
-                "Type": "None"
-            },
-            "PublisherSpec": {
-                "Type": "Estuary"
-            },
-            "Resources": {
-                "GPU": ""
-            },
-            "Timeout": 1800,
-            "Verifier": "Noop",
-            "Wasm": {
-                "EntryModule": {}
-            },
-            "outputs": [
-                {
-                    "Name": "outputs",
-                    "StorageSource": "IPFS",
-                    "path": "/outputs"
-                }
-            ]
-        }
-    }
-
-def _deterministic_wasm(params: dict):
-    """
-    params of form:
-        {"wasm_cid": "a1b2",
-         "wasm_entrypoint": "_start",
-        }
-    """
-    # TODO: support input parameters as CIDs
-    return {
-        "APIVersion": "V1beta1",
-        "Metadata": {
-            "CreatedAt": "0001-01-01T00:00:00Z",
-            "Requester": {}
-        },
-        "Spec": {
-            "Deal": {
-                "Concurrency": 1
-            },
-            "Engine": "Wasm",
-            "Network": {
-                "Type": "None"
-            },
-            "PublisherSpec": {
-                "Type": "Estuary"
-            },
-            "Resources": {
-                "GPU": ""
-            },
-            "Timeout": 1800,
-            "Verifier": "Noop",
-            "Wasm": {
-                "EntryModule": {
-                    "CID": params["wasm_cid"],
-                    "StorageSource": "IPFS",
-                },
-                "EntryPoint": params["wasm_entrypoint"],
-            },
-            "outputs": [
-                {
-                    "Name": "outputs",
-                    "StorageSource": "IPFS",
-                    "path": "/outputs"
-                }
-            ]
-        }
-    }
-
 modules = {
     "stable_diffusion": _stable_diffusion,
     "cowsay": _cowsay,
-    # "filecoin_data_prep": _filecoin_data_prep,
+    "filecoin_data_prep": _filecoin_data_prep,
     "deterministic_wasm": _deterministic_wasm,
 }

@@ -118,3 +118,42 @@ npx hardhat deploy --network localgeth
 # this will deploy to the production geth
 npx hardhat deploy --network production
 ```
+
+# usage
+
+Run this first (for now):
+```
+alias lilypad-run='docker run -ti --rm --net host --entrypoint "/usr/local/bin/modicum" -v /var/run/docker.sock:/var/run/docker.sock -v ./src/python:/app -e CONTRACT_ADDRESS=$(cat src/js/deployments/localhost/Modicum.json | jq -r .address) lilypad-docker-python runLilypadCLI'
+```
+
+## stable diffusion (requires GPU)
+
+```
+lilypad-run --template stable_diffusion --params "blue frog"
+```
+
+# TODO: fine tuning stable diffusion with LoRA
+# TODO: inference on a fine-tuned LoRA
+# TODO: t2i sketch, depth & pose
+# TODO: controlnet
+# TODO: support some subset of https://platform.stability.ai/docs/features
+
+## filecoin data prep
+
+```
+lilypad-run --template filecoin_data_prep \
+	--params '{"s3_bucket": "noaa-goes16", \
+	           "s3_key": "ABI-L1b-RadC/2000/001/12/OR_ABI-L1b-RadC-M3C01*"}'
+```
+
+# TODO: read results from http rather than ipfs for high performance
+
+## arbitrary wasm (run in a deterministic env)
+
+TODO: the following seems to be a `csv2parquet` program that requires a CSV as input - need to also provide a CSV as input! (but it runs, giving the error message rn)
+
+```
+lilypad-run --template deterministic_wasm \
+	--params '{"wasm_cid": "Qmajb9T3jBdMSp7xh2JruNrqg3hniCnM6EUVsBocARPJRQ", \
+	           "wasm_entrypoint": "_start"}'
+```

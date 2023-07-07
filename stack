@@ -3,7 +3,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export IMAGE_BASE=${IMAGE_BASE:="bravo-docker"}
+export IMAGE_BASE=${IMAGE_BASE:="lilypad-docker"}
 export IMAGE_LILYPAD=${IMAGE_LILYPAD:="${IMAGE_BASE}-python"}
 export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-js"}
 export IMAGE_INFLUX=${IMAGE_INFLUX:="influxdb:1.8.10"}
@@ -30,18 +30,6 @@ function hardhat() {
     --net host \
     -v $DIR/src/js/deployments:/app/deployments \
     $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port $HARDHAT_PORT
-}
-
-function geth() {
-  docker run --rm -ti \
-    --name geth \
-    -p 8545:8545 \
-    -v /tmp/geth:/data/geth \
-    ethereum/client-go \
-      --datadir /data/geth \
-      --dev --http \
-      --http.api web3,eth,net \
-      --http.addr 0.0.0.0
 }
 
 function address() {
