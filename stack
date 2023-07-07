@@ -101,7 +101,7 @@ function lilypad-node() {
     -v /tmp:/tmp \
     -v $DIR/src/python:/app \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -e CONTRACT_ADDRESS=$(address) \
+    -e CONTRACT_ADDRESS=$(contract-address) \
     $LILYPAD_NODE_IMAGE "$@" 
 }
 
