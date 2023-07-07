@@ -166,6 +166,12 @@ Run this first (for now):
 alias lilypad-run='docker run -ti --rm --net host --entrypoint "/usr/local/bin/modicum" -v /var/run/docker.sock:/var/run/docker.sock -v ./src/python:/app -e CONTRACT_ADDRESS=$(cat src/js/deployments/localhost/Modicum.json | jq -r .address) lilypad-docker-python runLilypadCLI'
 ```
 
+## cowsay
+
+```
+lilypad-run --template cowsay --params "i am a silly cow"
+```
+
 ## stable diffusion (requires GPU)
 
 ```
