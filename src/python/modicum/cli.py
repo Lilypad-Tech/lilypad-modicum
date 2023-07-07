@@ -524,7 +524,9 @@ def startRP(path,index,host,sim):
     RP.startCLIListener(cliport=9999)
     print("CLI is listening...")
 
-    RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_,index)
+    # NOTE: we force index index here so we are only ever using either
+    # the first (unlocked) account or the overriden account supplied by the env
+    RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, 0)
     print("Resource Provider Daemon is registering... ")
     exitcode = RP.register(RP.account,'armv7', 1)# ratio to 1Gz processor # XXX should this be arm64???
     print("exitcode:  %s" %exitcode)

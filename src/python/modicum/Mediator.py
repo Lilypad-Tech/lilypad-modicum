@@ -169,12 +169,13 @@ class Mediator(PlatformClient):
         self.active = True
         while self.active:
             events = self.contract.poll_events()
+            self.logger.info(f"poll contract events on {self.contract.address}")
             # self.logger.info(f"poll contract events, got {events}")
             for event in events:
                 params = event['params']
                 name = event['name']
                 transactionHash = event['transactionHash']
-
+                self.logger.info("HERE IS EVENT DATA {}({}).".format(name, params))
                 if name == "DebugUint" :
                     self.logger.info(name)
                     self.getReceipt(name, transactionHash)

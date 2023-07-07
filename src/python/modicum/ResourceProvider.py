@@ -159,7 +159,7 @@ class ResourceProvider(Mediator):
             for event in events:
                 params = event['params']
                 name = event['name']
-                self.logger.info("{}({}).".format(name, params))
+                self.logger.info("HERE IS EVENT DATA {}({}).".format(name, params))
                 if name == "ResourceProviderRegistered" and self.account == params['addr']:
                 # if name == "ResourceProviderRegistered":
                 #     self.addr = params['addr']
