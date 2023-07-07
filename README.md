@@ -18,7 +18,7 @@ You can get a new address using:
 ```bash
 cd src/js
 npm install
-node scripts/crecrate-new-account.js
+node scripts/create-new-account.js
 ```
 
 Copy the values into the `src/js/.env` file.
