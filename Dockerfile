@@ -25,9 +25,9 @@ ENV BACALHAU_API_HOST=localhost
 ENTRYPOINT ["/usr/local/bin/modicum"]
 
 FROM modicum AS resource-provider
-ADD ./src/python/supervisord.resourceProvider.conf /etc/supervisor/conf.d/supervisord.conf
+ADD ./src/python/supervisord.resourceProvider.conf /etc/supervisord.conf
 ENTRYPOINT ["/usr/local/bin/supervisord"]
 
 FROM modicum AS mediator
-ADD ./src/python/supervisord.mediator.conf /etc/supervisor/conf.d/supervisord.conf
+ADD ./src/python/supervisord.mediator.conf /etc/supervisord.conf
 ENTRYPOINT ["/usr/local/bin/supervisord"]

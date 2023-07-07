@@ -30,7 +30,7 @@ Then we create a new address using:
 
 ```bash
 cd src/js
-node scripts/crecrate-new-account.js
+node scripts/create-new-account.js
 ```
 
 Create a `src/js/.env` file like this:
@@ -78,15 +78,12 @@ The smart contract is now deployed and the address is written to the JSON file l
 
 ```bash
 ./stack mediator
+./stack logs mediator
 ```
 
 ```bash
 ./stack resource-provider
-```
-
-To watch the logs from the node (which is multiple processes running inside one docker container):
-```bash
-./stack lilypad-logs
+./stack logs resource-provider
 ```
 
 ```bash

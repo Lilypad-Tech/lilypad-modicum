@@ -14,16 +14,32 @@ from web3 import HTTPProvider, Web3
 from web3.middleware import geth_poa_middleware
 import requests
 
-from .SmartContract import GetABI
+def GetABIFile():
+    contractABIFile = os.getenv("CONTRACT_ABI_FILE", "/Modicum.json")
+    try:
+        f = open(contractABIFile, "r")
+        f.close()
+    except FileNotFoundError:
+        raise FileNotFoundError
+    # open the JSON file and parse it
+    with open(contractABIFile, "r") as f:
+        contractABI = json.load(f)
+    return contractABI
 
-# TODO: remove duplication wrt ModicumContract.py
-ABI = GetABI()
+def GetABI():
+    file = GetABIFile()
+    return file["abi"]
+
+def GetBytecode():
+    file = GetABIFile()
+    return file["bytecode"]
+
 
 class CustomHTTPProvider(HTTPProvider):
     def __init__(self, endpoint_uri, request_kwargs=None):
         super().__init__(endpoint_uri, request_kwargs)
-        if 'headers' not in self._request_kwargs:
-            self._request_kwargs['headers'] = {}
+        # if 'headers' not in self._request_kwargs:
+        #     self._request_kwargs['headers'] = {}
         rpcToken = os.getenv("RPC_TOKEN")
         if rpcToken != None:
             self._request_kwargs['headers']['Authorization'] = f'Bearer {rpcToken}'
@@ -44,8 +60,10 @@ class EthereumClient:
         else:
             self.w3 = Web3(CustomHTTPProvider(f'{protocol}://{self.ip}:{self.port}'))
 
-        self.abi = ABI
-        self.contract = self.w3.eth.contract(address=os.environ.get("CONTRACT_ADDRESS"), abi=ABI)
+        self.abi = GetABI()
+        self.bytecode = GetBytecode()
+        self.contract_address = os.environ.get("CONTRACT_ADDRESS")
+        self.contract = self.w3.eth.contract(address=self.contract_address, abi=self.abi, bytecode=self.bytecode)
 
         # Polygon compatibility
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
@@ -54,6 +72,8 @@ class EthereumClient:
         self.addresses = []
         for i in range(5):
             pk = os.environ.get(f'PRIVATE_KEY_{i}')
+            if i == 0 and pk is None:
+                pk = os.environ.get('PRIVATE_KEY')
             if pk is not None:
                 acct = self.w3.eth.account.from_key(pk)
                 self.addresses.append(acct.address)

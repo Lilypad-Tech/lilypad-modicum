@@ -46,15 +46,20 @@ function hardhat() {
 }
 
 function geth() {
+  docker network ls | grep modicum || docker network create modicum
   docker run --rm -ti \
     --name geth \
+    --network modicum \
     -p 8545:8545 \
     -v /tmp/geth:/data/geth \
     ethereum/client-go \
       --datadir /data/geth \
       --dev --http \
       --http.api web3,eth,net \
-      --http.addr 0.0.0.0
+      --http.addr 0.0.0.0 \
+      --http.corsdomain '*' \
+      --http.port 8545 \
+      --http.vhosts '*'
 }
 
 function geth-command() {
@@ -92,16 +97,17 @@ function lilypad-node() {
   if [[ -z "$LILYPAD_NODE_NAME" ]]; then
     echo >&2 "LILYPAD_NODE_NAME must be set"
   fi
+  if [[ -z "$RPC_URL" ]]; then
+    echo >&2 "RPC_URL must be set"
+  fi
   docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
-    --net host \
+    --network modicum \
     -v /tmp:/tmp \
     -v $DIR/src/python:/app \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e CONTRACT_ADDRESS=$(contract-address) \
-    -e RPC_URL=http://127.0.0.1:8545 \
     -e CONTRACT_ABI_FILE=/Modicum.json \
-    -e GETHIP=127.0.0.1 \
-    -e GETHPORT=8545 \
+    -e RPC_URL=$RPC_URL \
     $LILYPAD_NODE_IMAGE "$@" 
 }
 
@@ -118,22 +124,23 @@ function logs() {
 function resource-provider() {
   LILYPAD_NODE_IMAGE=$IMAGE_RESOURCE_PROVIDER \
   LILYPAD_NODE_NAME=resource-provider \
+  RPC_URL=http://geth:8545 \
   LILYPAD_NODE_FLAGS="-d" \
   lilypad-node "$@"
-  logs resource-provider
 }
 
 function mediator() {
   LILYPAD_NODE_IMAGE=$IMAGE_MEDIATOR \
   LILYPAD_NODE_NAME=mediator \
+  RPC_URL=http://geth:8545 \
   LILYPAD_NODE_FLAGS="-d" \
   lilypad-node "$@"
-  logs mediator
 }
 
 function solver() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=solver \
+  RPC_URL=http://geth:8545 \
   LILYPAD_NODE_FLAGS="--rm" \
   lilypad-node "runAsSolver"
 }
