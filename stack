@@ -145,4 +145,12 @@ function solver() {
   lilypad-node "runAsSolver"
 }
 
+function submitjob() {
+  LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
+  LILYPAD_NODE_NAME=submitjob \
+  RPC_URL=http://geth:8545 \
+  LILYPAD_NODE_FLAGS="--rm" \
+  lilypad-node "runLilypadCLI" "$@"
+}
+
 eval "$@"

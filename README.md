@@ -87,7 +87,7 @@ The smart contract is now deployed and the address is written to the JSON file l
 ```
 
 ```bash
-./stack lilypad-modicum-process runLilypadCLI --template stable_diffusion --params "hello"
+./stack submitjob --template stable_diffusion --params "hello"
 ```
 
 ### production initial node setup
