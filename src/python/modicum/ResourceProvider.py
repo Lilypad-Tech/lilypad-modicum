@@ -152,14 +152,14 @@ class ResourceProvider(Mediator):
 
     def platformListener(self):
         self.active = True
+        self.logger.info(f"poll contract events on {self.contract.address}")
         while self.active:
             events = self.contract.poll_events()
-            self.logger.info(f"poll contract events on {self.contract.address}")
             import pprint; pprint.pprint(events)
             for event in events:
                 params = event['params']
                 name = event['name']
-                self.logger.info("HERE IS EVENT DATA {}({}).".format(name, params))
+                self.logger.info("🔴 resource provider event: {}\n({}).".format(name, params))
                 if name == "ResourceProviderRegistered" and self.account == params['addr']:
                 # if name == "ResourceProviderRegistered":
                 #     self.addr = params['addr']
@@ -204,7 +204,7 @@ class ResourceProvider(Mediator):
                     self.logger.info("%s offerId= %s" % (name, matchID))
                     self.logger.info("Job offer %s = %s" % (name, self.job_offers[joid].ijoid))
                     self.logger.info("Resource offer %s = %s" % (name, self.resource_offers[roid].iroid))
-
+                    self.logger.info("🔴🔴🔴🔴🔴🔴🔴 MATCH")
                     match = Pstruct.Match(
                         joid, roid, params["mediator"]
                     )
