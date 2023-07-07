@@ -3,12 +3,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-<<<<<<< HEAD
 export IMAGE_BASE=${IMAGE_BASE:="lilypad-docker"}
-export IMAGE_LILYPAD=${IMAGE_LILYPAD:="${IMAGE_BASE}-python"}
-=======
-export IMAGE_BASE=${IMAGE_BASE:="bravo-docker"}
->>>>>>> a52f818ccd2a76a756dccc1b76a90c1233fc0f4a
 export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-js"}
 export IMAGE_MODICUM=${IMAGE_MODICUM:="${IMAGE_BASE}-modicum"}
 export IMAGE_RESOURCE_PROVIDER=${IMAGE_RESOURCE_PROVIDER:="${IMAGE_BASE}-resource-provider"}
