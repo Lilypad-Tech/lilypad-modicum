@@ -15,17 +15,19 @@ RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-a
     tar -xzf kubo.tar.gz && \
     cd kubo && \
     bash install.sh
-ADD ./modicum/requirements.txt /tmp
+# this gets the ABI into the python container
+ADD ./src/js/artifacts/contracts/Modicum.sol/Modicum.json /Modicum.json
+ADD ./src/python/modicum/requirements.txt /tmp
 RUN pip3 install -r /tmp/requirements.txt
-ADD . /app
+ADD ./src/python /app
 RUN pip3 install -e .
 ENV BACALHAU_API_HOST=localhost
 ENTRYPOINT ["/usr/local/bin/modicum"]
 
 FROM modicum AS resource-provider
-ADD ./supervisord.resourceProvider.conf /etc/supervisor/conf.d/supervisord.conf
+ADD ./src/python/supervisord.resourceProvider.conf /etc/supervisord.conf
 ENTRYPOINT ["/usr/local/bin/supervisord"]
 
 FROM modicum AS mediator
-ADD ./supervisord.mediator.conf /etc/supervisor/conf.d/supervisord.conf
+ADD ./src/python/supervisord.mediator.conf /etc/supervisord.conf
 ENTRYPOINT ["/usr/local/bin/supervisord"]

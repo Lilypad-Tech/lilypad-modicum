@@ -511,7 +511,7 @@ class JobCreator(PlatformClient):
 
         deposit = (msg["cpuTime"]*msg["instructionMaxPrice"] +
                    msg["bandwidthLimit"]*msg["bandwidthMaxPrice"])*self.penaltyRate
-        self.logger.info("Deposit: %s" %deposit)
+        self.logger.info("Deposit HERE: %s" %deposit)
 
         txHash = self.ethclient.contract.functions.postJobOfferPartOne(
             msg['ijoid'],
