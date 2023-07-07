@@ -125,6 +125,8 @@ class EthereumClient:
         if os.environ.get("PRIVATE_KEY_0") is not None:
             print(f"--> addresses = {self.addresses}")
             return self.addresses
+        print("😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀")
+        import pprint; pprint.pprint(self.w3.eth.accounts);
         return self.w3.eth.accounts
 
     def keccak256(self, string):
