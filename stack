@@ -4,40 +4,45 @@ IFS=$'\n\t'
 
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export IMAGE_BASE=${IMAGE_BASE:="bravo-docker"}
-export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-js"}
 export IMAGE_MODICUM=${IMAGE_MODICUM:="${IMAGE_BASE}-modicum"}
 export IMAGE_RESOURCE_PROVIDER=${IMAGE_RESOURCE_PROVIDER:="${IMAGE_BASE}-resource-provider"}
+export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-hardhat"}
 export IMAGE_MEDIATOR=${IMAGE_MEDIATOR:="${IMAGE_BASE}-mediator"}
-export IMAGE_INFLUX=${IMAGE_INFLUX:="influxdb:1.8.10"}
-export HARDHAT_IP=${HARDHAT_IP:="127.0.0.1"}
-export HARDHAT_PORT=${HARDHAT_PORT:="10000"}
-export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=""}
+export DEPLOYMENT=${DEPLOYMENT:="localgeth"}
+
+function build-modicum() {
+  docker build -t $IMAGE_MODICUM --target modicum .
+}
+
+function build-resource-provider() {
+  docker build -t $IMAGE_RESOURCE_PROVIDER --target resource-provider .
+}
+
+function build-mediator() {
+  docker build -t $IMAGE_MEDIATOR --target mediator .
+}
 
 function build-hardhat() {
   docker build -t $IMAGE_HARDHAT src/js
 }
 
-function build-modicum() {
-  docker build -t $IMAGE_MODICUM --target modicum src/python
-}
-
-function build-resource-provider() {
-  docker build -t $IMAGE_RESOURCE_PROVIDER --target resource-provider src/python
-}
-
-function build-mediator() {
-  docker build -t $IMAGE_MEDIATOR --target mediator src/python
-}
-
 function build() {
-  build-hardhat
   build-modicum
   build-resource-provider
   build-mediator
+  build-hardhat
 }
 
 function contract-address() {
-  cat src/js/deployments/localgeth/Modicum.json | jq -r .address
+  cat "src/js/deployments/${DEPLOYMENT}/Modicum.json" | jq -r .address
+}
+
+function hardhat() {
+  docker run -ti --rm \
+    --name hardhat \
+    --net host \
+    -v $DIR/src/js/deployments:/app/deployments \
+    $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port 8545
 }
 
 function geth() {
@@ -76,15 +81,6 @@ function geth-fund() {
   geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${address}\", value: web3.toWei(10000000000000, \"ether\")})"
 }
 
-function influx() {
-  docker run -d \
-    --name influx \
-    --net host \
-    $IMAGE_INFLUX
-  sleep 1
-  echo -n 'create database collectd;' | docker exec -i influx influx
-}
-
 # this means run ipfs, bacalhau and the modicum resource provider
 # in the same service - it is what nodes will run on their hardware
 #
@@ -96,12 +92,14 @@ function lilypad-node() {
   if [[ -z "$LILYPAD_NODE_NAME" ]]; then
     echo >&2 "LILYPAD_NODE_NAME must be set"
   fi
-  docker run --name $LILYPAD_NODE_NAME $LILYPAD_NODE_FLAGS \
+  docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     --net host \
     -v /tmp:/tmp \
     -v $DIR/src/python:/app \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -e CONTRACT_ADDRESS=$(address) \
+    -e CONTRACT_ADDRESS=$(contract-address) \
+    -e GETHIP=127.0.0.1 \
+    -e GETHPORT=8545 \
     $LILYPAD_NODE_IMAGE "$@" 
 }
 
@@ -134,7 +132,7 @@ function mediator() {
 function solver() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=solver \
-  LILYPAD_NODE_FLAGS="-ti --rm" \
+  LILYPAD_NODE_FLAGS="--rm" \
   lilypad-node "runAsSolver"
 }
 

@@ -117,6 +117,7 @@ class PlatformClient():
     def platformConnect(self, contract_address, geth_ip, geth_port, index):
         self.contract_address=contract_address
         self.ethclient = EthereumClient(ip=geth_ip, port=geth_port)
+        self.logger.info("-----------------> HERE")
         self.getEthAccount(index)
         self.contract = ModicumContract.ModicumContract(index, self.ethclient, self.contract_address)
         self.platformListenerThread.start()
