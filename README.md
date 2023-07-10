@@ -216,3 +216,14 @@ lilypad-run --template deterministic_wasm \
 	--params '{"wasm_cid": "Qmajb9T3jBdMSp7xh2JruNrqg3hniCnM6EUVsBocARPJRQ", \
 	           "wasm_entrypoint": "_start"}'
 ```
+
+
+#### production
+
+Variables that need setting on the prod node:
+
+```bash
+export TRIM=production
+export CONTRACT_ADDRESS=...
+export VERSION=...
+```

@@ -104,10 +104,10 @@ class Mediator(PlatformClient):
                 https://dashboard.bacalhau.org/jobs/{jobID}
 
                 Get stdout, status:
-                docker exec -ti lilypad-node bacalhau describe ${jobID}
+                docker exec -ti lilypad-node bacalhau describe {jobID}
 
                 Download results CID from IPFS:
-                docker exec -ti lilypad-node bacalhau get ${jobID}
+                docker exec -ti lilypad-node bacalhau get {jobID}
 
                 ---------------------------------------------------------------------------------------
                 ---------------------------------------------------------------------------------------

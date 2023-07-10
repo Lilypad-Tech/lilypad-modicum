@@ -3,12 +3,27 @@ set -euo pipefail
 IFS=$'\n\t'
 
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export IMAGE_BASE=${IMAGE_BASE:="lilypad-docker"}
-export IMAGE_MODICUM=${IMAGE_MODICUM:="${IMAGE_BASE}-modicum"}
-export IMAGE_RESOURCE_PROVIDER=${IMAGE_RESOURCE_PROVIDER:="${IMAGE_BASE}-resource-provider"}
+export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
+export GCP_ZONE=${GCP_ZONE:="us-central1-a"}
+export GCP_NODE_NAME=${GCP_NODE_NAME:="bravo-testnet-vm-0"}
+export TRIM=${TRIM:="development"}
+# we expect the contract address to be set in the environment
+# if we are production trim this will be handled by the deployment
+export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=""}
+export DATA_DIRECTORY=${DATA_DIRECTORY:="/tmp/geth"}
+export IMAGE_BASE=${IMAGE_BASE:="lilypad"}
 export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-hardhat"}
-export IMAGE_MEDIATOR=${IMAGE_MEDIATOR:="${IMAGE_BASE}-mediator"}
 export DEPLOYMENT=${DEPLOYMENT:="localgeth"}
+
+export VERSION=${VERSION:="$(cd $DIR; git rev-parse --short HEAD)"}
+
+export IMAGE_MODICUM_NAME=${IMAGE_MODICUM_NAME:="${IMAGE_BASE}-modicum"}
+export IMAGE_RESOURCE_PROVIDER_NAME=${IMAGE_RESOURCE_PROVIDER_NAME:="${IMAGE_BASE}-resource-provider"}
+export IMAGE_MEDIATOR_NAME=${IMAGE_MEDIATOR_NAME:="${IMAGE_BASE}-mediator"}
+
+export IMAGE_MODICUM="${DOCKER_REGISTRY}/${IMAGE_MODICUM_NAME}:${VERSION}"
+export IMAGE_RESOURCE_PROVIDER="${DOCKER_REGISTRY}/${IMAGE_RESOURCE_PROVIDER_NAME}:${VERSION}"
+export IMAGE_MEDIATOR="${DOCKER_REGISTRY}/${IMAGE_MEDIATOR}:${VERSION}"
 
 function build-modicum() {
   docker build -t $IMAGE_MODICUM --target modicum .
@@ -33,8 +48,18 @@ function build() {
   build-hardhat
 }
 
+function push-images() {
+  docker push $IMAGE_MODICUM
+  docker push $IMAGE_RESOURCE_PROVIDER
+  docker push $IMAGE_MEDIATOR
+}
+
 function contract-address() {
-  cat "src/js/deployments/${DEPLOYMENT}/Modicum.json" | jq -r .address
+  if [[ "$TRIM" eq "development" ]]; then
+    cat "src/js/deployments/${DEPLOYMENT}/Modicum.json" | jq -r .address
+  elif [[ "$TRIM" eq "production" ]]; then
+    echo $CONTRACT_ADDRESS
+  fi  
 }
 
 function hardhat() {
@@ -51,7 +76,7 @@ function geth() {
     --name geth \
     --network modicum \
     -p 8545:8545 \
-    -v /tmp/geth:/data/geth \
+    -v ${DATA_DIRECTORY}:/data/geth \
     ethereum/client-go \
       --datadir /data/geth \
       --dev --http \
@@ -104,10 +129,13 @@ function lilypad-node() {
   if [[ -z "$RPC_URL" ]]; then
     echo >&2 "RPC_URL must be set"
   fi
+  local extras=""
+  if [[ "$TRIM" eq "development" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app"
+  fi
   docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     --network modicum \
     -v /tmp:/tmp \
-    -v $DIR/src/python:/app \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \
