@@ -226,7 +226,7 @@ class Solver(PlatformClient):
             })
 
 
-        self.logger.info("🟢\n#JOs: %s\n#ROs: %s" %(json.dumps(debugResourceOffers), json.dumps(debugJobOffers)))
+        self.logger.info("🟢\n#JOs: %s\n#ROs: %s" %(json.dumps(debugJobOffers), json.dumps(debugResourceOffers)))
 
         #create edges for each node
         for i in self.job_offers:
