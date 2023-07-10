@@ -76,6 +76,20 @@ class ResourceProvider(Mediator):
             self.logger.info("RP is busy. Submit offer later")
             return 1
 
+    def postDefaultOffer(self):
+        self.postOffer({"request": "post",
+                        "deposit" : 1000,
+                        "instructionPrice" : 1,
+                        "instructionCap" : 15*60*1000, #ms on 1Ghz processor
+                        "memoryCap": 100000000,
+                        "localStorageCap" : 1000000000,
+                        "bandwidthCap" : 2**256-1,
+                        "bandwidthPrice" : 1,
+                        "matchIncentive" : 1,
+                        "verificationCount" : 1,
+                        "iroid" : time.time()*1000
+                        })
+
     def addSupportedFirstLayer(self, msg):
         self.contract.resourceProviderAddSupportedFirstLayer(
             self.account,
@@ -227,6 +241,8 @@ class ResourceProvider(Mediator):
                     ResultStatus = self.getJob(matchID, JO, True)
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "RP" + str(self.index)},
                                           seriesname="state", value=1)
+                    # once we have run a job let's post another offer
+                    self.postDefaultOffer()
 
                     # self.matches[matchID] = {"uri":uri,"JID":JID,"execute":True}
 
