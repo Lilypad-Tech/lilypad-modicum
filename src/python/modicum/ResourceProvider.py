@@ -76,6 +76,20 @@ class ResourceProvider(Mediator):
             self.logger.info("RP is busy. Submit offer later")
             return 1
 
+    def postDefaultOffer(self):
+        self.postOffer({"request": "post",
+                        "deposit" : 1000,
+                        "instructionPrice" : 1,
+                        "instructionCap" : 15*60*1000, #ms on 1Ghz processor
+                        "memoryCap": 100000000,
+                        "localStorageCap" : 1000000000,
+                        "bandwidthCap" : 2**256-1,
+                        "bandwidthPrice" : 1,
+                        "matchIncentive" : 1,
+                        "verificationCount" : 1,
+                        "iroid" : round(time.time()*1000)
+                        })
+
     def addSupportedFirstLayer(self, msg):
         self.contract.resourceProviderAddSupportedFirstLayer(
             self.account,
@@ -90,14 +104,12 @@ class ResourceProvider(Mediator):
         to_run = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() + delay))
         self.scheduler.add_job(self.acceptResult, 'date', id=str(resultId), run_date=to_run, args=[resultId])
 
-
-    # # IS THIS EVER CALLED? OR JUST THE MEDIATOR ONE?
-    # THE RP post result is different. postResult vs postMediationResult
     def postResult(self, matchID, joid, endStatus, uri, resultHash, cpuTime, bandwidthUsage):
-        resultHash_int = int(resultHash, 16)
-        self.logger.info("H: postResult = %s" %uri)
-        self.contract.postResult(self.account, True, matchID, joid, endStatus, uri,
-                                 resultHash_int, cpuTime, bandwidthUsage)
+        self.logger.info('JC post result: TBC')
+        # resultHash_int = int(resultHash, 16)
+        # self.logger.info("H: postResult = %s" %uri)
+        # self.contract.postResult(self.account, True, matchID, joid, endStatus, uri,
+        #                          resultHash_int, cpuTime, bandwidthUsage)
 
 
     def CLIListener(self):
@@ -227,6 +239,11 @@ class ResourceProvider(Mediator):
                     ResultStatus = self.getJob(matchID, JO, True)
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "RP" + str(self.index)},
                                           seriesname="state", value=1)
+
+                    # once we have run a job let's post another offer
+                    # TODO: remove this - it should be called as part of postOffer
+                    self.idle = True
+                    self.postDefaultOffer()
 
                     # self.matches[matchID] = {"uri":uri,"JID":JID,"execute":True}
 

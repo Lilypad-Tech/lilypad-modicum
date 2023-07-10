@@ -519,61 +519,22 @@ def startRP(path,index,host,sim,mediator):
         time.sleep(1)
     print("RP has registered")
 
+    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None:
+        mediator = os.environ.get('MEDIATOR_ADDRESSES').split(',')[0]
+
     if mediator is None:
-        mediator = RP.account
+        mediator = RP.getEthAccount(0)
 
     print("Resource Provider adding mediator... ")
-    exitcode = RP.addMediator(RP.account, RP.account)
+    exitcode = RP.addMediator(RP.account, mediator)
 
     while not RP.mediator:
         time.sleep(1)
 
-    if sim =="True":
-        for i in range(100):
+    while not RP.idle:
+        time.sleep(1)
 
-            msg = {"request": "post",
-                   "deposit" : 1000,
-                   "instructionPrice" : 1,
-                   "instructionCap" : 15*60*1000, #ms on 1Ghz processor
-                   "memoryCap": 100000000,
-                   "localStorageCap" : 1000000000,
-                   "bandwidthCap" : 2**256-1,
-                   "bandwidthPrice" : 1,
-                   "matchIncentive" : 1,
-                   "verificationCount" : 1,
-                   "iroid" : int(i)}
-
-            while not RP.idle:
-                time.sleep(1)
-            exitcode = RP.postOffer(msg)
-        
-    else:
-        with open(path+"player"+str(index), 'r') as f:
-            lines = f.readlines()
-            for line in lines:
-                print(line)
-                call,irid = line.split(" ")                
-                
-                if call == "postOffer":
-                    print("==== HERE, ABOUT TO POSTOFFER ===")
-                    msg = {"request": "post",
-                        "deposit" : 1000,
-                        "instructionPrice" : 1,
-                        "instructionCap" : 15*60*1000, #ms on 1Ghz processor
-                        "memoryCap": 100000000,
-                        "localStorageCap" : 1000000000,
-                        "bandwidthCap" : 2**256-1,
-                        "bandwidthPrice" : 1,
-                        "matchIncentive" : 1,
-                        "verificationCount" : 1,
-                        "iroid" : int(irid)
-                        }
-                    while not RP.idle:
-                        time.sleep(1)
-                    exitcode = RP.postOffer(msg)
-                    
-                else:
-                    pass
+    exitcode = RP.postDefaultOffer()
 
 @click.command('startRPDaemon')
 @click.option('--index', default=0, show_default=True)
@@ -722,8 +683,12 @@ def runLilypadCLI(template, params, mediator):
         time.sleep(1)
     click.echo("JC has registered")
 
+    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None:
+        mediator = os.environ.get('MEDIATOR_ADDRESSES').split(',')[0]
+
     if mediator is None:
-        mediator = JC.account
+        mediator = JC.getEthAccount(0)
+
     exitcode = JC.addMediator(JC.account, mediator)
     while not JC.mediator:
         time.sleep(1)

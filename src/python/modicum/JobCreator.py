@@ -324,8 +324,8 @@ class JobCreator(PlatformClient):
                     if joid in self.job_offers:
                         self.logger.info("%s matchId= %s" % (name, params['matchId']))
                         self.logger.info("%s offerId= %s" % (name, params['jobOfferId']))
-                        self.logger.info("Job offer %s = %s" %(name, self.job_offers[params['jobOfferId']].ijoid))
-                        self.logger.info("Resource offer %s = %s" %(name, self.resource_offers[params['resourceOfferId']].iroid))
+                        self.logger.info("Job offer %s = %s" %(name, params['jobOfferId']))
+                        self.logger.info("Resource offer %s = %s" %(name, params['resourceOfferId']))
 
                         matchID = params["matchId"]
                         match = Pstruct.Match(
