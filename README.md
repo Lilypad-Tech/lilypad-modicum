@@ -73,18 +73,15 @@ The smart contract is now deployed and the address is written to the JSON file l
 #### run services
 
 ```bash
-./stack solver
-./stack logs solver
+./stack solver && ./stack logs solver
 ```
 
 ```bash
-./stack mediator
-./stack logs mediator
+./stack mediator && ./stack logs mediator
 ```
 
 ```bash
-./stack resource-provider
-./stack logs resource-provider
+./stack resource-provider && ./stack logs resource-provider
 ```
 
 ```bash

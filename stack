@@ -2,6 +2,9 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+declare -ga GLOBAL_ARGS
+GLOBAL_ARGS=( "$@" )
+
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
 export GCP_ZONE=${GCP_ZONE:="us-central1-a"}
@@ -173,11 +176,13 @@ function lilypad-node() {
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \
     -e RPC_URL=$RPC_URL \
-    $LILYPAD_NODE_IMAGE "$@" 
+    $LILYPAD_NODE_IMAGE \
+    ${1:-""} \
+    $(for arg in ${GLOBAL_ARGS[@]:1}; do echo ${arg@Q}; done)
 }
 
 function logs() {
-  trap "reset" EXIT
+  trap "sleep 1; reset" EXIT
   service="$1"
   if [[ "$service" == "solver" ]]; then
     docker logs -f solver
@@ -215,7 +220,7 @@ function submitjob() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=submitjob \
   CONTAINER_MODE=cli \
-  lilypad-node "runLilypadCLI" "$@"
+  lilypad-node "runLilypadCLI"
 }
 
 eval "$@"
