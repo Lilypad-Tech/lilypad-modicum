@@ -202,7 +202,31 @@ class Solver(PlatformClient):
             resourceList[j]=[]
             visitedResource[j]=0
 
-        self.logger.info("🟢\n#JOs: %s\n#ROs: %s" %(json.dumps(self.job_offers), json.dumps(self.resource_offers)))
+        debugResourceOffers = []
+        debugJobOffers = []
+        
+        for i in self.resource_offers:
+            resource_offer = self.resource_offers[i]
+            # append a dict to debugJobOffers
+            debugResourceOffers.append({
+              "offerId": resource_offer.offerId,
+              "resourceProvider": resource_offer.resourceProvider,
+              "deposit": resource_offer.deposit,
+              "iroid": resource_offer.iroid
+            })
+
+        for i in self.job_offers:
+            job_offer = self.job_offers[i]
+            # append a dict to debugJobOffers
+            debugResourceOffers.append({
+              "offerId": job_offer.offerId,
+              "ijoid": job_offer.ijoid,
+              "jobCreator": job_offer.jobCreator,
+              "extras": job_offer.extras
+            })
+
+
+        self.logger.info("🟢\n#JOs: %s\n#ROs: %s" %(json.dumps(debugResourceOffers), json.dumps(debugJobOffers)))
 
         #create edges for each node
         for i in self.job_offers:
