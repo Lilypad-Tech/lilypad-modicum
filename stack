@@ -60,6 +60,10 @@ function build-hardhat() {
   docker build -t $IMAGE_HARDHAT src/js
 }
 
+function version() {
+  echo $VERSION
+}
+
 function build() {
   build-modicum
   build-resource-provider
@@ -169,7 +173,7 @@ function lilypad-node() {
   elif [[ "$CONTAINER_MODE" == "cli" ]]; then
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -ti --rm"
   fi
-  echo docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
+  eval docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e CONTRACT_ADDRESS=$(contract-address) \
