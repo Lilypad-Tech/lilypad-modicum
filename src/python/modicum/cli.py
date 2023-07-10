@@ -531,6 +531,9 @@ def startRP(path,index,host,sim,mediator):
     while not RP.mediator:
         time.sleep(1)
 
+    while not RP.idle:
+        time.sleep(1)
+
     exitcode = RP.postDefaultOffer()
 
 @click.command('startRPDaemon')

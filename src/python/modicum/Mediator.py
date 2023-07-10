@@ -91,8 +91,16 @@ class Mediator(PlatformClient):
                 f.close()
 
                 # RUN BACALHAU JOB AND GET THE ID
-                result = subprocess.run(['bacalhau', 'create', '--id-only', tmpfile], text=True, capture_output=True)
+                result = subprocess.run(['bacalhau', 'create', '--wait', '--id-only', tmpfile], text=True, capture_output=True)
                 jobID = result.stdout.strip()
+
+                # extrac the CID of the result to report back
+                listOutput = subprocess.run(['bacalhau', 'list', '--output', 'json', '--id-filter', jobID], text=True, capture_output=True)
+
+                # load the listOutput string as a JSON object
+                listOutputJSON = json.loads(listOutput.stdout)
+
+                resultHash = listOutputJSON[0]['State']['Executions'][0]['PublishedResults']['CID']
 
                 print(f"""
                 ---------------------------------------------------------------------------------------
@@ -127,12 +135,8 @@ class Mediator(PlatformClient):
                 ---------------------------------------------------------------------------------------
                 """)
 
-
-        if statusJob != 0:
-            if self.account:
                 self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
-            return endStatus
-
+                
     def postResult(self, matchID, joid, endStatus, uri, resultHash, cpuTime, bandwidthUsage):
         resultHash_int = int(resultHash, 16)
 

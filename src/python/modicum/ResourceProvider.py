@@ -87,7 +87,7 @@ class ResourceProvider(Mediator):
                         "bandwidthPrice" : 1,
                         "matchIncentive" : 1,
                         "verificationCount" : 1,
-                        "iroid" : time.time()*1000
+                        "iroid" : round(time.time()*1000)
                         })
 
     def addSupportedFirstLayer(self, msg):
