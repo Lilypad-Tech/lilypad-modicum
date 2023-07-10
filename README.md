@@ -73,18 +73,15 @@ The smart contract is now deployed and the address is written to the JSON file l
 #### run services
 
 ```bash
-./stack solver
-./stack logs solver
+./stack solver && ./stack logs solver
 ```
 
 ```bash
-./stack mediator
-./stack logs mediator
+./stack mediator && ./stack logs mediator
 ```
 
 ```bash
-./stack resource-provider
-./stack logs resource-provider
+./stack resource-provider && ./stack logs resource-provider
 ```
 
 ```bash
@@ -174,21 +171,16 @@ npx hardhat deploy --network production
 
 # usage
 
-Run this first (for now):
-```
-alias lilypad-run='docker run -ti --rm --net host --entrypoint "/usr/local/bin/modicum" -v /var/run/docker.sock:/var/run/docker.sock -v ./src/python:/app -e CONTRACT_ADDRESS=$(cat src/js/deployments/localhost/Modicum.json | jq -r .address) lilypad-docker-python runLilypadCLI'
-```
-
 ## cowsay
 
 ```
-lilypad-run --template cowsay:v0.0.1 --params "i am a silly cow"
+./stack submitjob --template cowsay:v0.0.1 --params "i am a silly cow"
 ```
 
 ## stable diffusion (requires GPU)
 
 ```
-lilypad-run --template stable_diffusion:v0.0.1 --params "blue frog"
+./stack submitjob --template stable_diffusion:v0.0.1 --params "blue frog"
 ```
 
 TODO:
@@ -201,7 +193,7 @@ TODO:
 ## filecoin data prep
 
 ```
-lilypad-run --template filecoin_data_prep:v0.0.1 \
+./stack submitjob --template filecoin_data_prep:v0.0.1 \
 	--params '{"s3_bucket": "noaa-goes16", \
 	           "s3_key": "ABI-L1b-RadC/2000/001/12/OR_ABI-L1b-RadC-M3C01*"}'
 ```
@@ -213,7 +205,7 @@ lilypad-run --template filecoin_data_prep:v0.0.1 \
 * TODO: the following seems to be a `csv2parquet` program that requires a CSV as input - need to also provide a CSV as input! (but it runs, giving the error message rn)
 
 ```
-lilypad-run --template deterministic_wasm:v0.0.1 \
+./stack submitjob --template deterministic_wasm:v0.0.1 \
 	--params '{"wasm_cid": "Qmajb9T3jBdMSp7xh2JruNrqg3hniCnM6EUVsBocARPJRQ", \
 	           "wasm_entrypoint": "_start"}'
 ```
