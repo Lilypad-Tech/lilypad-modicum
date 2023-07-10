@@ -176,6 +176,7 @@ function lilypad-node() {
   eval docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    -e PRIVATE_KEY \
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \
     -e RPC_URL=$RPC_URL \
