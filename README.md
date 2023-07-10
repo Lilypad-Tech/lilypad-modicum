@@ -1,6 +1,22 @@
-## MODICUM demo
+# Lilypad 🍃
 
-### development
+## Hello (cow) world example
+
+Requires:
+* [Docker](https://docs.docker.com/engine/install/)
+
+Install `lilypad` CLI (shell wrapper, works on Linux, macOS and WSL2)
+```
+curl -sSL -O https://bit.ly/get-lilypad
+sudo install get-lilypad /usr/local/bin/lilypad
+```
+
+Run cowsay via the BLOCKCHAIN
+```
+lilypad run --template cowsay --params "oh hello my dear cow"
+```
+
+# Development
 
 We need the following installed:
 
