@@ -74,6 +74,7 @@ The smart contract is now deployed and the address is written to the JSON file l
 
 ```bash
 ./stack solver
+./stack logs solver
 ```
 
 ```bash
@@ -87,7 +88,7 @@ The smart contract is now deployed and the address is written to the JSON file l
 ```
 
 ```bash
-./stack submitjob --template stable_diffusion --params "hello"
+./stack submitjob --template cowsay --params "hello"
 ```
 
 ### production initial node setup
@@ -220,10 +221,19 @@ lilypad-run --template deterministic_wasm:v0.0.1 \
 
 #### production
 
+Step 1 = run geth in production.
+
+Step 2 = transfer funds to admin account.
+
+Step 3 = deploy contract using hardhat `production` network
+
+Step 4 = run services
+
 Variables that need setting on the prod node:
 
 ```bash
 export TRIM=production
-export CONTRACT_ADDRESS=...
+export CONTRACT_ADDRESS=0x219F074D9b14410868105420eEEa9Ba768a7aAE1
 export VERSION=...
 ```
+

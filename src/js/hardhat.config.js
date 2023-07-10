@@ -30,7 +30,7 @@ const config = {
       blockGasLimit: 68719476736000,
     },
     production: {
-      url: 'http://34.30.95.3:8545',
+      url: 'http://testnet.lilypadnetwork.org:8545',
       chainId: 1337,
       accounts: [
         process.env.ADMIN_PRIVATE_KEY,

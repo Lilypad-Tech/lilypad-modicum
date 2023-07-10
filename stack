@@ -14,6 +14,7 @@ export DATA_DIRECTORY=${DATA_DIRECTORY:="/tmp/geth"}
 export IMAGE_BASE=${IMAGE_BASE:="lilypad"}
 export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-hardhat"}
 export DEPLOYMENT=${DEPLOYMENT:="localgeth"}
+export RPC_URL=${RPC_URL:="http://geth:8545"}
 
 export VERSION=${VERSION:="$(cd $DIR; git rev-parse --short HEAD)"}
 
@@ -71,6 +72,8 @@ function contract-address() {
     cat "src/js/deployments/${DEPLOYMENT}/Modicum.json" | jq -r .address
   elif [[ "$TRIM" == "production" ]]; then
     echo $CONTRACT_ADDRESS
+  elif [[ "$TRIM" == "production-client" ]]; then
+    echo $CONTRACT_ADDRESS
   fi  
 }
 
@@ -92,6 +95,7 @@ function geth() {
   docker network ls | grep modicum || docker network create modicum
   docker run $LILYPAD_GETH_FLAGS \
     --name geth \
+    --restart always \
     --network modicum \
     -p 8545:8545 \
     -v ${DATA_DIRECTORY}:/data/geth \
@@ -147,12 +151,15 @@ function lilypad-node() {
   if [[ -z "$RPC_URL" ]]; then
     echo >&2 "RPC_URL must be set"
   fi
-  local extras=""
   if [[ "$TRIM" == "development" ]]; then
-    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app"
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app --network modicum"
+  elif [[ "$TRIM" == "production" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS --network modicum"
+  elif [[ "$TRIM" == "production-client" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS"
   fi
   docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
-    --network modicum \
+    --restart always \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e CONTRACT_ADDRESS=$(contract-address) \
@@ -174,7 +181,6 @@ function logs() {
 function resource-provider() {
   LILYPAD_NODE_IMAGE=$IMAGE_RESOURCE_PROVIDER \
   LILYPAD_NODE_NAME=resource-provider \
-  RPC_URL=http://geth:8545 \
   LILYPAD_NODE_FLAGS="-d" \
   lilypad-node "$@"
 }
@@ -182,7 +188,6 @@ function resource-provider() {
 function mediator() {
   LILYPAD_NODE_IMAGE=$IMAGE_MEDIATOR \
   LILYPAD_NODE_NAME=mediator \
-  RPC_URL=http://geth:8545 \
   LILYPAD_NODE_FLAGS="-d" \
   lilypad-node "$@"
 }
@@ -190,15 +195,13 @@ function mediator() {
 function solver() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=solver \
-  RPC_URL=http://geth:8545 \
-  LILYPAD_NODE_FLAGS="--rm" \
+  LILYPAD_NODE_FLAGS="-d" \
   lilypad-node "runAsSolver"
 }
 
 function submitjob() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=submitjob \
-  RPC_URL=http://geth:8545 \
   LILYPAD_NODE_FLAGS="--rm" \
   lilypad-node "runLilypadCLI" "$@"
 }
