@@ -519,11 +519,14 @@ def startRP(path,index,host,sim,mediator):
         time.sleep(1)
     print("RP has registered")
 
+    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None:
+        mediator = os.environ.get('MEDIATOR_ADDRESSES').split(',')[0]
+
     if mediator is None:
-        mediator = RP.account
+        mediator = RP.getEthAccount(0)
 
     print("Resource Provider adding mediator... ")
-    exitcode = RP.addMediator(RP.account, RP.account)
+    exitcode = RP.addMediator(RP.account, mediator)
 
     while not RP.mediator:
         time.sleep(1)
@@ -722,8 +725,12 @@ def runLilypadCLI(template, params, mediator):
         time.sleep(1)
     click.echo("JC has registered")
 
+    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None:
+        mediator = os.environ.get('MEDIATOR_ADDRESSES').split(',')[0]
+
     if mediator is None:
-        mediator = JC.account
+        mediator = JC.getEthAccount(0)
+
     exitcode = JC.addMediator(JC.account, mediator)
     while not JC.mediator:
         time.sleep(1)
