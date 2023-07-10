@@ -10,6 +10,8 @@ The cloud is just someone else's computer.
 Requires:
 * [Docker](https://docs.docker.com/engine/install/)
 
+TODO: set `PRIVATE_KEY`
+
 Install `lilypad` CLI (shell wrapper, works on Linux, macOS and WSL2)
 ```
 curl -sSL -O https://bit.ly/get-lilypad
@@ -20,6 +22,11 @@ Run cowsay via the BLOCKCHAIN
 ```
 lilypad run --template cowsay --params "oh hello my dear cow"
 ```
+
+TODO: How to run a node
+
+
+
 
 # Development
 
