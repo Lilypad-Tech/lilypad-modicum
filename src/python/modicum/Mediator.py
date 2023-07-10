@@ -2,6 +2,7 @@ import logging
 import logging.config
 import os
 import subprocess
+import textwrap
 import docker.errors
 from . import DockerWrapper
 from .PlatformClient import PlatformClient
@@ -102,7 +103,7 @@ class Mediator(PlatformClient):
 
                 resultHash = listOutputJSON[0]['State']['Executions'][0]['PublishedResults']['CID']
 
-                print(f"""
+                print(textwrap.dedent(f"""
                 ---------------------------------------------------------------------------------------
                 ---------------------------------------------------------------------------------------
                 ---------------------------------------------------------------------------------------
@@ -112,10 +113,10 @@ class Mediator(PlatformClient):
                 https://dashboard.bacalhau.org/jobs/{jobID}
 
                 Get stdout, status:
-                docker exec -ti lilypad-node bacalhau describe {jobID}
+                docker exec -ti resource-provider bacalhau describe {jobID}
 
                 Download results CID from IPFS:
-                docker exec -ti lilypad-node bacalhau get {jobID}
+                docker exec -ti resource-provider bacalhau get {jobID}
 
                 ---------------------------------------------------------------------------------------
                 ---------------------------------------------------------------------------------------
@@ -133,7 +134,7 @@ class Mediator(PlatformClient):
                 ---------------------------------------------------------------------------------------
                 ---------------------------------------------------------------------------------------
                 ---------------------------------------------------------------------------------------
-                """)
+                """))
 
                 self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
                 

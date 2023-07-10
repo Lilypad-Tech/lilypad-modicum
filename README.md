@@ -48,9 +48,7 @@ rm -rf src/js/deployments/localgeth
 The first thing we need to do is compile the smart contract so we have the ABI and can build that into the container:
 
 ```bash
-cd src/js
-npm install
-npx hardhat compile
+(cd src/js && npm install && npx hardhat compile)
 ```
 
 #### admin address
@@ -58,8 +56,7 @@ npx hardhat compile
 Then we create a new address using:
 
 ```bash
-cd src/js
-node scripts/create-new-account.js
+(cd src/js && node scripts/create-new-account.js)
 ```
 
 Create a `src/js/.env` file like this:
@@ -93,8 +90,7 @@ source src/js/.env
 Then we can deploy the contract:
 
 ```bash
-cd src/js
-npx hardhat deploy --network localgeth
+(cd src/js && npx hardhat deploy --network localgeth)
 ```
 
 The smart contract is now deployed and the address is written to the JSON file living in `src/js/deployments/localgeth/Modicum.json`
