@@ -80,4 +80,15 @@ function run() {
   lilypad-node "runLilypadCLI"
 }
 
+# if args is empty, print help text
+if [[ $# -eq 0 ]]; then
+  echo "Usage: $0 <command> [args]"
+  echo
+  echo "Commands:"
+  echo "  serve"
+  echo "  run"
+  echo "  serve-logs"
+  exit 1
+fi
+
 eval "$@"
