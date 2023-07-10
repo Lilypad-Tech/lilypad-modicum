@@ -161,9 +161,7 @@ class Mediator(PlatformClient):
         
 
     def CLIListener(self):
-        active = True
-        while active:
-            pass
+        pass
 
     def platformListener(self):
         self.active = True
