@@ -2,7 +2,8 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-declare -ga GLOBAL_ARGS=( "$@" )
+declare -ga GLOBAL_ARGS
+GLOBAL_ARGS=( "$@" )
 
 export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
@@ -168,16 +169,15 @@ function lilypad-node() {
   elif [[ "$CONTAINER_MODE" == "cli" ]]; then
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -ti --rm"
   fi
-  for arg in "${GLOBAL_ARGS}"; do echo "boo --> ${arg@Q}"; done
-  args="$@"
-  echo docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
+  eval docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e PRIVATE_KEY \
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \
     -e RPC_URL=$RPC_URL \
-    $LILYPAD_NODE_IMAGE ${args@Q}
+    $LILYPAD_NODE_IMAGE \
+    $(for arg in ${GLOBAL_ARGS[@]:2}; do echo ${arg@Q}; done)
 }
 
 function logs() {
