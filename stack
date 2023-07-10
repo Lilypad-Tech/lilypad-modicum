@@ -173,7 +173,7 @@ function lilypad-node() {
   elif [[ "$CONTAINER_MODE" == "cli" ]]; then
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -ti --rm"
   fi
-  eval docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
+  echo docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e CONTRACT_ADDRESS=$(contract-address) \
@@ -183,6 +183,7 @@ function lilypad-node() {
 }
 
 function logs() {
+  trap "reset" EXIT
   service="$1"
   docker exec -ti $service supervisorctl tail -f bacalhau-serve stdout &
   docker exec -ti $service supervisorctl tail -f bacalhau-serve stderr &
