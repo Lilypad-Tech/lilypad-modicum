@@ -55,22 +55,6 @@ def interact():
     code.interact()
 
 ################################################################################
-# EthereumClient
-################################################################################
-@click.command('runEC')
-def runEC():
-    from io import BytesIO
-    import pycurl
-    import json
-    from modicum import EthereumClient as EC
-    
-    GETH_IP = os.environ.get('GETHIP')
-    GETH_PORT = os.environ.get('GETHPORT')
-    ethclient = EC.EthereumClient(ip=GETH_IP, port=GETH_PORT)
-    response = ethclient.accounts()
-    print(response)
-
-################################################################################
 # DIRECTORY CLI
 ################################################################################
 @click.command('runAsDir')
@@ -143,7 +127,7 @@ def runAsMediator(index,sim):
     # exitcode = M.test(1)
 
 
-    click.echo("Mediator is registering... ")
+    click.echo("Mediator is registering... %s" % (M.account,))
     M.register(M.account, "armv7", instructionPrice=1,
                bandwidthPrice=1,availabilityValue=1, verificationCount=1)
 
@@ -773,7 +757,6 @@ main.add_command(RPpostOffer)
 main.add_command(getJob)
 main.add_command(loadImage)
 main.add_command(getResult)
-main.add_command(runEC)
 main.add_command(getSize)
 main.add_command(runLilypadCLI)
 

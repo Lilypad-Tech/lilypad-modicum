@@ -96,16 +96,9 @@ function hardhat() {
 }
 
 function geth() {
-  LILYPAD_GETH_FLAGS=""
-  if [[ "$TRIM" == "development" ]]; then
-    LILYPAD_GETH_FLAGS="--rm -ti"
-  elif [[ "$TRIM" == "production" ]]; then
-    LILYPAD_GETH_FLAGS="-d"
-  fi
   docker network ls | grep modicum || docker network create modicum
-  docker run $LILYPAD_GETH_FLAGS \
+  docker run -d --restart always \
     --name geth \
-    --restart always \
     --network modicum \
     -p 8545:8545 \
     -v ${DATA_DIRECTORY}:/data/geth \
@@ -185,6 +178,9 @@ function lilypad-node() {
 
 function logs() {
   service="$1"
+  if [[ "$service" == "solver" ]]; then
+    docker logs -f solver
+  fi
   docker exec -ti $service supervisorctl tail -f bacalhau-serve stdout &
   docker exec -ti $service supervisorctl tail -f bacalhau-serve stderr &
   docker exec -ti $service supervisorctl tail -f ipfs stdout &

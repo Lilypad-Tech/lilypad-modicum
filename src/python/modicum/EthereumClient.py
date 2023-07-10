@@ -69,16 +69,16 @@ class EthereumClient:
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
         print(self.w3.is_connected())
 
-        self.addresses = []
+        self.addresses = self.w3.eth.accounts
         for i in range(5):
             pk = os.environ.get(f'PRIVATE_KEY_{i}')
             if i == 0 and pk is None:
                 pk = os.environ.get('PRIVATE_KEY')
             if pk is not None:
                 acct = self.w3.eth.account.from_key(pk)
-                self.addresses.append(acct.address)
+                self.addresses[i] = acct.address
 
-                print(f"--> Loaded private key for {acct} from env PRIVATE_KEY_{i}")
+                print(f"--> Loaded private key for {acct.address} from env PRIVATE_KEY_{i}")
                 # Add acct as auto-signer:
                 self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
                 # Transactions from `acct` will then be signed, under the hood, in
@@ -120,14 +120,6 @@ class EthereumClient:
             print(f"exception calling transaction(): {e}, sleeping 1s and retrying, try {try_}...")
             sleep(1)
             return self.transaction(from_address, data, value, to_address, try_+1)
-
-    def accounts(self):
-        if os.environ.get("PRIVATE_KEY_0") is not None:
-            print(f"--> addresses = {self.addresses}")
-            return self.addresses
-        print("😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀")
-        import pprint; pprint.pprint(self.w3.eth.accounts);
-        return self.w3.eth.accounts
 
     def keccak256(self, string):
         r = self.w3.solidity_keccak(['string'], [string])

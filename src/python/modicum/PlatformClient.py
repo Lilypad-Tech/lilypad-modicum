@@ -117,20 +117,13 @@ class PlatformClient():
     def platformConnect(self, contract_address, geth_ip, geth_port, index):
         self.contract_address=contract_address
         self.ethclient = EthereumClient(ip=geth_ip, port=geth_port)
-        self.getEthAccount(index)
+        self.account = self.getEthAccount(index)
         self.contract = ModicumContract.ModicumContract(index, self.ethclient, self.contract_address)
         self.platformListenerThread.start()
         return self.ethclient, self.contract
 
-    def getEthAccount(self,index):
-        response = self.ethclient.accounts()
-        self.logger.info("ALL ACCOUNTS: %s, idx=%s" % (response, index))
-        if "ERROR" not in response:
-          self.account = response[index] # use the first owned address
-          self.logger.info("My account: %s" %self.account)
-          return self.account
-        else:
-          return "ERROR: Failed to fetch account"
+    def getEthAccount(self, index):
+        return self.ethclient.addresses[index]
 
     def wait(self):
         time.sleep(1)
