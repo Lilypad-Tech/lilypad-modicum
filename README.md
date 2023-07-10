@@ -221,19 +221,52 @@ lilypad-run --template deterministic_wasm:v0.0.1 \
 
 #### production
 
+Step 0 = build and push images
+
+```bash
+./stack build
+./stack push-images
+```
+
 Step 1 = run geth in production.
 
 Step 2 = transfer funds to admin account.
 
 Step 3 = deploy contract using hardhat `production` network
 
-Step 4 = run services
+Step 4 = export variables
 
-Variables that need setting on the prod node:
+These variables are exported on the node
 
 ```bash
 export TRIM=production
 export CONTRACT_ADDRESS=0x219F074D9b14410868105420eEEa9Ba768a7aAE1
 export VERSION=...
 ```
+
+Step 4 = run solver and mediator services
+
+^ all of the above is done using the `stack` script on the production node.
+
+Step 5 = run resource-provider on a separate node
+
+NOTE: you need to use `export TRIM=production-client` on the resource-provider node
+
+```bash
+export TRIM=production-client
+./stack resource-provider
+```
+
+Step 6 = submit jobs
+
+NOTE: you need to use `export TRIM=production-client` on the client node
+
+```bash
+export TRIM=production-client
+./stack submitjob --template cowsay:v0.0.1 --params "hello"
+```
+
+
+
+
 
