@@ -104,10 +104,10 @@ class Mediator(PlatformClient):
                 https://dashboard.bacalhau.org/jobs/{jobID}
 
                 Get stdout, status:
-                docker exec -ti lilypad-node bacalhau describe ${jobID}
+                docker exec -ti lilypad-node bacalhau describe {jobID}
 
                 Download results CID from IPFS:
-                docker exec -ti lilypad-node bacalhau get ${jobID}
+                docker exec -ti lilypad-node bacalhau get {jobID}
 
                 ---------------------------------------------------------------------------------------
                 ---------------------------------------------------------------------------------------
@@ -167,15 +167,15 @@ class Mediator(PlatformClient):
 
     def platformListener(self):
         self.active = True
+        self.logger.info(f"poll contract events on {self.contract.address}")
         while self.active:
             events = self.contract.poll_events()
-            self.logger.info(f"poll contract events on {self.contract.address}")
             # self.logger.info(f"poll contract events, got {events}")
             for event in events:
                 params = event['params']
                 name = event['name']
                 transactionHash = event['transactionHash']
-                self.logger.info("HERE IS EVENT DATA {}({}).".format(name, params))
+                self.logger.info("🔴 mediator event: {}\n({}).".format(name, params))
                 if name == "DebugUint" :
                     self.logger.info(name)
                     self.getReceipt(name, transactionHash)

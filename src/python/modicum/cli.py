@@ -23,7 +23,7 @@ logging.getLogger('fabric')
 
 # sys.stdout = LoggerWriter.LoggerWriter(rootLogger.info)
 # sys.stderr = LoggerWriter.LoggerWriter(rootLogger.warning)
-mediator = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
+# mediator = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
 # mediator = '0x21822993d2a654e90d4f8f837a8af8a2e23c686f'
 
 
@@ -504,7 +504,8 @@ def getSize(tag):
 @click.option('--index', default=0, show_default=True)
 @click.option('-h','--host',default=None)
 @click.option('--sim')
-def startRP(path,index,host,sim):
+@click.option('--mediator', default=None, show_default=True)
+def startRP(path,index,host,sim,mediator):
     from modicum import ResourceProvider
 
     if host:
@@ -534,9 +535,11 @@ def startRP(path,index,host,sim):
         time.sleep(1)
     print("RP has registered")
 
+    if mediator is None:
+        mediator = RP.account
 
     print("Resource Provider adding mediator... ")
-    exitcode = RP.addMediator(RP.account, mediator)
+    exitcode = RP.addMediator(RP.account, RP.account)
 
     while not RP.mediator:
         time.sleep(1)
@@ -718,7 +721,8 @@ def main(ctx):
 @click.command('runLilypadCLI')
 @click.option('--template', default="stable_diffusion", show_default=True)
 @click.option('--params', default="", show_default=True)
-def runLilypadCLI(template, params):
+@click.option('--mediator', default=None, show_default=True)
+def runLilypadCLI(template, params, mediator):
     print("template: %s - params: %s" % (template, params))
     from modicum import JobCreator
     index = 0
@@ -734,6 +738,8 @@ def runLilypadCLI(template, params):
         time.sleep(1)
     click.echo("JC has registered")
 
+    if mediator is None:
+        mediator = JC.account
     exitcode = JC.addMediator(JC.account, mediator)
     while not JC.mediator:
         time.sleep(1)

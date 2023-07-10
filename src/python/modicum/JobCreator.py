@@ -521,7 +521,9 @@ class JobCreator(PlatformClient):
             msg['bandwidthMaxPrice'],
             msg['completionDeadline'],
             msg['matchIncentive']
-        ).transact()
+        ).transact({
+          "from": self.account
+        })
 
         self.logger.info("D: postJobOfferPartOne = %s" % (txHash,))
 
@@ -573,7 +575,9 @@ class JobCreator(PlatformClient):
             Web3.to_int(msg['hash']),
             Web3.to_int(1),
             jsonData,
-        ).transact()
+        ).transact({
+          "from": self.account
+        })
 
 #         (1,
 #  100,

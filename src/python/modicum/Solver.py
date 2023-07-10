@@ -240,15 +240,14 @@ class Solver(PlatformClient):
 
     def platformListener(self):
         self.active = True
-        self.logger.info("Listening for contract events...")
-
+        self.logger.info(f"poll contract events on {self.contract.address}")
         while self.active:
             events = self.contract.poll_events()
-            self.logger.info(f"poll contract events on {self.contract.address}")
+            
             for event in events:
                 params = event['params']
                 name = event['name']
-                self.logger.info("HERE IS EVENT DATA {}({}).".format(name, params))
+                self.logger.info("🔴 solver event: {}\n({}).".format(name, params))
                 transactionHash = event['transactionHash']
 
                 self.getReceipt(name, transactionHash)
