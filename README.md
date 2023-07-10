@@ -181,13 +181,13 @@ alias lilypad-run='docker run -ti --rm --net host --entrypoint "/usr/local/bin/m
 ## cowsay
 
 ```
-lilypad-run --template cowsay --params "i am a silly cow"
+lilypad-run --template cowsay:v0.0.1 --params "i am a silly cow"
 ```
 
 ## stable diffusion (requires GPU)
 
 ```
-lilypad-run --template stable_diffusion --params "blue frog"
+lilypad-run --template stable_diffusion:v0.0.1 --params "blue frog"
 ```
 
 TODO:
@@ -200,7 +200,7 @@ TODO:
 ## filecoin data prep
 
 ```
-lilypad-run --template filecoin_data_prep \
+lilypad-run --template filecoin_data_prep:v0.0.1 \
 	--params '{"s3_bucket": "noaa-goes16", \
 	           "s3_key": "ABI-L1b-RadC/2000/001/12/OR_ABI-L1b-RadC-M3C01*"}'
 ```
@@ -212,7 +212,7 @@ lilypad-run --template filecoin_data_prep \
 * TODO: the following seems to be a `csv2parquet` program that requires a CSV as input - need to also provide a CSV as input! (but it runs, giving the error message rn)
 
 ```
-lilypad-run --template deterministic_wasm \
+lilypad-run --template deterministic_wasm:v0.0.1 \
 	--params '{"wasm_cid": "Qmajb9T3jBdMSp7xh2JruNrqg3hniCnM6EUVsBocARPJRQ", \
 	           "wasm_entrypoint": "_start"}'
 ```
