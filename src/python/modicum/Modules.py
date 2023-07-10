@@ -17,8 +17,8 @@ def get_bacalhau_jobspec(template_name, params):
     return modules[template_name](params)
 
 modules = {
-    "stable_diffusion": _stable_diffusion,
-    "cowsay": _cowsay,
-    "filecoin_data_prep": _filecoin_data_prep,
-    "deterministic_wasm": _deterministic_wasm,
+    "stable_diffusion:v0.0.1": _stable_diffusion,
+    "cowsay:v0.0.1": _cowsay,
+    "filecoin_data_prep:v0.0.1": _filecoin_data_prep,
+    "deterministic_wasm:v0.0.1": _deterministic_wasm,
 }
