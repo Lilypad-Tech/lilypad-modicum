@@ -88,7 +88,7 @@ The smart contract is now deployed and the address is written to the JSON file l
 ```
 
 ```bash
-./stack submitjob --template cowsay --params "hello"
+./stack submitjob --template cowsay:v0.0.1 --params "hello"
 ```
 
 ### production initial node setup

@@ -7,6 +7,10 @@ export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
 export GCP_ZONE=${GCP_ZONE:="us-central1-a"}
 export GCP_NODE_NAME=${GCP_NODE_NAME:="bravo-testnet-vm-0"}
 export TRIM=${TRIM:="development"}
+# this means -d or -ti --rm
+# bash sucks sometimes because we can't just pass these as a single string
+# server or cli
+export CONTAINER_MODE=${CONTAINER_MODE:="server"}
 # we expect the contract address to be set in the environment
 # if we are production trim this will be handled by the deployment
 export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=""}
@@ -25,6 +29,8 @@ export IMAGE_MEDIATOR_NAME=${IMAGE_MEDIATOR_NAME:="${IMAGE_BASE}-mediator"}
 export IMAGE_MODICUM="${DOCKER_REGISTRY}/${IMAGE_MODICUM_NAME}:${VERSION}"
 export IMAGE_RESOURCE_PROVIDER="${DOCKER_REGISTRY}/${IMAGE_RESOURCE_PROVIDER_NAME}:${VERSION}"
 export IMAGE_MEDIATOR="${DOCKER_REGISTRY}/${IMAGE_MEDIATOR_NAME}:${VERSION}"
+
+export LILYPAD_NODE_FLAGS=""
 
 function gSSH() {
   gcloud compute ssh --quiet --zone=$GCP_ZONE $GCP_NODE_NAME -- sudo $*
@@ -158,8 +164,12 @@ function lilypad-node() {
   elif [[ "$TRIM" == "production-client" ]]; then
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS"
   fi
-  docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
-    --restart always \
+  if [[ "$CONTAINER_MODE" == "server" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -d --restart always"
+  elif [[ "$CONTAINER_MODE" == "cli" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -ti --rm"
+  fi
+  echo docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e CONTRACT_ADDRESS=$(contract-address) \
@@ -181,28 +191,28 @@ function logs() {
 function resource-provider() {
   LILYPAD_NODE_IMAGE=$IMAGE_RESOURCE_PROVIDER \
   LILYPAD_NODE_NAME=resource-provider \
-  LILYPAD_NODE_FLAGS="-d" \
+  CONTAINER_MODE=server \
   lilypad-node "$@"
 }
 
 function mediator() {
   LILYPAD_NODE_IMAGE=$IMAGE_MEDIATOR \
   LILYPAD_NODE_NAME=mediator \
-  LILYPAD_NODE_FLAGS="-d" \
+  CONTAINER_MODE=server \
   lilypad-node "$@"
 }
 
 function solver() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=solver \
-  LILYPAD_NODE_FLAGS="-d" \
+  CONTAINER_MODE=server \
   lilypad-node "runAsSolver"
 }
 
 function submitjob() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=submitjob \
-  LILYPAD_NODE_FLAGS="--rm" \
+  CONTAINER_MODE=cli \
   lilypad-node "runLilypadCLI" "$@"
 }
 
