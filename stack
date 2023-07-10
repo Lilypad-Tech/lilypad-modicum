@@ -233,14 +233,16 @@ function stop() {
 function start() {
   build
   geth
-  resource-provider
-  mediator
+  echo "Waiting for geth to start"
+  sleep 5
   solver
+  mediator
+  resource-provider
   echo "Now run (in separate terminals):"
   echo "./stack logs geth"
-  echo "./stack logs resource-provider"
-  echo "./stack logs mediator"
   echo "./stack logs solver"
+  echo "./stack logs mediator"
+  echo "./stack logs resource-provider"
 }
 
 eval "$@"
