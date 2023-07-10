@@ -1,0 +1,94 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+declare -ga GLOBAL_ARGS
+GLOBAL_ARGS=( "$@" )
+
+export VERSION=${VERSION:="53ab27e"}
+export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
+export TRIM=${TRIM:="production-client"}
+export CONTAINER_MODE=${CONTAINER_MODE:="cli"}
+export RPC_URL=${RPC_URL:="http://testnet.lilypadnetwork.org:8545"}
+export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:="0x219F074D9b14410868105420eEEa9Ba768a7aAE1"}
+export IMAGE_BASE=${IMAGE_BASE:="lilypad"}
+export IMAGE_MODICUM_NAME=${IMAGE_MODICUM_NAME:="${IMAGE_BASE}-modicum"}
+export IMAGE_MODICUM="${DOCKER_REGISTRY}/${IMAGE_MODICUM_NAME}:${VERSION}"
+export IMAGE_RESOURCE_PROVIDER_NAME=${IMAGE_RESOURCE_PROVIDER_NAME:="${IMAGE_BASE}-resource-provider"}
+export IMAGE_RESOURCE_PROVIDER="${DOCKER_REGISTRY}/${IMAGE_RESOURCE_PROVIDER_NAME}:${VERSION}"
+export LILYPAD_NODE_FLAGS=""
+
+function lilypad-node() {
+  if [[ -z "$LILYPAD_NODE_IMAGE" ]]; then
+    echo >&2 "LILYPAD_NODE_IMAGE must be set"
+  fi
+  if [[ -z "$LILYPAD_NODE_NAME" ]]; then
+    echo >&2 "LILYPAD_NODE_NAME must be set"
+  fi
+  if [[ -z "$RPC_URL" ]]; then
+    echo >&2 "RPC_URL must be set"
+  fi
+  if [[ "$TRIM" == "development" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app --network modicum"
+  elif [[ "$TRIM" == "production" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS --network modicum"
+  elif [[ "$TRIM" == "production-client" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS"
+  fi
+  if [[ "$CONTAINER_MODE" == "server" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -d --restart always"
+  elif [[ "$CONTAINER_MODE" == "cli" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -ti --rm"
+  fi
+  eval docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
+    -v /tmp:/tmp \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -e PRIVATE_KEY \
+    -e CONTRACT_ADDRESS=${CONTRACT_ADDRESS} \
+    -e CONTRACT_ABI_FILE=/Modicum.json \
+    -e RPC_URL=${RPC_URL} \
+    $LILYPAD_NODE_IMAGE \
+    ${1:-""} \
+    $(for arg in ${GLOBAL_ARGS[@]:1}; do echo ${arg@Q}; done)
+}
+
+function serve-logs() {
+  trap "sleep 1; reset" EXIT
+  service="resource-provider"
+  if [[ "$service" == "solver" ]]; then
+    docker logs -f solver
+  fi
+  docker exec -ti $service supervisorctl tail -f bacalhau-serve stdout &
+  docker exec -ti $service supervisorctl tail -f bacalhau-serve stderr &
+  docker exec -ti $service supervisorctl tail -f ipfs stdout &
+  docker exec -ti $service supervisorctl tail -f ipfs stderr &
+  docker exec -ti $service supervisorctl tail -f $service stdout &
+  docker exec -ti $service supervisorctl tail -f $service stderr
+}
+
+function serve() {
+  LILYPAD_NODE_IMAGE=$IMAGE_RESOURCE_PROVIDER \
+  LILYPAD_NODE_NAME=resource-provider \
+  CONTAINER_MODE=server \
+  lilypad-node "$@"
+}
+
+function run() {
+  LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
+  LILYPAD_NODE_NAME=submitjob \
+  CONTAINER_MODE=cli \
+  lilypad-node "runLilypadCLI"
+}
+
+# if args is empty, print help text
+if [[ $# -eq 0 ]]; then
+  echo "Usage: $0 <command> [args]"
+  echo
+  echo "Commands:"
+  echo "  serve"
+  echo "  run"
+  echo "  serve-logs"
+  exit 1
+fi
+
+eval "$@"

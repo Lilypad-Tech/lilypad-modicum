@@ -1,6 +1,36 @@
-## MODICUM demo
+# Lilypad 🍃
 
-### development
+This cloud is just someone else's computer.
+
+![image](https://github.com/bacalhau-project/lilypad/assets/264658/d91dad9a-ca46-43d4-a94b-d33454efc7ae)
+
+This guide shows you (amongst other things) how to make crypto with your gaming GPU by running stable diffusion jobs for someone else. (caveat, today it is just worthless test crypto)
+
+
+## Hello (cow) world example
+
+Requires:
+* [Docker](https://docs.docker.com/engine/install/)
+
+TODO: set `PRIVATE_KEY`
+
+Install `lilypad` CLI (shell wrapper, works on Linux, macOS and WSL2)
+```
+curl -sSL -O https://bit.ly/get-lilypad
+sudo install get-lilypad /usr/local/bin/lilypad
+```
+
+Run cowsay via the BLOCKCHAIN
+```
+lilypad run --template cowsay --params "oh hello my dear cow"
+```
+
+TODO: How to run a node
+
+
+
+
+# Development
 
 We need the following installed:
 
