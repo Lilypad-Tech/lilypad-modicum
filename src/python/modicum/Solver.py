@@ -3,6 +3,7 @@ import logging
 import sys
 import os
 import time
+import json
 import datetime
 from .PlatformClient import PlatformClient
 from . import PlatformStructs as Pstruct
@@ -201,7 +202,7 @@ class Solver(PlatformClient):
             resourceList[j]=[]
             visitedResource[j]=0
 
-        self.logger.info("#JOs: %s, #RO: %s" %(self.job_offers, self.resource_offers))
+        self.logger.info("🟢\n#JOs: %s\n#ROs: %s" %(json.dumps(self.job_offers), json.dumps(self.resource_offers)))
 
         #create edges for each node
         for i in self.job_offers:
