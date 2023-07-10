@@ -177,7 +177,8 @@ function lilypad-node() {
     -e CONTRACT_ABI_FILE=/Modicum.json \
     -e RPC_URL=$RPC_URL \
     $LILYPAD_NODE_IMAGE \
-    $(for arg in ${GLOBAL_ARGS[@]:2}; do echo ${arg@Q}; done)
+    $1 \
+    $(for arg in ${GLOBAL_ARGS[@]:1}; do echo ${arg@Q}; done)
 }
 
 function logs() {
