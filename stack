@@ -184,6 +184,9 @@ function lilypad-node() {
 function logs() {
   trap "sleep 1; reset" EXIT
   service="$1"
+  if [[ "$service" == "geth" ]]; then
+    docker logs -f geth
+  fi
   if [[ "$service" == "solver" ]]; then
     docker logs -f solver
   fi
