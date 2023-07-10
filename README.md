@@ -7,8 +7,7 @@ Requires:
 
 Install `lilypad` CLI (shell wrapper, works on Linux, macOS and WSL2)
 ```
-curl -sSL -O https://bit.ly/get-lilypad
-sudo install get-lilypad /usr/local/bin/lilypad
+curl -sSL -O https://bit.ly/get-lilypad && sudo install get-lilypad /usr/local/bin/lilypad
 ```
 
 Run cowsay via the BLOCKCHAIN
