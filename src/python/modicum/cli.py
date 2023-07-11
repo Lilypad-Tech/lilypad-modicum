@@ -6,7 +6,7 @@ import zmq
 import logging
 import json
 
-from .Contract.Enums import Architecture
+from .Enums import Architecture
 
 # logFormatter = logging.Formatter('%(levelname)s - %(threadName)s - %(asctime)s - %(name)s - %(message)s')
 logFormatter = logging.Formatter('%(asctime)s;%(name)s;%(message)s')

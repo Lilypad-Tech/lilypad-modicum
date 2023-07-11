@@ -6,8 +6,6 @@ import time
 import dotenv
 import os
 import subprocess
-# logging.basicConfig(format='--%(name)s--: %(message)s', level=logging.INFO)
-from .Contract import ModicumContract as ModicumContract
 from .DirectoryClient import DirectoryClient
 from . import DockerWrapper
 from .EthereumClient import EthereumClient
@@ -118,9 +116,8 @@ class PlatformClient():
         self.contract_address=contract_address
         self.ethclient = EthereumClient(ip=geth_ip, port=geth_port)
         self.account = self.getEthAccount(index)
-        self.contract = ModicumContract.ModicumContract(index, self.ethclient, self.contract_address)
         self.platformListenerThread.start()
-        return self.ethclient, self.contract
+        return self.ethclient
 
     def getEthAccount(self, index):
         return self.ethclient.addresses[index]
@@ -131,7 +128,7 @@ class PlatformClient():
     def platformListener(self):
         self.active = True
         while self.active:
-            events = self.contract.poll_events()
+            events = self.ethclient.poll_events()
             # self.logger.info("poll contract events")
             for event in events:
                 params = event['params']

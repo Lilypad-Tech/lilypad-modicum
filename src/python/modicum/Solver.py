@@ -269,8 +269,7 @@ class Solver(PlatformClient):
         self.active = True
         self.logger.info(f"poll contract events on {self.ethclient.contract_address}")
         while self.active:
-            events = self.contract.poll_events()
-            
+            events = self.ethclient.poll_events()
             for event in events:
                 params = event['params']
                 name = event['name']

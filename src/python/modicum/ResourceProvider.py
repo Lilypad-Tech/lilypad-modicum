@@ -12,7 +12,7 @@ import traceback
 from apscheduler.schedulers.background import BackgroundScheduler
 from . import helper
 import datetime
-from .Contract.Enums import ResultStatus
+from .Enums import ResultStatus
 
 class ResourceProvider(Mediator):
     def __init__(self, index=0, sim=False):
@@ -182,8 +182,7 @@ class ResourceProvider(Mediator):
         self.active = True
         self.logger.info(f"poll contract events on {self.ethclient.contract_address}")
         while self.active:
-            events = self.contract.poll_events()
-            import pprint; pprint.pprint(events)
+            events = self.ethclient.poll_events()
             for event in events:
                 params = event['params']
                 name = event['name']
