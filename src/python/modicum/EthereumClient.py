@@ -47,6 +47,7 @@ class CustomHTTPProvider(HTTPProvider):
 class EthereumClient:
     def __init__(self, ip, port, protocol=None):
         self.logger = logging.getLogger("EthereumClient")
+        self.logger.setLevel(logging.INFO)
         self.ip = ip
         self.port = port
         if protocol is None:
@@ -65,7 +66,8 @@ class EthereumClient:
         self.bytecode = GetBytecode()
         self.contract_address = os.environ.get("CONTRACT_ADDRESS")
         self.contract = self.w3.eth.contract(address=self.contract_address, abi=self.abi, bytecode=self.bytecode)
-        self.filter = self.w3.eth.filter({"fromBlock": "latest"})
+        # self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
+        self.filter = self.w3.eth.filter('latest')
 
         # Polygon compatibility
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
@@ -162,10 +164,14 @@ class EthereumClient:
         raise Exception(f"Unexpected method {method}")
 
     def poll_events(self):
-        log = self.filter.get_new_entries()
+        self.logger.info("🔴🔴🔴🔴🔴🔴🔴🔴 poll_events.")
         events = []
-        self.logger.info("🔴🔴🔴 events.")
-        import pprint; pprint.pprint(log)
+        for event in self.filter.get_new_entries():
+            import pprint; pprint.pprint(event)
+
+        # logs = self.filter.get_new_entries()
+        # events = []
+        # import pprint; pprint.pprint(logs)
         # for item in log:
         #     if not isinstance(item, dict) and not isinstance(item, AttributeDict):
         #         self.logger.info(f"[poll_events] Skipping processing {item} since it is not a dict")
