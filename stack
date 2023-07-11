@@ -97,7 +97,12 @@ function hardhat() {
     -p 8545:8545 \
     -v $DIR/src/js/deployments:/app/deployments \
     -v $DIR/src/js/contracts:/app/contracts \
+    -v $DIR/src/js/scripts:/app/scripts \
     $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port 8545
+}
+
+function hardhat-balances() {
+  docker exec geth node scripts/show-balances.js
 }
 
 function geth() {

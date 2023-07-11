@@ -58,6 +58,7 @@ class Mediator(PlatformClient):
           verificationCount
         ).transact({
             "from": self.account,
+            "gasPrice": self.ethclient.w3.eth.gas_price
         })
 
     def getJob(self, matchID, JO, execute):
@@ -181,6 +182,7 @@ class Mediator(PlatformClient):
           faultyParty
         ).transact({
             "from": self.account,
+            "gasPrice": self.ethclient.w3.eth.gas_price
         })
 
     def CLIListener(self):

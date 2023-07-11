@@ -879,7 +879,7 @@ contract Modicum {
         //address(uint160(m)).transfer(2 * mediatorAvailabilityIncentive);
 
 
-        address(uint160(ro.resProvider)).transfer(cost);
+        // address(uint160(ro.resProvider)).transfer(cost);
         emit MatchClosed(matchId, cost);
         emit EtherTransferred(address(this), ro.resProvider, cost, EtherTransferCause.FinishingJob);
         // emit EtherTransferred(address(this), jo.jobCreator, jo_deposit - cost, EtherTransferCause.FinishingJob);
