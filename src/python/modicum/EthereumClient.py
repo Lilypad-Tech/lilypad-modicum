@@ -85,7 +85,7 @@ class EthereumClient:
         
         # Polygon compatibility
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
-        print(self.w3.is_connected())
+        # print(self.w3.is_connected())
 
         self.addresses = self.w3.eth.accounts
         for i in range(5):
@@ -96,7 +96,7 @@ class EthereumClient:
                 acct = self.w3.eth.account.from_key(pk)
                 self.addresses[i] = acct.address
 
-                print(f"--> Loaded private key for {acct.address} from env PRIVATE_KEY_{i}")
+                print(f"🔑 Loaded private key for {acct.address}")
                 # Add acct as auto-signer:
                 self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
                 # Transactions from `acct` will then be signed, under the hood, in
@@ -154,7 +154,7 @@ class EthereumClient:
 
         if try_ > 30:
             raise Exception(f"Too many tries calling command()")
-        print(f"===> Web3EthereumClient command({method}, {self.summarize(params)}")
+        # print(f"===> Web3EthereumClient command({method}, {self.summarize(params)}")
         try:
             if method == "eth_estimateGas":
                 tx = params[0]
@@ -168,12 +168,12 @@ class EthereumClient:
                 return self.w3.eth.send_transaction(tx)
             if method == "eth_getTransactionReceipt":
                 tx = params[0]
-                print(f"!!! --> get tx receipt --> {tx}")
+                # print(f"!!! --> get tx receipt --> {tx}")
                 return self.w3.eth.get_transaction_receipt(tx)
             if method == "eth_blockNumber":
                 return self.w3.eth.block_number
         except Exception as e:
-            print(f"exception calling command(): {e}, sleeping 1s and retrying, try {try_}...")
+            # print(f"exception calling command(): {e}, sleeping 1s and retrying, try {try_}...")
             sleep(1)
             return self.command(method, params, try_+1)
         raise Exception(f"Unexpected method {method}")

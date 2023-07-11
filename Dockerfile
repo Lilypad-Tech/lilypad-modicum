@@ -1,5 +1,6 @@
 FROM ubuntu:22.04 AS modicum
 WORKDIR /app
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y \
       curl \
@@ -8,7 +9,8 @@ RUN apt-get update && \
       python3-dev \
       libssl-dev \
       libcurl4-openssl-dev \
-      jq
+      jq \
+      tzdata
 RUN curl -sL https://get.bacalhau.org/install.sh | bash
 RUN pip3 install supervisor
 RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-amd64.tar.gz && \
