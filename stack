@@ -35,6 +35,11 @@ export IMAGE_MEDIATOR="${DOCKER_REGISTRY}/${IMAGE_MEDIATOR_NAME}:${VERSION}"
 
 export LILYPAD_NODE_FLAGS=""
 
+function clean() {
+  sudo rm -rf "$DATA_DIRECTORY"
+  rm -rf "$DIR/src/js/deployments/$DEPLOYMENT"
+}
+
 function gSSH() {
   gcloud compute ssh --quiet --zone=$GCP_ZONE $GCP_NODE_NAME -- sudo $*
 }
