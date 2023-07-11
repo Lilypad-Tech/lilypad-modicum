@@ -16,8 +16,6 @@ from web3.middleware import geth_poa_middleware
 import requests
 from hexbytes import HexBytes
 
-EVENTS = {'Debug': [('value', 'uint64')], 'DebugArch': [('arch', 'Architecture')], 'DebugUint': [('value', 'uint256')], 'DebugString': [('str', 'string')], 'penaltyRateSet': [('penaltyRate', 'uint256')], 'reactionDeadlineSet': [('reactionDeadline', 'uint256')], 'ResultReaction': [('addr', 'address'), ('resultId', 'uint256'), ('matchId', 'uint256'), ('ResultReaction', 'uint256')], 'ResultPosted': [('addr', 'address'), ('resultId', 'uint256'), ('matchId', 'uint256'), ('status', 'ResultStatus'), ('uri', 'string'), ('hash', 'uint256'), ('instructionCount', 'uint256'), ('bandwidthUsage', 'uint256')], 'Matched': [('addr', 'address'), ('matchId', 'uint256'), ('jobOfferId', 'uint256'), ('resourceOfferId', 'uint256'), ('mediator', 'address')], 'JobOfferPostedPartOne': [('offerId', 'uint256'), ('ijoid', 'uint256'), ('addr', 'address'), ('instructionLimit', 'uint256'), ('bandwidthLimit', 'uint256'), ('instructionMaxPrice', 'uint256'), ('bandwidthMaxPrice', 'uint256'), ('completionDeadline', 'uint256'), ('deposit', 'uint256'), ('matchIncentive', 'uint256')], 'JobOfferPostedPartTwo': [('offerId', 'uint256'), ('addr', 'address'), ('hash', 'uint256'), ('uri', 'string'), ('directory', 'address'), ('arch', 'Architecture'), ('ramLimit', 'uint256'), ('localStorageLimit', 'uint256'), ('extras', 'string')], 'ResourceOfferPosted': [('offerId', 'uint256'), ('addr', 'address'), ('instructionPrice', 'uint256'), ('instructionCap', 'uint256'), ('memoryCap', 'uint256'), ('localStorageCap', 'uint256'), ('bandwidthCap', 'uint256'), ('bandwidthPrice', 'uint256'), ('deposit', 'uint256'), ('iroid', 'uint256')], 'JobOfferCanceled': [('offerId', 'uint256')], 'ResourceOfferCanceled': [('resOfferId', 'uint256')], 'JobAssignedForMediation': [('addr', 'address'), ('matchId', 'uint256')], 'MediatorRegistered': [('addr', 'address'), ('arch', 'Architecture'), ('instructionPrice', 'uint256'), ('bandwidthPrice', 'uint256'), ('availabilityValue', 'uint256'), ('verificationCount', 'uint256')], 'MediatorAddedSupportedFirstLayer': [('addr', 'address'), ('firstLayerHash', 'uint256')], 'ResourceProviderRegistered': [('addr', 'address'), ('arch', 'Architecture'), ('timePerInstruction', 'uint256'), ('penaltyRate', 'uint256')], 'ResourceProviderAddedTrustedMediator': [('addr', 'address'), ('mediator', 'address')], 'JobCreatorRegistered': [('addr', 'address'), ('penaltyRate', 'uint256')], 'JobCreatorAddedTrustedMediator': [('addr', 'address'), ('mediator', 'address')], 'MediatorAddedTrustedDirectory': [('addr', 'address'), ('directory', 'address')], 'ResourceProviderAddedTrustedDirectory': [('addr', 'address'), ('directory', 'address')], 'ResourceProviderAddedSupportedFirstLayer': [('addr', 'address'), ('firstLayer', 'uint256')], 'MediationResultPosted': [('matchId', 'uint256'), ('addr', 'address'), ('result', 'uint256'), ('faultyParty', 'Party'), ('verdict', 'Verdict'), ('status', 'ResultStatus'), ('uri', 'string'), ('hash', 'uint256'), ('instructionCount', 'uint256'), ('mediationCost', 'uint256')], 'MatchClosed': [('matchId', 'uint256'), ('cost', 'uint256')], 'EtherTransferred': [('_from', 'address'), ('to', 'address'), ('value', 'uint256'), ('cause', 'EtherTransferCause')]}
-
 def GetABIFile():
     contractABIFile = os.getenv("CONTRACT_ABI_FILE", "/Modicum.json")
     try:
@@ -33,6 +31,17 @@ def GetABIFile():
 def GetABI():
     file = GetABIFile()
     return file["abi"]
+
+def GetEvents():
+    abi = GetABI()
+    events = {}
+    for event in abi:
+        if event["type"] == "event":
+            args = []
+            for arg in event["inputs"]:
+                args.append((arg["name"], arg["type"]))
+            events[event["name"]] = args
+    return events
 
 def GetBytecode():
     file = GetABIFile()
@@ -68,11 +77,11 @@ class EthereumClient:
 
         self.abi = GetABI()
         self.bytecode = GetBytecode()
-        
+
         self.contract_address = os.environ.get("CONTRACT_ADDRESS")
         self.contract = self.w3.eth.contract(address=self.contract_address, abi=self.abi, bytecode=self.bytecode)
-        self.filter = self.w3.eth.filter({"fromBlock": "latest"})
-        self.generate_topics(EVENTS)
+        self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
+        self.generate_topics(GetEvents())
         
         # Polygon compatibility
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
