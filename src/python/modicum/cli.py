@@ -5,6 +5,7 @@ import time
 import zmq
 import logging
 import json
+from .JobCreator import JobFinished
 
 from .Enums import Architecture
 
@@ -695,11 +696,21 @@ def runLilypadCLI(template, params, mediator):
     while not JC.mediator:
         time.sleep(1)
     click.echo("Mediator has registered")
-    
-    exitcode = JC.postLilypadOffer(template, params)
 
-    # TODO: why doesn't this work?
-    sys.exit(0)
+    exitcode = JC.postLilypadOffer(template, params)
+    print("🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡 WE RETURNED FROM POSTLILYPADOFFER")
+
+    # Threading is terrible. Poll a freaking shared variable.
+
+    while not JC.finished:
+        print(f"STATUS --> {JC.state} {JC.status}")
+        time.sleep(1)
+
+    print(f"STATUS --> {JC.state} {JC.status}")
+
+    os._exit(0)
+
+
 
 main.add_command(foo_command)
 main.add_command(build)

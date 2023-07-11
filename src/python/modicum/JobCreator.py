@@ -17,6 +17,9 @@ from web3 import Web3
 
 import datetime
 
+class JobFinished(Exception):
+    pass
+
 
 class JobCreator(PlatformClient):
     def __init__(self, index=0, sim=False):
@@ -56,6 +59,10 @@ class JobCreator(PlatformClient):
 
         self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "JC"+str(self.index)},
                               seriesname="state", value=1)
+        
+        self.state = "STARTING"
+        self.status = ""
+        self.finished = False
 
 
     def register(self, account):
@@ -238,17 +245,20 @@ class JobCreator(PlatformClient):
                 name = event['name']
                 # self.logger.info("{}({}).".format(name, params))
                 if name == "JobCreatorRegistered" and self.account == params['addr']:
+                    self.state = "JC_REGISTERED"
                     self.logger.info("🔴 JobCreatorRegistered: \n({}).".format(params))
                     self.penaltyRate = params['penaltyRate']
                     self.registered = True
                     self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=-1, ijoid=-1)
                     self.logger.info("A: %s PenaltyRate : %s" %(name, self.penaltyRate))
                 elif name == "JobCreatorAddedTrustedMediator" and self.account == params['addr']:
+                    self.state = "JC_ADDED_MEDIATOR"
                     self.logger.info("🔴 JobCreatorAddedTrustedMediator: \n({}).".format(params))
                     self.mediator = params['mediator']
                     self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=-1, ijoid=-1)
                     self.logger.info("B: %s" %name)
                 elif name == "ResourceOfferPosted":
+                    self.state = "RO_POSTED"
                     self.logger.info("🔴 ResourceOfferPosted: \n({}).".format(params))
                     self.logger.info("%s" %name) 
                     helper.storeResourceOffer(event,self.resource_offers)           
@@ -256,10 +266,12 @@ class JobCreator(PlatformClient):
                 elif "JobOfferPosted" in name and self.account == params['addr']:   
                         self.logger.info("🔴 {}: \n({}).".format(name, params))
                         if "One" in name: 
+                            self.state = "JO_1_POSTED"
                             self.ijoid = params["ijoid"]
                             # self.logger.info("D: %s = %s" %(name,self.ijoid)) 
                             self.logger.info("D: %s offerId = %s" %(name,params["offerId"])) 
                         elif "Two"  in name and self.ijoid:   
+                            self.state = "JO_2_POSTED"
                             # self.logger.info("D: %s = %s" %(name,self.ijoid)) 
                             self.logger.info("D: %s offerId = %s" %(name,params["offerId"])) 
                         
@@ -268,6 +280,7 @@ class JobCreator(PlatformClient):
 
 
                 elif name == "Matched":
+                    self.state = "MATCHED"
                     self.logger.info("🔴 Matched: \n({}).".format(params))
                     joid = params['jobOfferId']
                     if joid in self.job_offers:
@@ -328,6 +341,8 @@ class JobCreator(PlatformClient):
                         ---------------------------------------------------------------------------------------
                         ---------------------------------------------------------------------------------------
                         """))
+                        self.state = "RESULTS_POSTED"
+                        self.status = f"https://ipfs.io/ipfs/{params['hash']}"
 
                         # self.scheduler.remove_job(job_id=str(matchID))
 
@@ -392,6 +407,7 @@ class JobCreator(PlatformClient):
 
 
                 elif name == "ResultReaction":
+                    self.state = "RESULTS_REACTION"
                     self.logger.info("🔴 ResultReaction: \n({}).".format(params))
                     if params["matchId"] in self.matches:
                         matchID = params["matchId"]
@@ -408,13 +424,14 @@ class JobCreator(PlatformClient):
                         
 
                 elif name == "MatchClosed":
+                    self.state = "MATCH_CLOSED"
                     self.logger.info("🔴 MatchClosed: \n({}).".format(params))
                     if params["matchId"] in self.matches:
                         matchID = params["matchId"]
                         joid = self.matches[matchID].jobOfferId
                         ijoid = self.job_offers[joid].ijoid
                         roid = self.matches[matchID].resourceOfferId
-                        iroid = self.resource_offers[roid].iroid
+                        # iroid = self.resource_offers[roid].iroid
 
                         self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=joid, ijoid=ijoid)
 
@@ -428,9 +445,10 @@ class JobCreator(PlatformClient):
                         self.logger.info("Q: %s joid = %s" %(name, joid))
                         self.logger.info("Q: %s ijoid = %s" %(name, ijoid))
                         self.logger.info("Q: %s roid = %s" %(name, roid))
-                        self.logger.info("Q: %s iroid = %s" %(name, iroid))
+                        # self.logger.info("Q: %s iroid = %s" %(name, iroid))
 
                 elif name == "MediationResultPosted":
+                    self.state = "MEDIATION_RESULT_POSTED"
                     self.logger.info("🔴 MediationResultPosted: \n({}).".format(params))
                     if params["matchId"] in self.matches:
                         matchID = params["matchId"]
@@ -442,6 +460,7 @@ class JobCreator(PlatformClient):
                         self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=joid, ijoid=ijoid)
                 
                 elif name == "JobAssignedForMediation":
+                    self.state = "JOB_ASSIGNED_FOR_MEDIATION"
                     self.logger.info("🔴 JobAssignedForMediation: \n({}).".format(params))
                     if params["matchId"] in self.matches:
                         self.logger.info("M: %s = %s" %(name, params["matchId"]))
@@ -458,7 +477,15 @@ class JobCreator(PlatformClient):
                         self.logger.info("M: %s Resource = %s" %(name, iroid))
 
                 elif name == "EtherTransferred":
+                    self.status = f"last state was {self.state}"
+                    # TODO: We need an explicit state machine :-(
+                    if self.state == "RO_POSTED":
+                        self.state = "FINISHED"
+                        self.finished = True
+                    else:
+                        self.state = "ETHER_TRANSFERRED"
                     self.logger.info("🟡 EtherTransferred: \n({}).".format(params))
+
 
             self.wait()
 
