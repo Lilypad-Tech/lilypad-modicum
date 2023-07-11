@@ -35,11 +35,6 @@ export IMAGE_MEDIATOR="${DOCKER_REGISTRY}/${IMAGE_MEDIATOR_NAME}:${VERSION}"
 
 export LILYPAD_NODE_FLAGS=""
 
-function clean() {
-  sudo rm -rf "$DATA_DIRECTORY"
-  rm -rf "$DIR/src/js/deployments/$DEPLOYMENT"
-}
-
 function gSSH() {
   gcloud compute ssh --quiet --zone=$GCP_ZONE $GCP_NODE_NAME -- sudo $*
 }
@@ -177,6 +172,7 @@ function lilypad-node() {
   eval docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    -e DEBUG \
     -e PRIVATE_KEY \
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \
@@ -248,6 +244,18 @@ function start() {
   echo "./stack logs solver"
   echo "./stack logs mediator"
   echo "./stack logs resource-provider"
+}
+
+function clean() {
+  sudo rm -rf "$DATA_DIRECTORY"
+  rm -rf "$DIR/src/js/deployments/$DEPLOYMENT"
+}
+
+function stop-modicum() {
+  docker rm -f solver || true
+  docker rm -f mediator || true
+  docker rm -f resource-provider || true
+  docker rm -f submitjob || true
 }
 
 eval "$@"

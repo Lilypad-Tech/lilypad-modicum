@@ -1,4 +1,5 @@
 import logging
+import os
 import importlib
 from binascii import unhexlify, hexlify
 from .. import helper
@@ -16,6 +17,10 @@ class Contract:
     def __init__(self, client, address, events):
         self.logger = logging.getLogger("Contract")
         self.logger.setLevel(logging.INFO)
+
+        # if the DEBUG environment variable is set, then set the logger to debug
+        if os.environ.get("DEBUG") is not None:
+            self.logger.setLevel(logging.DEBUG)
         
         # ch = logging.StreamHandler()
         # formatter = logging.Formatter("---%(name)s---: \n%(message)s\n\r")

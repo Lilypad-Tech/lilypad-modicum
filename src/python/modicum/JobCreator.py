@@ -61,75 +61,16 @@ class JobCreator(PlatformClient):
     def register(self, account):
         self.logger.info("A: registerJobCreator")
         self.account = account
-        txHash = self.contract.registerJobCreator(self.account,True)
-        # helper.wait4receipt(self.ethclient,txHash)
+        txHash = self.ethclient.contract.functions.registerJobCreator().transact({
+            "from": self.account,
+        })
         return 0
 
     def addMediator(self,account,mediator):
         self.logger.info("B: jobCreatorAddTrustedMediator")
-        txHash = self.contract.jobCreatorAddTrustedMediator(self.account,  True, mediator)
-        # helper.wait4receipt(self.ethclient,txHash)
-
-        return 0
-
-    def postOffer(self,msg,getReceipt):
-
-        self.jobsPending += 1
-
-        self.logger.info("cpuTime: %s Type: %s" %(msg["cpuTime"],type(msg["cpuTime"])))
-        self.logger.info("instructionMaxPrice: %s Type: %s" %(msg["instructionMaxPrice"],type(msg["instructionMaxPrice"])))
-        self.logger.info("bandwidthLimit: %s Type: %s" %(msg["bandwidthLimit"],type(msg["bandwidthLimit"])))
-        self.logger.info("bandwidthMaxPrice: %s Type: %s" %(msg["bandwidthMaxPrice"],type(msg["bandwidthMaxPrice"])))
-        self.logger.info("self.penaltyRate: %s Type: %s" %(self.penaltyRate,type(self.penaltyRate)))
-        self.logger.info("arch: %s Type: %s" %(msg['arch'],type(msg['arch'])))
-
-
-        deposit = (msg["cpuTime"]*msg["instructionMaxPrice"] +
-                   msg["bandwidthLimit"]*msg["bandwidthMaxPrice"])*self.penaltyRate
-        self.logger.info("Deposit: %s" %deposit)
-
-        self.logger.info("D: postJobOfferPartOne = %s" %msg["ijoid"])
-
-
-        self.reject[msg['ijoid']] = msg['reject']
-
-        self.logger.info("reject this job result %s? : %s" %(msg['ijoid'], msg['reject']))
-
-        txHash = self.contract.postJobOfferPartOne(
-            self.account,
-            getReceipt,
-            deposit,
-            msg['ijoid'],
-            msg['cpuTime'],
-            msg['bandwidthLimit'],
-            msg['instructionMaxPrice'],
-            msg['bandwidthMaxPrice'],
-            msg['completionDeadline'],
-            msg['matchIncentive']
-            )
-
-        self.logger.info("D: postJobOfferPartTwo = %s" %msg["ijoid"])
-
-        txHash = self.contract.postJobOfferPartTwo(
-            self.account,
-            getReceipt,
-            msg['ijoid'],
-            msg['ramLimit'],
-            msg['localStorageLimit'],
-            msg['uri'],
-            msg['directory'],
-            msg['hash'],
-            msg['arch'],
-            "01234567890",
-            )
-
-        self.helper.logInflux(now=datetime.datetime.now(), 
-                              tag_dict={"aix":self.index, "ijoid":msg['ijoid'], "event":"postOffer"},
-                              seriesname="jobsPending",  
-                              value=self.jobsPending)
-
-
-        # self.cliSocket.send_pyobj("job offer part one?: %s" %txHash)
+        txHash = self.ethclient.contract.functions.jobCreatorAddTrustedMediator(mediator).transact({
+            "from": self.account,
+        })
         return 0
 
     def getResult(self,user, tag,name,joid, ijoid, resultID,RID, hash):
@@ -138,10 +79,6 @@ class JobCreator(PlatformClient):
         _SSHKEY_ = os.environ.get('sshkey')
         _SSHPORT_ = os.environ.get('SSHPORT')
         _WORKPATH_ = os.environ.get('WORKPATH')
-
-        if self.sim:
-            self.contract.acceptResult(self.account,  True, resultID, joid)
-            return 0
 
         remote_user = self.DC.getUsername(_DIRIP_, _DIRPORT_, RID)
 
@@ -158,7 +95,9 @@ class JobCreator(PlatformClient):
         # TODO check hash param is the same as DC.getData's hash
 
         self.logger.info("F: acceptResult = %s: " %joid)
-        self.contract.acceptResult(self.account,  True, resultID, joid)
+        txHash = self.ethclient.contract.functions.acceptResult(resultID, joid).transact({
+            "from": self.account,
+        })
 
         return 0
 
@@ -230,7 +169,9 @@ class JobCreator(PlatformClient):
         self.logger.info("O: timeout = %s" %(name, ijoid))   
         self.logger.info(f'Match {matchId} timed out.')
 
-        self.contract.timeout(self.account,  True, matchId, joid)
+        txHash = self.ethclient.contract.functions.timeout(matchId, joid).transact({
+            "from": self.account,
+        })
 
     def scheduleTimeout(self, matchID, deadline_ms):
         self.logger.info("now: %s" %time.time())
@@ -291,6 +232,7 @@ class JobCreator(PlatformClient):
             for event in events:
                 params = event['params']
                 name = event['name']
+                self.logger.info("🔴 job creator event: {}\n({}).".format(name, params))
                 # self.logger.info("{}({}).".format(name, params))
                 if name == "JobCreatorRegistered" and self.account == params['addr']:
                     self.penaltyRate = params['penaltyRate']
@@ -366,7 +308,9 @@ class JobCreator(PlatformClient):
                         if (not str(params['status']) == 'ResultStatus.Completed' or
                             self.reject[ijoid] == "True"):
                             self.logger.info("M: rejectResult = %s" % ijoid)
-                            self.contract.rejectResult(self.account,  True, resultId, joid)
+                            self.ethclient.contract.functions.rejectResult(resultId, joid).transact({
+                                "from": self.account,
+                            })
                             continue
                         else:
                             self.logger.info("Job was completed correctly")
@@ -396,7 +340,9 @@ class JobCreator(PlatformClient):
                         #                                   resultID=resultId,RID=RID, hash=params['hash'])
                         #     else:
                         #         self.logger.info("M: Mediation requested = %s" % matchID)
-                        #         self.contract.rejectResult(self.account,  True, resultId)
+                                  # self.ethclient.contract.functions.rejectResult(resultId, joid).transact({
+                                  #     "from": self.account,
+                                  # })
                         else:
                             _DIRIP_ = os.environ.get('DIRIP')
                             _DIRPORT_ = os.environ.get('DIRPORT')
@@ -522,25 +468,11 @@ class JobCreator(PlatformClient):
             msg['completionDeadline'],
             msg['matchIncentive']
         ).transact({
-          "from": self.account
+          "from": self.account,
+          "amount": deposit
         })
 
         self.logger.info("D: postJobOfferPartOne = %s" % (txHash,))
-
-        # txHash = self.contract.postJobOfferPartOne(
-        #     self.account,
-        #     True,
-        #     deposit,
-        #     msg['ijoid'],
-        #     msg['cpuTime'],
-        #     msg['bandwidthLimit'],
-        #     msg['instructionMaxPrice'],
-        #     msg['bandwidthMaxPrice'],
-        #     msg['completionDeadline'],
-        #     msg['matchIncentive']
-        # )
-
-        
 
         # make a JSON string from a single object that has template and params
         # as attributes

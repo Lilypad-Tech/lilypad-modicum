@@ -47,15 +47,18 @@ class Mediator(PlatformClient):
             self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "M" + str(self.index)},
                            seriesname="state", value=1)
 
-    def test(self, value):
-        self.logger.info("run test")
-        exitcode = self.contract.test(self.account,  True, value)
-        return exitcode
-
     def register(self, account, arch, instructionPrice, bandwidthPrice, availabilityValue, verificationCount):
         self.logger.info("A: registerMediator")
         self.account = account
-        self.contract.registerMediator(self.account, True, arch, instructionPrice, bandwidthPrice, availabilityValue, verificationCount)
+        txHash = self.ethclient.contract.functions.registerMediator(
+          arch,
+          instructionPrice,
+          bandwidthPrice,
+          availabilityValue,
+          verificationCount
+        ).transact({
+            "from": self.account,
+        })
 
     def getJob(self, matchID, JO, execute):
         JID = JO.jobCreator
@@ -158,18 +161,26 @@ class Mediator(PlatformClient):
                 reason = 'WrongResults'
                 faultyParty = 'ResourceProvider'
                 
-        
-        self.contract.postMediationResult(self.account, True, matchID, joid, contractStatus, 
-                                          uri, resultHash, cpuTime, 0, 
-                                          reason, faultyParty)
-        
+        txHash = self.ethclient.contract.functions.postMediationResult(
+          matchID,
+          joid,
+          contractStatus, 
+          uri,
+          resultHash,
+          cpuTime,
+          0, 
+          reason,
+          faultyParty
+        ).transact({
+            "from": self.account,
+        })
 
     def CLIListener(self):
         pass
 
     def platformListener(self):
         self.active = True
-        self.logger.info(f"poll contract events on {self.contract.address}")
+        self.logger.info(f"poll contract events on {self.ethclient.contract_address}")
         while self.active:
             events = self.contract.poll_events()
             # self.logger.info(f"poll contract events, got {events}")

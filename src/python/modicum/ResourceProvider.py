@@ -7,10 +7,12 @@ from .PlatformClient import PlatformClient
 from .Mediator import Mediator
 from . import PlatformStructs as Pstruct
 import time
+import json
 import traceback
 from apscheduler.schedulers.background import BackgroundScheduler
 from . import helper
 import datetime
+from .Contract.Enums import ResultStatus
 
 class ResourceProvider(Mediator):
     def __init__(self, index=0, sim=False):
@@ -43,13 +45,16 @@ class ResourceProvider(Mediator):
     def register(self, account, arch, timePerInstruction):
         self.logger.info("A: registerResourceProvider")
         self.account = account
-        txHash = self.contract.registerResourceProvider(account, True, arch, timePerInstruction)
-        # helper.wait4receipt(self.ethclient,txHash)
+        txHash = self.ethclient.contract.functions.registerResourceProvider(arch, timePerInstruction).transact({
+            "from": self.account,
+        })
         return 0
 
     def addMediator(self,account,mediator):
         self.logger.info("B: resourceProviderAddTrustedMediator")
-        txHash = self.contract.resourceProviderAddTrustedMediator(account, True, mediator)
+        txHash = self.ethclient.contract.functions.resourceProviderAddTrustedMediator(mediator).transact({
+            "from": self.account,
+        })
         # helper.wait4receipt(self.ethclient,txHash)
         return 0
 
@@ -57,19 +62,21 @@ class ResourceProvider(Mediator):
         if self.idle:
             self.idle = False
             self.logger.info("C: postResOffer = %s" %msg["iroid"])
-            txHash = self.contract.postResOffer(self.account, True,
-                            msg["deposit"],
-                            msg["instructionPrice"],
-                            msg["instructionCap"],
-                            msg["memoryCap"],
-                            msg["localStorageCap"],
-                            msg["bandwidthCap"],
-                            msg["bandwidthPrice"],
-                            msg["matchIncentive"],
-                            msg["verificationCount"],
-                            msg["iroid"]
-                            )
-            # helper.wait4receipt(self.ethclient,txHash)
+            txHash = self.ethclient.contract.functions.postResOffer(
+                msg["deposit"],
+                msg["instructionPrice"],
+                msg["instructionCap"],
+                msg["memoryCap"],
+                msg["localStorageCap"],
+                msg["bandwidthCap"],
+                msg["bandwidthPrice"],
+                msg["matchIncentive"],
+                msg["verificationCount"],
+                msg["iroid"]
+            ).transact({
+              "from": self.account,
+              "amount": msg["deposit"]
+            })
             return 0
         else:
             self.offerq.insert(0,msg)
@@ -91,26 +98,32 @@ class ResourceProvider(Mediator):
                         })
 
     def addSupportedFirstLayer(self, msg):
-        self.contract.resourceProviderAddSupportedFirstLayer(
-            self.account,
-            msg['firstLayerHash']
-        )
+        self.logger.info('addSupportedFirstLayer n/a')
 
     def acceptResult(self, resultId):
         self.logger.info('JC Missed deadline for reacting to results.')
-        self.contract.acceptResult(self.account, True, resultId)
+        txHash = self.ethclient.contract.functions.acceptResult(resultId).transact({
+            "from": self.account,
+        })
 
     def scheduleAcceptResult(self, resultId, delay):
         to_run = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() + delay))
         self.scheduler.add_job(self.acceptResult, 'date', id=str(resultId), run_date=to_run, args=[resultId])
 
     def postResult(self, matchID, joid, resultStatus, uri, resultHash, cpuTime, bandwidthUsage):
-        self.logger.info("🟢 Posting result %s" % (resultHash,))
-        contractStatus = 1
+        contractStatus = ResultStatus.Declined.value
         if resultStatus == "Completed":
-            contractStatus = 0
-        self.contract.postResult(self.account, True, matchID, joid, contractStatus, uri,
-                                 resultHash, cpuTime, bandwidthUsage)
+            contractStatus = ResultStatus.Completed.value
+        self.logger.info("🟢 Posting result: \n%s" % (json.dumps({
+          "matchID": matchID,
+          "joid": joid,
+          "contractStatus": contractStatus,
+          "resultHash": resultHash,
+        }),))
+        txHash = self.ethclient.contract.functions.postResult(matchID, joid, contractStatus, uri, resultHash, cpuTime, bandwidthUsage).transact({
+            "from": self.account,
+        })
+        self.logger.info("🟢 result posted %s" % (txHash,))
 
     def CLIListener(self):
         active = True
@@ -164,7 +177,7 @@ class ResourceProvider(Mediator):
 
     def platformListener(self):
         self.active = True
-        self.logger.info(f"poll contract events on {self.contract.address}")
+        self.logger.info(f"poll contract events on {self.ethclient.contract_address}")
         while self.active:
             events = self.contract.poll_events()
             import pprint; pprint.pprint(events)
@@ -216,7 +229,7 @@ class ResourceProvider(Mediator):
                     self.logger.info("%s offerId= %s" % (name, matchID))
                     self.logger.info("Job offer %s = %s" % (name, self.job_offers[joid].ijoid))
                     self.logger.info("Resource offer %s = %s" % (name, self.resource_offers[roid].iroid))
-                    self.logger.info("🔴 MATCH")
+                    self.logger.info("🔵🔵🔵 RUN JOB NOW")
                     match = Pstruct.Match(
                         joid, roid, params["mediator"]
                     )
@@ -242,6 +255,7 @@ class ResourceProvider(Mediator):
 
                     # once we have run a job let's post another offer
                     # TODO: remove this - it should be called as part of postOffer
+                    self.logger.info("🔵🔵🔵 post resource offer")
                     self.idle = True
                     self.postDefaultOffer()
 

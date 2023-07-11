@@ -6,6 +6,8 @@ import zmq
 import logging
 import json
 
+from .Contract.Enums import Architecture
+
 # logFormatter = logging.Formatter('%(levelname)s - %(threadName)s - %(asctime)s - %(name)s - %(message)s')
 logFormatter = logging.Formatter('%(asctime)s;%(name)s;%(message)s')
 rootLogger = logging.getLogger()
@@ -128,7 +130,7 @@ def runAsMediator(index,sim):
 
 
     click.echo("Mediator is registering... %s" % (M.account,))
-    M.register(M.account, "armv7", instructionPrice=1,
+    M.register(M.account, Architecture.armv7.value, instructionPrice=1,
                bandwidthPrice=1,availabilityValue=1, verificationCount=1)
 
     while not M.registered:
@@ -513,7 +515,7 @@ def startRP(path,index,host,sim,mediator):
     # the first (unlocked) account or the overriden account supplied by the env
     RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, 0)
     print("Resource Provider Daemon is registering... ")
-    exitcode = RP.register(RP.account,'armv7', 1)# ratio to 1Gz processor # XXX should this be arm64???
+    exitcode = RP.register(RP.account,Architecture.armv7.value, 1)# ratio to 1Gz processor # XXX should this be arm64???
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
         time.sleep(1)
@@ -554,7 +556,7 @@ def startRPDaemon(index):
 
     RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_,index)
     print("Resource Provider Daemon is registering... ")
-    exitcode = RP.register(RP.account,'armv7', 1)# ratio to 1Gz processor
+    exitcode = RP.register(RP.account,Architecture.armv7.value, 1)# ratio to 1Gz processor
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
         time.sleep(1)
