@@ -46,6 +46,7 @@ class CustomHTTPProvider(HTTPProvider):
 
 class EthereumClient:
     def __init__(self, ip, port, protocol=None):
+        self.logger = logging.getLogger("EthereumClient")
         self.ip = ip
         self.port = port
         if protocol is None:
