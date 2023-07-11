@@ -30,3 +30,6 @@ def _cowsay(params: str):
             "Verifier": "Noop"
         }
     }
+
+# denoted in eth
+_cowsay.price = 0.1

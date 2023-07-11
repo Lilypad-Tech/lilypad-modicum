@@ -354,6 +354,9 @@ class Solver(PlatformClient):
                     self.logger.info("I: resource offer %s = %s" %(name, iroid))
 
                     self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=joid, ijoid=ijoid)
+                
+                elif name == "EtherTransferred":
+                    self.logger.info("🟡 EtherTransferred: \n({}).".format(params))
 
 
             #after reading events call mathing

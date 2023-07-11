@@ -6,7 +6,7 @@ import textwrap
 import docker.errors
 from . import DockerWrapper
 from .PlatformClient import PlatformClient
-from .Modules import get_bacalhau_jobspec
+from .Modules import get_bacalhau_jobspec, get_bacalhau_jobprice
 from . import PlatformStructs as Pstruct
 from . import helper
 import dotenv
@@ -72,6 +72,15 @@ class Mediator(PlatformClient):
             extrasData["params"]
         )
 
+        jobPrice = get_bacalhau_jobprice(extrasData["template"])
+
+        # we set the cpuTime to the jobPrice in wei
+        # the "price per cpu instruction" is set to 1
+        # and so the total price is dictated by the cpuTime (in wei)
+        # this is obviously completely shit and will replaced
+        # asap with a non-time constrained hack
+        cpuTime = jobPrice
+
         _DIRIP_ = os.environ.get('DIRIP')
         _DIRPORT_ = os.environ.get('DIRPORT')
         _KEY_ = os.environ.get('pubkey')
@@ -79,7 +88,7 @@ class Mediator(PlatformClient):
         _SSHPORT_ = os.environ.get('SSHPORT')
         _WORKPATH_ = os.environ.get('WORKPATH')
         statusJob=0
-        cpuTime=0
+        
         endStatus="Completed"
         input_exists=False
         image_exits=False
@@ -146,7 +155,6 @@ class Mediator(PlatformClient):
         contractStatus = 1
         if resultStatus!="Completed":
             if self.account:
-                resultHash_int = int(resultHash, 16)
                 self.logger.info("N: postMediationResult: %s, JC at fault = %s" %(endStatus,uri))
                 reason = 'InvalidResultStatus'
                 faultyParty = 'JobCreator'
@@ -279,5 +287,8 @@ class Mediator(PlatformClient):
                 elif name == "DebugString":
                     self.logger.info(params["str"])
                     self.getReceipt(name, transactionHash)
+
+                elif name == "EtherTransferred":
+                    self.logger.info("🟡 EtherTransferred: \n({}).".format(params))
 
             self.wait()

@@ -43,3 +43,6 @@ def _stable_diffusion(params: str):
             ]
         }
     }
+
+# denoted in eth
+_stable_diffusion.price = 0.5

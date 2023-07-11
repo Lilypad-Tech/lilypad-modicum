@@ -8,7 +8,7 @@ import json
 import textwrap
 import dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
-
+from .Modules import get_bacalhau_jobprice
 from . import DockerWrapper
 from . import PlatformStructs as Pstruct
 from .PlatformClient import PlatformClient
@@ -450,6 +450,9 @@ class JobCreator(PlatformClient):
                         self.logger.info("M: %s Job = %s" %(name, ijoid))
                         self.logger.info("M: %s Resource = %s" %(name, iroid))
 
+                elif name == "EtherTransferred":
+                    self.logger.info("🟡 EtherTransferred: \n({}).".format(params))
+
             self.wait()
 
     def postLilypadOffer(self, template, params):
@@ -457,7 +460,7 @@ class JobCreator(PlatformClient):
         self.jobsPending += 1
 
         msg = {
-          "ijoid":1,
+          "ijoid":round(time.time()*1000),
           "cpuTime":800000,
           "bandwidthLimit":100,
           "instructionMaxPrice":1,
@@ -473,17 +476,27 @@ class JobCreator(PlatformClient):
           "arch":"armv7"
         }
 
-        self.logger.info("cpuTime: %s Type: %s" %(msg["cpuTime"],type(msg["cpuTime"])))
-        self.logger.info("instructionMaxPrice: %s Type: %s" %(msg["instructionMaxPrice"],type(msg["instructionMaxPrice"])))
-        self.logger.info("bandwidthLimit: %s Type: %s" %(msg["bandwidthLimit"],type(msg["bandwidthLimit"])))
-        self.logger.info("bandwidthMaxPrice: %s Type: %s" %(msg["bandwidthMaxPrice"],type(msg["bandwidthMaxPrice"])))
-        self.logger.info("self.penaltyRate: %s Type: %s" %(self.penaltyRate,type(self.penaltyRate)))
-        self.logger.info("arch: %s Type: %s" %(msg['arch'],type(msg['arch'])))
+        # self.logger.info("cpuTime: %s Type: %s" %(msg["cpuTime"],type(msg["cpuTime"])))
+        # self.logger.info("instructionMaxPrice: %s Type: %s" %(msg["instructionMaxPrice"],type(msg["instructionMaxPrice"])))
+        # self.logger.info("bandwidthLimit: %s Type: %s" %(msg["bandwidthLimit"],type(msg["bandwidthLimit"])))
+        # self.logger.info("bandwidthMaxPrice: %s Type: %s" %(msg["bandwidthMaxPrice"],type(msg["bandwidthMaxPrice"])))
+        # self.logger.info("self.penaltyRate: %s Type: %s" %(self.penaltyRate,type(self.penaltyRate)))
+        # self.logger.info("arch: %s Type: %s" %(msg['arch'],type(msg['arch'])))
 
-        deposit = (msg["cpuTime"]*msg["instructionMaxPrice"] +
-                   msg["bandwidthLimit"]*msg["bandwidthMaxPrice"])*self.penaltyRate
-        self.logger.info("Deposit HERE: %s" %deposit)
+        # make a JSON string from a single object that has template and params
+        # as attributes
+        jsonData = json.dumps({
+          "template": template,
+          "params": params
+        })
 
+        # deposit = (msg["cpuTime"]*msg["instructionMaxPrice"] +
+        #            msg["bandwidthLimit"]*msg["bandwidthMaxPrice"])*self.penaltyRate
+
+        # send the cost of the job
+        deposit = get_bacalhau_jobprice(template)
+
+        self.logger.info("🔵🔵🔵 post job offer")
         txHash = self.ethclient.contract.functions.postJobOfferPartOne(
             msg['ijoid'],
             msg['cpuTime'],
@@ -498,13 +511,6 @@ class JobCreator(PlatformClient):
         })
 
         self.logger.info("D: postJobOfferPartOne = %s" % (txHash,))
-
-        # make a JSON string from a single object that has template and params
-        # as attributes
-        jsonData = json.dumps({
-          "template": template,
-          "params": params
-        })
 
         # int,int,int,int,str,int,str,str = what python saw
         # uint256,uint256,uint256,bytes32,address,uint256,uint8,string = what it saw in the contract

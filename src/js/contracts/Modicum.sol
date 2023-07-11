@@ -856,32 +856,35 @@ contract Modicum {
 
         JobResult memory r = results[matchToResult[matchId]];
         ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer];
-        JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer];
-        address m = matches[matchId].mediator;
+        // JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer];
+        // address m = matches[matchId].mediator;
 
         //require(isMatchClosed[matchId] == false, "This match is already closed.");
         isMatchClosed[matchId] = true;
 
-        uint256 cost = r.instructionCount * ro.instructionPrice +
-            r.bandwidthUsage * ro.bandwidthPrice;
+        uint256 cost = r.instructionCount;
 
-        uint256 mediatorAvailabilityIncentive = mediators[m].availabilityValue;
+        // uint256 cost = r.instructionCount * ro.instructionPrice +
+        //     r.bandwidthUsage * ro.bandwidthPrice;
+        // uint256 mediatorAvailabilityIncentive = mediators[m].availabilityValue;
 
-        uint256 jo_deposit = jo.depositValue;
-        uint256 ro_deposit = ro.depositValue;
+        // uint256 jo_deposit = jo.depositValue;
+        // uint256 ro_deposit = ro.depositValue;
 
-        jo.depositValue = 0;
-        ro.depositValue = 0;
+        // jo.depositValue = 0;
+        // ro.depositValue = 0;
 
         //address(uint160(jo.jobCreator)).transfer(jo_deposit - cost - jo.matchIncentive - mediatorAvailabilityIncentive);
         //address(uint160(ro.resProvider)).transfer(jo_deposit + cost - ro.matchIncentive - mediatorAvailabilityIncentive);
         //address(uint160(m)).transfer(2 * mediatorAvailabilityIncentive);
 
 
+        address(uint160(ro.resProvider)).transfer(cost);
         emit MatchClosed(matchId, cost);
-        emit EtherTransferred(address(this), jo.jobCreator, jo_deposit - cost, EtherTransferCause.FinishingJob);
-        emit EtherTransferred(address(this), ro.resProvider, ro_deposit + cost, EtherTransferCause.FinishingResource);
-        emit EtherTransferred(address(this), m, 2 * mediatorAvailabilityIncentive, EtherTransferCause.MediatorAvailability);
+        emit EtherTransferred(address(this), ro.resProvider, cost, EtherTransferCause.FinishingJob);
+        // emit EtherTransferred(address(this), jo.jobCreator, jo_deposit - cost, EtherTransferCause.FinishingJob);
+        // emit EtherTransferred(address(this), ro.resProvider, ro_deposit + cost, EtherTransferCause.FinishingResource);
+        // emit EtherTransferred(address(this), m, 2 * mediatorAvailabilityIncentive, EtherTransferCause.MediatorAvailability);
 
         return cost;
     }

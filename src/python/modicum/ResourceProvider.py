@@ -9,6 +9,7 @@ from . import PlatformStructs as Pstruct
 import time
 import json
 import traceback
+import web3
 from apscheduler.schedulers.background import BackgroundScheduler
 from . import helper
 import datetime
@@ -62,6 +63,7 @@ class ResourceProvider(Mediator):
         if self.idle:
             self.idle = False
             self.logger.info("C: postResOffer = %s" %msg["iroid"])
+            self.logger.info("🔵🔵🔵 post resource offer")
             txHash = self.ethclient.contract.functions.postResOffer(
                 msg["instructionPrice"],
                 msg["instructionCap"],
@@ -84,14 +86,19 @@ class ResourceProvider(Mediator):
 
     def postDefaultOffer(self):
         self.postOffer({"request": "post",
-                        "deposit" : 1000,
+                        "deposit" : 1,
+                        # it's important this is 1 because it gives us control over the price
+                        # from the number of units used once the job has run by setting the
+                        # cpuTime parameter when we call postResult
                         "instructionPrice" : 1,
+                        # it's important this is 0 so bandwidth does not affect the price
+                        "bandwidthPrice" : 0,
                         "instructionCap" : 15*60*1000, #ms on 1Ghz processor
                         "memoryCap": 100000000,
                         "localStorageCap" : 1000000000,
                         "bandwidthCap" : 2**256-1,
-                        "bandwidthPrice" : 1,
-                        "matchIncentive" : 1,
+                        
+                        "matchIncentive" : 0,
                         "verificationCount" : 1,
                         "iroid" : round(time.time()*1000)
                         })
@@ -109,6 +116,9 @@ class ResourceProvider(Mediator):
         to_run = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() + delay))
         self.scheduler.add_job(self.acceptResult, 'date', id=str(resultId), run_date=to_run, args=[resultId])
 
+    # we are using cpuTime as the way to actually price the job
+    # the resource offer will have given us a cpu cost per instruction of 1
+    # so we set the price by controlling the number of units
     def postResult(self, matchID, joid, resultStatus, uri, resultHash, cpuTime, bandwidthUsage):
         contractStatus = ResultStatus.Declined.value
         if resultStatus == "Completed":
@@ -122,10 +132,6 @@ class ResourceProvider(Mediator):
         txHash = self.ethclient.contract.functions.postResult(matchID, joid, contractStatus, uri, resultHash, cpuTime, bandwidthUsage).transact({
             "from": self.account,
         })
-        receipt = self.ethclient.w3.eth.get_transaction_receipt(txHash)
-        logs = self.ethclient.contract.events.ResultPosted().process_receipt(receipt)
-        self.logger.info("🟢🟢🟢 result posted %s" % (txHash,))
-        import pprint; pprint.pprint(logs)
 
 
     def CLIListener(self):
@@ -261,10 +267,7 @@ class ResourceProvider(Mediator):
 
                     # once we have run a job let's post another offer
                     # TODO: remove this - it should be called as part of postOffer
-                    self.logger.info("🔵🔵🔵 post resource offer")
-                    self.idle = True
-                    self.postDefaultOffer()
-
+                    
                     # self.matches[matchID] = {"uri":uri,"JID":JID,"execute":True}
 
                 elif name == "ResultPosted" and params["matchId"] in self.matches:
@@ -281,6 +284,7 @@ class ResourceProvider(Mediator):
                     # self.matches[params['matchId']]['resultId'] = params['resultId']
                     # self.scheduleAcceptResult(params['resultId'], 1440)
                     self.idle = True
+                    self.postDefaultOffer()
 
                 elif name == "ResultReaction" and params["matchId"] in self.matches:
                     self.logger.info("🔴 ResultReaction: \n({}).".format(params))
@@ -323,6 +327,9 @@ class ResourceProvider(Mediator):
 
                 elif name == "DebugString":
                     self.logger.info(params["str"])
+
+                elif name == "EtherTransferred":
+                    self.logger.info("🟡 EtherTransferred: \n({}).".format(params))
 
             if self.idle and self.offerq:
                 offer = self.offerq.pop()
