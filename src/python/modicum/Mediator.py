@@ -188,16 +188,17 @@ class Mediator(PlatformClient):
                 params = event['params']
                 name = event['name']
                 transactionHash = event['transactionHash']
-                self.logger.info("🔴 mediator event: {}\n({}).".format(name, params))
                 if name == "DebugUint" :
                     self.logger.info(name)
                     self.getReceipt(name, transactionHash)
                 elif name == "MediatorRegistered" and self.account == params['addr']:
+                    self.logger.info("🔴 MediatorRegistered: \n({}).".format(params))
                     self.logger.info("A: %s" %name)
                     self.getReceipt(name, transactionHash)
                     self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=-1, ijoid=-1)
                     self.registered = True
                 elif name == "ResourceOfferPosted":
+                    self.logger.info("🔴 ResourceOfferPosted: \n({}).".format(params))
                     self.logger.info(name)
                     offer = Pstruct.ResourceOffer(
                                         params['offerId'],
@@ -213,12 +214,13 @@ class Mediator(PlatformClient):
                                         )
                     self.resource_offers[params['offerId']] =  offer
 
-                elif "JobOfferPosted" in name: 
+                elif "JobOfferPosted" in name:
+                    self.logger.info("🔴 JobOfferPosted: \n({}).".format(params))
                     self.logger.info(name)
                     helper.storeJobOffer(event,self.job_offers)
 
                 elif name == "Matched" and self.account == params['mediator']:
-                    
+                    self.logger.info("🔴 Matched: \n({}).".format(params))
                     self.logger.info(name)
 
                     matchID = params['matchId']
@@ -230,19 +232,20 @@ class Mediator(PlatformClient):
                     }
 
                 elif name == "ResultPosted" and params['matchId'] in self.myMatches:
-                        
-                        self.myMatches[params['matchId']]['resHash'] = params['hash']
+                    self.logger.info("🔴 ResultPosted: \n({}).".format(params))
+                    self.myMatches[params['matchId']]['resHash'] = params['hash']
 
-                        joid = self.myMatches[matchID]['joid']
-                        JO = self.job_offers[joid]
-                        ijoid = JO.ijoid
+                    joid = self.myMatches[matchID]['joid']
+                    JO = self.job_offers[joid]
+                    ijoid = JO.ijoid
 
-                        roid = self.myMatches[matchID]['roid']
-                        RO = self.resource_offers[roid]
-                        iroid = RO.iroid
+                    roid = self.myMatches[matchID]['roid']
+                    RO = self.resource_offers[roid]
+                    iroid = RO.iroid
 
 
                 elif name == "JobAssignedForMediation" and params['matchId'] in self.myMatches:
+                    self.logger.info("🔴 JobAssignedForMediation: \n({}).".format(params))
                     self.logger.info(name)
                     self.getReceipt(name, transactionHash)
                     
@@ -261,7 +264,7 @@ class Mediator(PlatformClient):
                                           seriesname="state", value=1)
 
                 elif name == "MediationResultPosted" and params['matchId'] in self.myMatches:
-
+                    self.logger.info("🔴 MediationResultPosted: \n({}).".format(params))
                     matchID = params['matchId']
                     joid = self.myMatches[matchID]['joid']
                     JO = self.job_offers[joid]

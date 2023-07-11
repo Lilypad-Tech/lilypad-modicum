@@ -1,5 +1,5 @@
 pragma solidity ^0.4.25;
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 contract Modicum {
 
@@ -299,7 +299,7 @@ contract Modicum {
             availabilityValue: availabilityValue,
             verificationCount: verificationCount
             });
-        console.log("🟢🟢🟢 EMIT MediatorRegistered");
+        // console.log("🟢🟢🟢 EMIT MediatorRegistered");
         emit MediatorRegistered(msg.sender,
             arch,
             instructionPrice,
@@ -338,8 +338,7 @@ contract Modicum {
             timePerInstruction: timePerInstruction,
             trustedDirectories: trustedDirectories
         });
-        // console.log("-----------------------------> ABOUT TO EMIT EVENT: ResourceProviderRegistered");
-        console.log("🟢🟢🟢 EMIT ResourceProviderRegistered");
+        // console.log("🟢🟢🟢 EMIT ResourceProviderRegistered");
         emit ResourceProviderRegistered(msg.sender,
             arch,
             timePerInstruction,
@@ -350,7 +349,7 @@ contract Modicum {
 
     function resourceProviderAddTrustedMediator(address mediator) public {
         resourceProviders[msg.sender].trustedMediators.push(mediator);
-        console.log("🟢🟢🟢 EMIT ResourceProviderAddedTrustedMediator");
+        // console.log("🟢🟢🟢 EMIT ResourceProviderAddedTrustedMediator");
         emit ResourceProviderAddedTrustedMediator(msg.sender, mediator);
     }
 
@@ -379,7 +378,7 @@ contract Modicum {
             trustedMediators: trustedMediators,
             itShouldntBeHere: 0
         });
-        console.log("🟢🟢🟢 EMIT JobCreatorRegistered");
+        // console.log("🟢🟢🟢 EMIT JobCreatorRegistered");
         emit JobCreatorRegistered(msg.sender, penaltyRate);
     }
 
@@ -388,7 +387,7 @@ contract Modicum {
     // }
     function jobCreatorAddTrustedMediator(address mediator) public {
         jobCreators[msg.sender].trustedMediators.push(mediator);
-        console.log("🟢🟢🟢 EMIT JobCreatorAddedTrustedMediator");
+        // console.log("🟢🟢🟢 EMIT JobCreatorAddedTrustedMediator");
         emit JobCreatorAddedTrustedMediator(msg.sender, mediator);
     }
 
@@ -441,7 +440,7 @@ contract Modicum {
             })) - 1;
 
         uint256 iroid = misc;
-        console.log("🟢🟢🟢 EMIT ResourceOfferPosted");
+        // console.log("🟢🟢🟢 EMIT ResourceOfferPosted");
         emit ResourceOfferPosted(index,
 
             msg.sender,
@@ -502,7 +501,7 @@ contract Modicum {
         jobOffersPartOne[index] = joPOne;
         jobOfferPartOnePosted[index] = true;
 
-        console.log("🟢🟢🟢 EMIT JobOfferPostedPartOne");
+        // console.log("🟢🟢🟢 EMIT JobOfferPostedPartOne");
         emit JobOfferPostedPartOne(
             index,
             ijoid,
@@ -556,7 +555,7 @@ contract Modicum {
         jobOffersPartTwo[index] = joPTwo;
         jobOfferPartTwoPosted[index] = true;
 
-        console.log("🟢🟢🟢 EMIT JobOfferPostedPartTwo");
+        // console.log("🟢🟢🟢 EMIT JobOfferPostedPartTwo");
         emit JobOfferPostedPartTwo(
             index,
             msg.sender,
@@ -681,7 +680,7 @@ contract Modicum {
 
         emit EtherTransferred(address(this), msg.sender, matchIncentive, EtherTransferCause.PostMatch);
 
-        console.log("🟢🟢🟢 EMIT Matched");
+        // console.log("🟢🟢🟢 EMIT Matched");
         emit Matched(msg.sender, index, jobOfferId, resourceOfferId, mediator);
 
         return index;
@@ -698,7 +697,7 @@ contract Modicum {
     ) public returns (uint256) {
         require(jobOfferId >= 0);
 
-        console.log("🟢🟢🟢 postResult");
+        // console.log("🟢🟢🟢 postResult");
         // require (resourceOffers[matches[matchId].resourceOffer].resProvider == msg.sender,
         //     "You are not supposed to publish result for this match.");
 
@@ -719,7 +718,7 @@ contract Modicum {
         matchToResult[matchId] = index;
         resultAvailable[matchId] = true;
 
-        console.log("🟢🟢🟢 EMIT ResultPosted");
+        // console.log("🟢🟢🟢 EMIT ResultPosted");
 
         emit ResultPosted(
             msg.sender,

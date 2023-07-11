@@ -273,13 +273,13 @@ class Solver(PlatformClient):
             for event in events:
                 params = event['params']
                 name = event['name']
-                self.logger.info("🔴 solver event: {}\n({}).".format(name, params))
                 transactionHash = event['transactionHash']
 
                 self.getReceipt(name, transactionHash)
 
                 self.logger.info("{}({}).".format(name, params))
                 if name == "MediatorRegistered":
+                    self.logger.info("🔴 MediatorRegistered: \n({}).".format(params))
                     self.logger.info("%s" %name)
                     self.mediators[params['addr']] = Pstruct.Mediator(
                                                         params['arch'],
@@ -287,19 +287,24 @@ class Solver(PlatformClient):
                                                         params['bandwidthPrice'])
 
                 elif name == "ResourceProviderRegistered":
+                    self.logger.info("🔴 ResourceProviderRegistered: \n({}).".format(params))
                     self.logger.info("%s" %name)
                     self.resource_providers[params['addr']] = Pstruct.ResourceProvider(params['arch'], params['timePerInstruction'])
                 elif name == "JobCreatorRegistered":
+                    self.logger.info("🔴 JobCreatorRegistered: \n({}).".format(params))
                     self.logger.info("%s" %name)
                     self.job_creators[params['addr']] = Pstruct.JobCreator()
                 elif name == "ResourceProviderAddedTrustedMediator":
+                    self.logger.info("🔴 ResourceProviderAddedTrustedMediator: \n({}).".format(params))
                     self.logger.info("%s" %name)
                     self.logger.info("name : %s  addr : %s" %(name, params['addr']))
                     self.resource_providers[params['addr']].trustedMediators.append(params['mediator'])
                 elif name == "JobCreatorAddedTrustedMediator":
+                    self.logger.info("🔴 JobCreatorAddedTrustedMediator: \n({}).".format(params))
                     self.logger.info("%s" %name)
                     self.job_creators[params['addr']].trustedMediators.append(params['mediator'])
                 elif name == "ResourceOfferPosted":
+                    self.logger.info("🔴 {}: \n({}).".format(name, params))
                     self.logger.info("%s = %s" %(name, params["iroid"]))
                     offer = Pstruct.ResourceOffer(
                                         params['offerId'],
@@ -316,7 +321,7 @@ class Solver(PlatformClient):
 
                     self.resource_offers[params['offerId']] = offer
                 elif "JobOfferPosted" in name:
-
+                    self.logger.info("🔴 JobOfferPosted: \n({}).".format(params))
                     self.logger.info("%s offerID = %s" % (name, params['offerId']))
 
                     if "One" in name:
@@ -331,6 +336,7 @@ class Solver(PlatformClient):
                         self.job_offer_part_two_completed.append(params['offerId'])
 
                 elif name == "Matched":
+                    self.logger.info("🔴 Matched: \n({}).".format(params))
                     # self.logger.info("I: %s" %name)
 
                     joid = params['jobOfferId']

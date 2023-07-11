@@ -186,19 +186,21 @@ class ResourceProvider(Mediator):
             for event in events:
                 params = event['params']
                 name = event['name']
-                self.logger.info("🔴 resource provider event: {}\n({}).".format(name, params))
                 if name == "ResourceProviderRegistered" and self.account == params['addr']:
                 # if name == "ResourceProviderRegistered":
                 #     self.addr = params['addr']
+                    self.logger.info("🔴 ResourceProviderRegistered: \n({}).".format(params))
                     self.penaltyRate = params['penaltyRate']
                     self.registered = True
                     self.logger.info("A: %s PenaltyRate : %s" %(name,self.penaltyRate))
                     self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=-1, ijoid=-1)
                 elif name == "ResourceProviderAddedTrustedMediator" and self.account == params['addr']:
+                    self.logger.info("🔴 ResourceProviderAddedTrustedMediator: \n({}).".format(params))
                     self.mediator = params['mediator']
                     self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=-1, ijoid=-1)
                     self.logger.info("B: %s" %name)
                 elif name == "ResourceOfferPosted" and self.account == params['addr']:
+                    self.logger.info("🔴 ResourceOfferPosted: \n({}).".format(params))
                     self.logger.info("C: %s = %s" %(name,params["iroid"]))
                     self.logger.info("OfferID: %s" %params['offerId'])
 
@@ -220,10 +222,12 @@ class ResourceProvider(Mediator):
                     self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=-1, ijoid=-1)
 
                 elif "JobOfferPosted" in name: 
+                    self.logger.info("🔴 JobOfferPosted: \n({}).".format(params))
                     self.logger.info("%s offerId = %s" %(name, params["offerId"]))
                     helper.storeJobOffer(event,self.job_offers)
 
                 elif name == "Matched" and params['resourceOfferId'] in self.resource_offers:
+                    self.logger.info("🔴 Matched: \n({}).".format(params))
                     joid = params['jobOfferId']
                     roid = params['resourceOfferId']
                     matchID = params["matchId"]
@@ -264,7 +268,7 @@ class ResourceProvider(Mediator):
                     # self.matches[matchID] = {"uri":uri,"JID":JID,"execute":True}
 
                 elif name == "ResultPosted" and params["matchId"] in self.matches:
-                    self.logger.info("🔴🔴🔴 ResultPosted")
+                    self.logger.info("🔴 ResultPosted: \n({}).".format(params))
                     self.logger.info("H: %s" %name)
                     self.logger.info("result posted for matchId : %s" %params["matchId"])
                     self.logger.info("resultID for matchId : %s" % params["resultId"])
@@ -279,7 +283,7 @@ class ResourceProvider(Mediator):
                     self.idle = True
 
                 elif name == "ResultReaction" and params["matchId"] in self.matches:
-
+                    self.logger.info("🔴 ResultReaction: \n({}).".format(params))
                     self.logger.info("%s" % name)
                     self.logger.info("%s" % params)
                     self.logger.info("result ResultReaction for matchId : %s" % params["matchId"])
@@ -302,7 +306,7 @@ class ResourceProvider(Mediator):
                     # self.scheduler.remove_job(str(params['resultId']))
 
                 elif name == "MatchClosed" and params["matchId"] in self.matches:
-
+                    self.logger.info("🔴 MatchClosed: \n({}).".format(params))
                     matchID = params["matchId"]
                     joid = self.matches[matchID].jobOfferId
                     ijoid = self.job_offers[joid].ijoid
