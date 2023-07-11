@@ -102,6 +102,7 @@ class Mediator(PlatformClient):
                 listOutputJSON = json.loads(listOutput.stdout)
 
                 resultHash = listOutputJSON[0]['State']['Executions'][0]['PublishedResults']['CID']
+                resultStatus = listOutputJSON[0]['State']['Executions'][0]['State']
 
                 print(textwrap.dedent(f"""
                 ---------------------------------------------------------------------------------------
@@ -136,32 +137,30 @@ class Mediator(PlatformClient):
                 ---------------------------------------------------------------------------------------
                 """))
 
-                self.postResult(matchID, JO.offerId, endStatus, urix, resultHash, cpuTime, 0)
+                self.postResult(matchID, JO.offerId, resultStatus, urix, resultHash, cpuTime, 0)
                 
-    def postResult(self, matchID, joid, endStatus, uri, resultHash, cpuTime, bandwidthUsage):
-        resultHash_int = int(resultHash, 16)
-
-        if endStatus!=0:
+    def postResult(self, matchID, joid, resultStatus, uri, resultHash, cpuTime, bandwidthUsage):
+        contractStatus = 1
+        if resultStatus!="Completed":
             if self.account:
                 resultHash_int = int(resultHash, 16)
-
                 self.logger.info("N: postMediationResult: %s, JC at fault = %s" %(endStatus,uri))
-                self.logger.info("Hash mismatch")
                 reason = 'InvalidResultStatus'
                 faultyParty = 'JobCreator'
         else :
-            if self.myMatches[matchID]['resHash'] == resultHash_int:
+            if self.myMatches[matchID]['resHash'] == resultHash:
                 self.logger.info("N: postMediationResult: %s, JC at fault = %s" %(endStatus,uri))
                 reason = 'CorrectResults'
                 faultyParty = 'JobCreator'
+                contractStatus = 0
             else:
                 self.logger.info("N: postMediationResult: %s, RP at fault = %s" %(endStatus,uri))
                 reason = 'WrongResults'
                 faultyParty = 'ResourceProvider'
                 
         
-        self.contract.postMediationResult(self.account, True, matchID, joid, endStatus, 
-                                          uri, resultHash_int, cpuTime, 0, 
+        self.contract.postMediationResult(self.account, True, matchID, joid, contractStatus, 
+                                          uri, resultHash, cpuTime, 0, 
                                           reason, faultyParty)
         
 

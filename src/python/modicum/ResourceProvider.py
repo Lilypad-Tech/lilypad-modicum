@@ -104,13 +104,13 @@ class ResourceProvider(Mediator):
         to_run = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() + delay))
         self.scheduler.add_job(self.acceptResult, 'date', id=str(resultId), run_date=to_run, args=[resultId])
 
-    def postResult(self, matchID, joid, endStatus, uri, resultHash, cpuTime, bandwidthUsage):
-        self.logger.info('JC post result: TBC')
-        # resultHash_int = int(resultHash, 16)
-        # self.logger.info("H: postResult = %s" %uri)
-        # self.contract.postResult(self.account, True, matchID, joid, endStatus, uri,
-        #                          resultHash_int, cpuTime, bandwidthUsage)
-
+    def postResult(self, matchID, joid, resultStatus, uri, resultHash, cpuTime, bandwidthUsage):
+        self.logger.info("🟢 Posting result %s" % (resultHash,))
+        contractStatus = 1
+        if resultStatus == "Completed":
+            contractStatus = 0
+        self.contract.postResult(self.account, True, matchID, joid, contractStatus, uri,
+                                 resultHash, cpuTime, bandwidthUsage)
 
     def CLIListener(self):
         active = True
@@ -216,7 +216,7 @@ class ResourceProvider(Mediator):
                     self.logger.info("%s offerId= %s" % (name, matchID))
                     self.logger.info("Job offer %s = %s" % (name, self.job_offers[joid].ijoid))
                     self.logger.info("Resource offer %s = %s" % (name, self.resource_offers[roid].iroid))
-                    self.logger.info("🔴🔴🔴🔴🔴🔴🔴 MATCH")
+                    self.logger.info("🔴 MATCH")
                     match = Pstruct.Match(
                         joid, roid, params["mediator"]
                     )
@@ -248,6 +248,7 @@ class ResourceProvider(Mediator):
                     # self.matches[matchID] = {"uri":uri,"JID":JID,"execute":True}
 
                 elif name == "ResultPosted" and params["matchId"] in self.matches:
+                    self.logger.info("🔴🔴🔴 ResultPosted")
                     self.logger.info("H: %s" %name)
                     self.logger.info("result posted for matchId : %s" %params["matchId"])
                     self.logger.info("resultID for matchId : %s" % params["resultId"])

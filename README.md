@@ -26,22 +26,12 @@ lilypad run --template cowsay --params "oh hello my dear cow"
 
 TODO: How to run a node
 
-
-
-
 # Development
 
 We need the following installed:
 
  * docker
  * jq
-
-NOTE: if you want a fresh installation - then:
-
-```bash
-sudo rm -rf /tmp/geth
-rm -rf src/js/deployments/localgeth
-```
 
 #### compile contract
 
@@ -111,6 +101,12 @@ The smart contract is now deployed and the address is written to the JSON file l
 
 ```bash
 ./stack submitjob --template cowsay:v0.0.1 --params "hello"
+```
+
+NOTE: if you want a fresh installation - then:
+
+```bash
+./stack clean
 ```
 
 ### production initial node setup

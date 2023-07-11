@@ -218,7 +218,7 @@ class Solver(PlatformClient):
         for i in self.job_offers:
             job_offer = self.job_offers[i]
             # append a dict to debugJobOffers
-            debugResourceOffers.append({
+            debugJobOffers.append({
               "offerId": job_offer.offerId,
               "ijoid": job_offer.ijoid,
               "jobCreator": job_offer.jobCreator,
