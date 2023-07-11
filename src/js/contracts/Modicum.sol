@@ -118,7 +118,7 @@ contract Modicum {
 
         uint256 matchId;
 
-        uint256 hash;
+        string hash;
 
         uint256 instructionCount;
         uint256 bandwidthUsage;
@@ -133,7 +133,7 @@ contract Modicum {
 
         uint256 matchId;
 
-        uint256 hash;
+        string hash;
 
         uint256 instructionCount;
         uint256 bandwidthUsage;
@@ -183,7 +183,7 @@ contract Modicum {
 
     event ResultReaction(address addr, uint256 resultId, uint256 matchId, uint256 ResultReaction);
     event ResultPosted(address addr, uint256 resultId, uint256 matchId, ResultStatus status, string uri,
-                       uint256 hash, uint256 instructionCount, uint256 bandwidthUsage);
+                       string hash, uint256 instructionCount, uint256 bandwidthUsage);
     event Matched(address addr, uint256 matchId, uint256 jobOfferId, uint256 resourceOfferId, address mediator); //the same as job assigned.
 
     event JobOfferPostedPartOne(uint256 offerId, uint256 ijoid, address addr, uint256 instructionLimit,
@@ -214,7 +214,7 @@ contract Modicum {
     event ResourceProviderAddedSupportedFirstLayer(address addr, uint256 firstLayer);
 
     event MediationResultPosted(uint256 matchId, address addr, uint256 result, Party faultyParty, Verdict verdict, ResultStatus status,
-                                string uri, uint256 hash, uint256 instructionCount, uint256 mediationCost);
+                                string uri, string hash, uint256 instructionCount, uint256 mediationCost);
 
     event MatchClosed(uint256 matchId, uint256 cost);
 
@@ -683,7 +683,7 @@ contract Modicum {
         uint256 jobOfferId,
         ResultStatus status,
         string uri,
-        uint256 hash,
+        string hash,
         uint256 instructionCount,
         uint256 bandwidthUsage
     ) public returns (uint256) {
@@ -768,7 +768,7 @@ contract Modicum {
         ResultStatus status,
         string uri,
 
-        uint256 hash,
+        string hash,
 
         uint256 instructionCount,
         uint256 bandwidthUsage,
