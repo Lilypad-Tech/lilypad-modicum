@@ -226,16 +226,36 @@ function submitjob() {
   lilypad-node "runLilypadCLI"
 }
 
+function reset() {
+  docker rm -f $(docker ps -aq) ||true
+  sudo rm -rf /tmp/geth
+  rm -rf src/js/deployments/localgeth
+  (cd src/js && \
+   npm install && npx hardhat compile
+   node scripts/create-new-account.js
+   node scripts/create-new-account.js \
+    |sed 's/privateKey: /ADMIN_PRIVATE_KEY=/' \
+    |sed 's/address: /ADMIN_ADDRESS=/' \
+    > .env)
+  geth
+  sleep 5
+  (source src/js/.env && \
+   ./stack geth-fund $ADMIN_ADDRESS && \
+   ./stack geth-balance $ADMIN_ADDRESS)
+  (cd src/js && npx hardhat deploy --network localgeth)
+}
+
 function stop() {
   docker rm -f $(docker ps -aq)
 }
 
 function start() {
   build
-  geth
+  geth ||true
   echo "Waiting for geth to start"
   sleep 5
   solver
+  sleep 5
   mediator
   resource-provider
   echo "Now run (in separate terminals):"
