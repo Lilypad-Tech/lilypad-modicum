@@ -6,13 +6,17 @@ from time import time, sleep
 from threading import Thread, RLock
 from . import config as cfg
 from web3 import Web3
+from web3.datastructures import AttributeDict
 from web3.middleware import construct_sign_and_send_raw_middleware
 import os
-from .Contract import ModicumContract as ModicumContract
+import importlib
 from hexbytes import HexBytes
 from web3 import HTTPProvider, Web3
 from web3.middleware import geth_poa_middleware
 import requests
+from hexbytes import HexBytes
+
+EVENTS = {'Debug': [('value', 'uint64')], 'DebugArch': [('arch', 'Architecture')], 'DebugUint': [('value', 'uint256')], 'DebugString': [('str', 'string')], 'penaltyRateSet': [('penaltyRate', 'uint256')], 'reactionDeadlineSet': [('reactionDeadline', 'uint256')], 'ResultReaction': [('addr', 'address'), ('resultId', 'uint256'), ('matchId', 'uint256'), ('ResultReaction', 'uint256')], 'ResultPosted': [('addr', 'address'), ('resultId', 'uint256'), ('matchId', 'uint256'), ('status', 'ResultStatus'), ('uri', 'string'), ('hash', 'uint256'), ('instructionCount', 'uint256'), ('bandwidthUsage', 'uint256')], 'Matched': [('addr', 'address'), ('matchId', 'uint256'), ('jobOfferId', 'uint256'), ('resourceOfferId', 'uint256'), ('mediator', 'address')], 'JobOfferPostedPartOne': [('offerId', 'uint256'), ('ijoid', 'uint256'), ('addr', 'address'), ('instructionLimit', 'uint256'), ('bandwidthLimit', 'uint256'), ('instructionMaxPrice', 'uint256'), ('bandwidthMaxPrice', 'uint256'), ('completionDeadline', 'uint256'), ('deposit', 'uint256'), ('matchIncentive', 'uint256')], 'JobOfferPostedPartTwo': [('offerId', 'uint256'), ('addr', 'address'), ('hash', 'uint256'), ('uri', 'string'), ('directory', 'address'), ('arch', 'Architecture'), ('ramLimit', 'uint256'), ('localStorageLimit', 'uint256'), ('extras', 'string')], 'ResourceOfferPosted': [('offerId', 'uint256'), ('addr', 'address'), ('instructionPrice', 'uint256'), ('instructionCap', 'uint256'), ('memoryCap', 'uint256'), ('localStorageCap', 'uint256'), ('bandwidthCap', 'uint256'), ('bandwidthPrice', 'uint256'), ('deposit', 'uint256'), ('iroid', 'uint256')], 'JobOfferCanceled': [('offerId', 'uint256')], 'ResourceOfferCanceled': [('resOfferId', 'uint256')], 'JobAssignedForMediation': [('addr', 'address'), ('matchId', 'uint256')], 'MediatorRegistered': [('addr', 'address'), ('arch', 'Architecture'), ('instructionPrice', 'uint256'), ('bandwidthPrice', 'uint256'), ('availabilityValue', 'uint256'), ('verificationCount', 'uint256')], 'MediatorAddedSupportedFirstLayer': [('addr', 'address'), ('firstLayerHash', 'uint256')], 'ResourceProviderRegistered': [('addr', 'address'), ('arch', 'Architecture'), ('timePerInstruction', 'uint256'), ('penaltyRate', 'uint256')], 'ResourceProviderAddedTrustedMediator': [('addr', 'address'), ('mediator', 'address')], 'JobCreatorRegistered': [('addr', 'address'), ('penaltyRate', 'uint256')], 'JobCreatorAddedTrustedMediator': [('addr', 'address'), ('mediator', 'address')], 'MediatorAddedTrustedDirectory': [('addr', 'address'), ('directory', 'address')], 'ResourceProviderAddedTrustedDirectory': [('addr', 'address'), ('directory', 'address')], 'ResourceProviderAddedSupportedFirstLayer': [('addr', 'address'), ('firstLayer', 'uint256')], 'MediationResultPosted': [('matchId', 'uint256'), ('addr', 'address'), ('result', 'uint256'), ('faultyParty', 'Party'), ('verdict', 'Verdict'), ('status', 'ResultStatus'), ('uri', 'string'), ('hash', 'uint256'), ('instructionCount', 'uint256'), ('mediationCost', 'uint256')], 'MatchClosed': [('matchId', 'uint256'), ('cost', 'uint256')], 'EtherTransferred': [('_from', 'address'), ('to', 'address'), ('value', 'uint256'), ('cause', 'EtherTransferCause')]}
 
 def GetABIFile():
     contractABIFile = os.getenv("CONTRACT_ABI_FILE", "/Modicum.json")
@@ -67,8 +71,8 @@ class EthereumClient:
         
         self.contract_address = os.environ.get("CONTRACT_ADDRESS")
         self.contract = self.w3.eth.contract(address=self.contract_address, abi=self.abi, bytecode=self.bytecode)
-        
-        self.filter = None
+        self.filter = self.w3.eth.filter({"fromBlock": "latest"})
+        self.generate_topics(EVENTS)
         
         # Polygon compatibility
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
@@ -100,6 +104,7 @@ class EthereumClient:
 
     def exit(self):
         return
+
 
     def keccak256(self, string):
         r = self.w3.solidity_keccak(['string'], [string])
@@ -164,36 +169,73 @@ class EthereumClient:
             return self.command(method, params, try_+1)
         raise Exception(f"Unexpected method {method}")
 
+    @staticmethod
+    def is_enum_defined(name):
+        try:
+            module = importlib.import_module('..Enums',__name__)
+            getattr(module, name)
+            return True
+        except AttributeError:
+            return False
+
+    @staticmethod
+    def get_enum_by_classname(name):
+        module = importlib.import_module('..Enums',__name__)
+        return getattr(module, name)
+
+    def generate_topics(self, events):
+        self.topics = {}
+        for event in events:
+            name = event
+            topic = {'name': name}
+            params = []
+            for param in events[event]:
+                ptype = param[1]
+                pname = param[0]
+                params.append((ptype, pname))
+            topic['params'] = params
+
+            # This part, converts enums to uint8 for checking signature hash.
+            params = params.copy()
+            for i in range(0, len(params)):
+                if EthereumClient.is_enum_defined(params[i][0]):
+                    params[i] = ('uint8', params[i][1])
+
+            signature = "{}({})".format(name, ",".join([ptype for (ptype, pname) in params]))
+            keccak256 = self.keccak256(signature)
+            if not (keccak256.startswith("0x") and len(keccak256) == 66):
+                raise Exception("Incorrect hash {} computed for signature {}!".format(keccak256, signature))
+            self.topics[keccak256] = topic
+        return self.topics
+
     def poll_events(self):
-        if self.filter is None:
-            self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
-        self.logger.info("🔴🔴🔴🔴🔴🔴🔴🔴 poll_events.")
+        log = self.filter.get_new_entries()
         events = []
-        entries = self.filter.get_new_entries()
-        import pprint; pprint.pprint(entries)
-        self.logger.info("🔴🔴🔴🔴🔴🔴🔴🔴 poll_events complete")
-            
-        # logs = self.filter.get_new_entries()
-        # events = []
-        # import pprint; pprint.pprint(logs)
-        # for item in log:
-        #     if not isinstance(item, dict) and not isinstance(item, AttributeDict):
-        #         self.logger.info(f"[poll_events] Skipping processing {item} since it is not a dict")
-        #         continue
-        #     if self.address == item['address']:
-        #         if maybe_hex(item['topics'][0]) in self.topics:
-        #             topic = self.topics[maybe_hex(item['topics'][0])]
-        #             event_name = topic['name']
-        #             zs = [x for x in self.client.abi if x["type"] == "event" and x["name"] == event_name]
-        #             if len(zs) != 1:
-        #                 raise Exception('oh no the universe exploded')
-        #             event_abi = zs[0]
-        #             from web3 import _utils
-        #             raw_event = dict(_utils.events.get_event_data(self.client.w3.codec, event_abi, item))
-        #             raw_event["params"] = raw_event["args"]
-        #             raw_event["name"] = event_name
-        #             del raw_event["args"]
-        #             events.append(raw_event)
+        for item in log:
+            if not isinstance(item, dict) and not isinstance(item, AttributeDict):
+                self.logger.info(f"🟠🟠🟠🟠[poll_events] Skipping processing {item} since it is not a dict")
+                continue
+            if self.contract_address == item['address']:
+                if maybe_hex(item['topics'][0]) in self.topics:
+                    topic = self.topics[maybe_hex(item['topics'][0])]
+                    event_name = topic['name']
+                    zs = [x for x in self.abi if x["type"] == "event" and x["name"] == event_name]
+                    if len(zs) != 1:
+                        raise Exception('oh no the universe exploded')
+                    event_abi = zs[0]
+                    from web3 import _utils
+                    raw_event = dict(_utils.events.get_event_data(self.w3.codec, event_abi, item))
+                    raw_event["params"] = raw_event["args"]
+                    raw_event["name"] = event_name
+                    del raw_event["args"]
+                    events.append(raw_event)
+                else:
+                  self.logger.info(f"🟠🟠🟠🟠[poll_events] Skipping processing {item} since the topic is not known {maybe_hex(item['topics'][0])}")
 
         return events
 
+def maybe_hex(x):
+    if isinstance(x, HexBytes):
+        return x.hex()
+    else:
+        return x

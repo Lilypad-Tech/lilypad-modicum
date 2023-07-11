@@ -9,10 +9,8 @@ import subprocess
 from .DirectoryClient import DirectoryClient
 from . import DockerWrapper
 from .EthereumClient import EthereumClient
-
 import requests
 from . import helper
-
 
 class PlatformClient():
     def __init__(self):
@@ -42,33 +40,40 @@ class PlatformClient():
 
         self.helper = helper.helper()
 
-    def logInflux(self, now, tag_dict, seriesname, value):
-        records = []
+    def platformConnect(self, contract_address, geth_ip, geth_port, index):
+        self.contract_address=contract_address
+        self.ethclient = EthereumClient(ip=geth_ip, port=geth_port)
+        self.account = self.getEthAccount(index)
+        self.platformListenerThread.start()
+        return self.ethclient
 
-        floatvalue = None
+    def getEthAccount(self, index):
+        return self.ethclient.addresses[index]
 
-        if value is not None:
-            try:
-                floatvalue = float(value)
-            except:
-                floatvalue = None
+    def wait(self):
+        time.sleep(1)
 
-        if floatvalue is not None:
-            # ---------------------------------------------------------------------------------
-            record = {"time": now,
-                      "measurement": seriesname,
-                      "tags": tag_dict,
-                      "fields": {"value": floatvalue},
-                      }
-            records.append(record)
-        self.logger.info("writing: %s" % str(records))
-        # try:
-        #     res = self.client.write_points(records)  # , retention_policy=self.retention_policy)
-        # except requests.exceptions.ConnectionError as e:
-        #     self.logger.warning("CONNECTION ERROR %s" % e)
-        #     self.logger.warning("try again")
+    def platformListener(self):
+        self.active = True
+        while self.active:
+            events = self.contract.poll_events()
+            # self.logger.info("poll contract events")
+            for event in events:
+                params = event['params']
+                name = event['name']
+                self.logger.info("{}({}).".format(name, params))
+            self.wait()
 
+    def getReceipt(self, name, transactionHash):
+        receipt = self.ethclient.command("eth_getTransactionReceipt", params=[transactionHash])
+        self.logger.info("%s gasUsed: %s" %(name, receipt['gasUsed']))
+        self.logger.info("%s cumulativeGasUsed: %s" %(name, receipt['cumulativeGasUsed']))
 
+    def stop(self):
+        self.logger.info("Stop Client")
+        self.active = False
+        self.ethclient.exit()
+        # self.dockerClient.close() #not required but unittest throws a warning if not used.
 
     def startCLIListener(self, cliport="7654"):
         self.cliSocket = zmq.Context().socket(zmq.REP)
@@ -112,38 +117,28 @@ class PlatformClient():
             #     self.DC.getData(msg["host"],msg["sftport"],msg["ijoid"],msg["iroid"],msg["job"],msg["localpath"],msg["sshpath"])
             #     self.cliSocket.send_pyobj("got result")
 
-    def platformConnect(self, contract_address, geth_ip, geth_port, index):
-        self.contract_address=contract_address
-        self.ethclient = EthereumClient(ip=geth_ip, port=geth_port)
-        self.account = self.getEthAccount(index)
-        self.contract = ModicumContract.ModicumContract(index, self.ethclient, self.contract_address)
-        self.platformListenerThread.start()
-        return self.ethclient
+    def logInflux(self, now, tag_dict, seriesname, value):
+        records = []
 
-    def getEthAccount(self, index):
-        return self.ethclient.addresses[index]
+        floatvalue = None
 
-    def wait(self):
-        time.sleep(1)
+        if value is not None:
+            try:
+                floatvalue = float(value)
+            except:
+                floatvalue = None
 
-    def platformListener(self):
-        self.active = True
-        while self.active:
-            events = self.contract.poll_events()
-            # self.logger.info("poll contract events")
-            for event in events:
-                params = event['params']
-                name = event['name']
-                self.logger.info("{}({}).".format(name, params))
-            self.wait()
-
-    def getReceipt(self, name, transactionHash):
-        receipt = self.ethclient.command("eth_getTransactionReceipt", params=[transactionHash])
-        self.logger.info("%s gasUsed: %s" %(name, receipt['gasUsed']))
-        self.logger.info("%s cumulativeGasUsed: %s" %(name, receipt['cumulativeGasUsed']))
-
-    def stop(self):
-        self.logger.info("Stop Client")
-        self.active = False
-        self.ethclient.exit()
-        # self.dockerClient.close() #not required but unittest throws a warning if not used.
+        if floatvalue is not None:
+            # ---------------------------------------------------------------------------------
+            record = {"time": now,
+                      "measurement": seriesname,
+                      "tags": tag_dict,
+                      "fields": {"value": floatvalue},
+                      }
+            records.append(record)
+        self.logger.info("writing: %s" % str(records))
+        # try:
+        #     res = self.client.write_points(records)  # , retention_policy=self.retention_policy)
+        # except requests.exceptions.ConnectionError as e:
+        #     self.logger.warning("CONNECTION ERROR %s" % e)
+        #     self.logger.warning("try again")
