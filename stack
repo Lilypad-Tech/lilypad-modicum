@@ -92,8 +92,9 @@ function contract-address() {
 
 function hardhat() {
   docker run -ti --rm \
-    --name hardhat \
-    --net host \
+    --name geth \
+    --network modicum \
+    -p 8545:8545 \
     -v $DIR/src/js/deployments:/app/deployments \
     $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port 8545
 }

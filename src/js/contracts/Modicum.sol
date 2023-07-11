@@ -688,6 +688,8 @@ contract Modicum {
         uint256 bandwidthUsage
     ) public returns (uint256) {
         require(jobOfferId >= 0);
+
+        console.log("🟢🟢🟢 postResult");
         // require (resourceOffers[matches[matchId].resourceOffer].resProvider == msg.sender,
         //     "You are not supposed to publish result for this match.");
 
@@ -707,6 +709,8 @@ contract Modicum {
 
         matchToResult[matchId] = index;
         resultAvailable[matchId] = true;
+
+        console.log("🟢🟢🟢 EMIT ResultPosted");
 
         emit ResultPosted(
             msg.sender,

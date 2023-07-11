@@ -63,7 +63,6 @@ class ResourceProvider(Mediator):
             self.idle = False
             self.logger.info("C: postResOffer = %s" %msg["iroid"])
             txHash = self.ethclient.contract.functions.postResOffer(
-                msg["deposit"],
                 msg["instructionPrice"],
                 msg["instructionCap"],
                 msg["memoryCap"],
@@ -114,7 +113,7 @@ class ResourceProvider(Mediator):
         contractStatus = ResultStatus.Declined.value
         if resultStatus == "Completed":
             contractStatus = ResultStatus.Completed.value
-        self.logger.info("🟢 Posting result: \n%s" % (json.dumps({
+        self.logger.info("🟢🟢🟢 Posting result: \n%s" % (json.dumps({
           "matchID": matchID,
           "joid": joid,
           "contractStatus": contractStatus,
@@ -123,7 +122,11 @@ class ResourceProvider(Mediator):
         txHash = self.ethclient.contract.functions.postResult(matchID, joid, contractStatus, uri, resultHash, cpuTime, bandwidthUsage).transact({
             "from": self.account,
         })
-        self.logger.info("🟢 result posted %s" % (txHash,))
+        receipt = self.ethclient.w3.eth.get_transaction_receipt(txHash)
+        logs = self.ethclient.contract.events.ResultPosted().process_receipt(receipt)
+        self.logger.info("🟢🟢🟢 result posted %s" % (txHash,))
+        import pprint; pprint.pprint(logs)
+
 
     def CLIListener(self):
         active = True
