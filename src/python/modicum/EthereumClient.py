@@ -8,7 +8,7 @@ from . import config as cfg
 from web3 import Web3
 from web3.middleware import construct_sign_and_send_raw_middleware
 import os
-
+from .Contract import ModicumContract as ModicumContract
 from hexbytes import HexBytes
 from web3 import HTTPProvider, Web3
 from web3.middleware import geth_poa_middleware
@@ -64,11 +64,12 @@ class EthereumClient:
 
         self.abi = GetABI()
         self.bytecode = GetBytecode()
+        
         self.contract_address = os.environ.get("CONTRACT_ADDRESS")
         self.contract = self.w3.eth.contract(address=self.contract_address, abi=self.abi, bytecode=self.bytecode)
-        # self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
-        self.filter = self.w3.eth.filter('latest')
-
+        
+        self.filter = None
+        
         # Polygon compatibility
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
         print(self.w3.is_connected())
@@ -164,11 +165,14 @@ class EthereumClient:
         raise Exception(f"Unexpected method {method}")
 
     def poll_events(self):
+        if self.filter is None:
+            self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
         self.logger.info("🔴🔴🔴🔴🔴🔴🔴🔴 poll_events.")
         events = []
-        for event in self.filter.get_new_entries():
-            import pprint; pprint.pprint(event)
-
+        entries = self.filter.get_new_entries()
+        import pprint; pprint.pprint(entries)
+        self.logger.info("🔴🔴🔴🔴🔴🔴🔴🔴 poll_events complete")
+            
         # logs = self.filter.get_new_entries()
         # events = []
         # import pprint; pprint.pprint(logs)

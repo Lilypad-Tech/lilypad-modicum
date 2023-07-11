@@ -116,6 +116,7 @@ class PlatformClient():
         self.contract_address=contract_address
         self.ethclient = EthereumClient(ip=geth_ip, port=geth_port)
         self.account = self.getEthAccount(index)
+        self.contract = ModicumContract.ModicumContract(index, self.ethclient, self.contract_address)
         self.platformListenerThread.start()
         return self.ethclient
 
@@ -128,7 +129,7 @@ class PlatformClient():
     def platformListener(self):
         self.active = True
         while self.active:
-            events = self.ethclient.poll_events()
+            events = self.contract.poll_events()
             # self.logger.info("poll contract events")
             for event in events:
                 params = event['params']
