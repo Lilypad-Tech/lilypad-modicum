@@ -12,8 +12,9 @@ export GCP_NODE_NAME=${GCP_NODE_NAME:="bravo-testnet-vm-0"}
 # this means -d or -ti --rm
 # bash sucks sometimes because we can't just pass these as a single string
 # server or cli
+export DEFAULT_DATA_DIR="/tmp/geth"
 export CONTAINER_MODE=${CONTAINER_MODE:="server"}
-export DATA_DIRECTORY=${DATA_DIRECTORY:="/tmp/geth"}
+export DATA_DIRECTORY=${DATA_DIRECTORY:="$DEFAULT_DATA_DIR"}
 export IMAGE_BASE=${IMAGE_BASE:="lilypad"}
 export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-hardhat"}
 export DEPLOYMENT=${DEPLOYMENT:="localgeth"}
@@ -160,11 +161,15 @@ function lilypad-node() {
     echo >&2 "RPC_URL must be set"
     exit 1
   fi
-  local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app --network modicum"
+  local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS --network modicum"
+  # this is for dev trim
+  if [[ "$DATA_DIRECTORY" == "$DEFAULT_DATA_DIR" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app"
+  fi
   if [[ "$CONTAINER_MODE" == "server" ]]; then
-    local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -d --restart always"
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -d --restart always"
   elif [[ "$CONTAINER_MODE" == "cli" ]]; then
-    local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -ti --rm"
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -ti --rm"
   fi
   eval docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     -v /tmp:/tmp \
