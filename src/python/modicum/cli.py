@@ -5,6 +5,7 @@ import time
 import zmq
 import logging
 import json
+from web3 import Web3
 from .JobCreator import JobFinished
 
 from .Enums import Architecture
@@ -529,6 +530,9 @@ def startRP(path,index,host,sim,mediator):
     if mediator is None or mediator == "":
         raise Exception("No mediator specified in comma seperated MEDIATOR_ADDRESSES environment variable")
 
+
+    mediator = Web3.to_checksum_address(mediator)
+
     print("Resource Provider adding mediator... ")
     exitcode = RP.addMediator(RP.account, mediator)
 
@@ -703,6 +707,8 @@ def runLilypadCLI(template, params, mediator):
 
     if mediator is None or mediator == "":
         raise Exception("No mediator specified in comma seperated MEDIATOR_ADDRESSES environment variable")
+
+    mediator = Web3.to_checksum_address(mediator)
 
     spinner = Halo(text=f'Adding mediator {mediator}', spinner='pong')
     spinner.start()
