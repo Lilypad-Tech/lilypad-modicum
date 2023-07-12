@@ -55,13 +55,13 @@ Install `lilypad` CLI:
 curl -sSL -O https://bit.ly/get-lilypad && sudo install get-lilypad /usr/local/bin/lilypad
 ```
 
-### run a job
+### run a job (x86_64 or arm64)
 Run cowsay via the BLOCKCHAIN
 ```
 lilypad run --template cowsay:v0.0.1 --params "hello lilypad"
 ```
 
-### run a node
+### run a node (x86_64 only)
 To contribute your resources to the network and get paid
 ```
 export PRIVATE_KEY=<as above>
