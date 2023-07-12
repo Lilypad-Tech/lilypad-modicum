@@ -2,6 +2,9 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+### NOTE - THIS SCRIPT HAS TO BE COMPATIBLE WITH OLD VERSIONS OF BASH ON MACOS
+### DO NOT PUT declare -g OR {@Q} OR OTHER FANCY THINGS IN IT
+
 export VERSION=${VERSION:="4a5f0f7-$(uname -m |sed 's/arm64/aarch64/')"}
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
 export RPC_URL=${RPC_URL:="http://testnet.lilypadnetwork.org:8545"}
