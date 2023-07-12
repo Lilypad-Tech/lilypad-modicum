@@ -11,7 +11,9 @@ This guide shows you (amongst other things) how to make crypto with your gaming 
 
 **It's safest to create a brand new Metamask account and not reuse the account/private key you create here for anything else**
 
-Set up metamask with our Lalechuza testnet:
+Set up metamask with our Lalechuza testnet.
+
+Click the down arrow on networks and click add network.
 
 <img src="https://github.com/bacalhau-project/lilypad/assets/264658/9f4bd43e-aef1-4d7b-8441-082b0355298f" width="300">
 
