@@ -126,6 +126,10 @@ function geth-command() {
   docker exec -ti geth geth --exec "$@" attach /data/geth/geth.ipc
 }
 
+function geth-cli() {
+  docker exec -ti geth geth attach /data/geth/geth.ipc
+}
+
 function geth-balance() {
   address="$1"
   # check if address is defined
@@ -136,15 +140,49 @@ function geth-balance() {
   geth-command "eth.getBalance(\"${address}\")/1e18"
 }
 
-function geth-fund() {
+function toWei() {
+  amount="$1"
+  # check if address is defined
+  if [[ -z "$amount" ]]; then
+    echo >&2 "amount must be set"
+    exit 1
+  fi
+  geth-command "web3.toWei($amount, \"ether\")"
+}
+
+# fund from given account with ALL the money
+function geth-transfer() {
+  from="$1"
+  to="$2"
+  amount="$3"
+  # check if address is defined
+  if [[ -z "$from" ]]; then
+    echo >&2 "from must be set"
+    exit 1
+  fi
+  if [[ -z "$to" ]]; then
+    echo >&2 "to must be set"
+    exit 1
+  fi
+  if [[ -z "$amount" ]]; then
+    echo >&2 "amount must be set"
+    exit 1
+  fi
+  geth-command "eth.sendTransaction({from: \"${from}\", to: \"${to}\", value: ${amount}})"
+}
+
+
+# fund the given account with ALL the money from coinbase
+function geth-fund-admin() {
   address="$1"
   # check if address is defined
   if [[ -z "$address" ]]; then
     echo >&2 "address must be set"
     exit 1
   fi
-  geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${address}\", value: web3.toWei(10000000000000, \"ether\")})"
+  geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${address}\", value: eth.getBalance(eth.coinbase)})"
 }
+
 
 function coinbase() {
   geth-command "eth.coinbase"
@@ -236,20 +274,22 @@ function submitjob() {
 
 function reset() {
   docker rm -f $(docker ps -aq) ||true
-  sudo rm -rf /tmp/geth
+  sudo rm -rf $DATA_DIRECTORY
   rm -rf src/js/deployments/localgeth
-  (cd src/js && \
-   npm install && npx hardhat compile
-   node scripts/create-new-account.js
-   node scripts/create-new-account.js \
-    |sed 's/privateKey: /ADMIN_PRIVATE_KEY=/' \
-    |sed 's/address: /ADMIN_ADDRESS=/' \
-    > .env)
+  (set -euo pipefail
+   cd src/js
+   npm install
+   npx hardhat compile
+  )
+  node src/js/scripts/create-new-accounts.js > .env
+  source .env
   geth
   sleep 5
-  (source src/js/.env && \
-   ./stack geth-fund $ADMIN_ADDRESS && \
-   ./stack geth-balance $ADMIN_ADDRESS)
+  geth-fund-admin
+  # (set -euo pipefail
+  #  source src/js/.env && \
+  #  ./stack geth-fund $ADMIN_ADDRESS && \
+  #  ./stack geth-balance $ADMIN_ADDRESS)
   (cd src/js && npx hardhat deploy --network localgeth)
 }
 
