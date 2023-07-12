@@ -736,7 +736,7 @@ def runLilypadCLI(template, params, mediator):
     descriptions = {
         "JobOfferPostedTwo": "Scheduling on-chain...",
         "Matched": "Running job...",
-        "ResultsPosted": "Fetching results...",   
+        "ResultsPosted": "Fetching results...",
     }
     while not JC.finished:
         if JC.state != lastState:
