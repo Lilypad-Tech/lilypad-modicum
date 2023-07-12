@@ -165,6 +165,8 @@ function lilypad-node() {
   # this is for dev trim
   if [[ "$DATA_DIRECTORY" == "$DEFAULT_DATA_DIR" ]]; then
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app"
+  else
+    echo >&2 "running in production mode..."
   fi
   if [[ "$CONTAINER_MODE" == "server" ]]; then
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -d --restart always"
