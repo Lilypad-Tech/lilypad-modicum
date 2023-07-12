@@ -33,7 +33,11 @@ export IMAGE_MODICUM="${DOCKER_REGISTRY}/${IMAGE_MODICUM_NAME}:${VERSION}"
 export IMAGE_RESOURCE_PROVIDER="${DOCKER_REGISTRY}/${IMAGE_RESOURCE_PROVIDER_NAME}:${VERSION}"
 export IMAGE_MEDIATOR="${DOCKER_REGISTRY}/${IMAGE_MEDIATOR_NAME}:${VERSION}"
 
+export ADDRESS_ADMIN=${ADDRESS_ADMIN:=""}
+
 export LILYPAD_NODE_FLAGS=""
+
+
 
 function gSSH() {
   gcloud compute ssh --quiet --zone=$GCP_ZONE $GCP_NODE_NAME -- sudo $*
@@ -144,21 +148,19 @@ function balances() {
 
 # move ALL the money apart from 1 eth to the given account
 function fund-admin() {
-  address="$1"
-  # check if address is defined
-  if [[ -z "$address" ]]; then
-    echo >&2 "address must be set"
+  if [[ -z "$ADDRESS_ADMIN" ]]; then
+    echo >&2 "ADDRESS_ADMIN must be set"
     exit 1
   fi
-  geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${address}\", value: new web3.BigNumber(eth.getBalance(eth.coinbase)).minus(web3.toWei(1, \"ether\"))  })"
+  geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${ADDRESS_ADMIN}\", value: new web3.BigNumber(eth.getBalance(eth.coinbase)).minus(web3.toWei(1, \"ether\"))  })"
 }
 
 function fund-faucet() {
-  geth-script scripts/fund-accounts.js
+  geth-script scripts/fund-faucet.js
 }
 
 function fund-services() {
-  geth-script scripts/fund-accounts.js
+  geth-script scripts/fund-services.js
 }
 
 # this means run ipfs, bacalhau and the modicum resource provider
@@ -168,12 +170,15 @@ function fund-services() {
 function lilypad-node() {
   if [[ -z "$LILYPAD_NODE_IMAGE" ]]; then
     echo >&2 "LILYPAD_NODE_IMAGE must be set"
+    exit 1
   fi
   if [[ -z "$LILYPAD_NODE_NAME" ]]; then
     echo >&2 "LILYPAD_NODE_NAME must be set"
+    exit 1
   fi
   if [[ -z "$RPC_URL" ]]; then
     echo >&2 "RPC_URL must be set"
+    exit 1
   fi
   if [[ "$TRIM" == "development" ]]; then
     local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app --network modicum"

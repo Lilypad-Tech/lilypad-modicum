@@ -12,6 +12,6 @@ const names = [
 
 names.forEach(name => {
   const wallet = Wallet.generate();
-  console.log(`PRIVATE_KEY_${name}=${wallet.getPrivateKeyString()}`)
-  console.log(`ADDRESS_${name}=${wallet.getAddressString()}`)
+  console.log(`export PRIVATE_KEY_${name}=${wallet.getPrivateKeyString()}`)
+  console.log(`export ADDRESS_${name}=${wallet.getAddressString()}`)
 })

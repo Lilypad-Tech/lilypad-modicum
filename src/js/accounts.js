@@ -22,11 +22,11 @@ const getAccount = (accountName) => {
   const addressName = `ADDRESS_${accountName.toUpperCase()}`
   const addressValue = process.env[addressName]
   if(!privateKeyValue) {
-    console.error(`${privateKeyName} is not set in the env file: ${ENV_FILE}`)
+    console.error(`${privateKeyName} is not set in the env`)
     process.exit(1)
   }
   if(!addressValue) {
-    console.error(`${addressName} is not set in the env file: ${ENV_FILE}`)
+    console.error(`${addressName} is not set in the env`)
     process.exit(1)
   }
   return {
