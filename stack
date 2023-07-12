@@ -242,6 +242,8 @@ function reset() {
   set -x
   docker rm -f $(docker ps -aq) ||true
   sudo rm -rf $DATA_DIRECTORY
+  node src/js/scripts/create-new-accounts.js > .env
+  source .env
   rm -rf src/js/deployments/localgeth
   (
     set -euo pipefail
@@ -249,8 +251,6 @@ function reset() {
     npm install
     npx hardhat compile
   )
-  node src/js/scripts/create-new-accounts.js > .env
-  source .env
   geth
   sleep 5
   fund-admin
