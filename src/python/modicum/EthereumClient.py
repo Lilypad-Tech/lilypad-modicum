@@ -97,7 +97,6 @@ class EthereumClient:
             acct = self.w3.eth.account.from_key(pk)
             self.addresses.append(acct.address)
 
-            print(f"🔑 Loaded private key for {acct.address}")
             # Add acct as auto-signer:
             self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
         else:
