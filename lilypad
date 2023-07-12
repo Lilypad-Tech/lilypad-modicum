@@ -5,7 +5,7 @@ IFS=$'\n\t'
 declare -ga GLOBAL_ARGS
 GLOBAL_ARGS=( "$@" )
 
-export VERSION=${VERSION:="53ab27e"}
+export VERSION=${VERSION:="4a5f0f7-$(uname -m)"}
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
 export TRIM=${TRIM:="production-client"}
 export CONTAINER_MODE=${CONTAINER_MODE:="cli"}
