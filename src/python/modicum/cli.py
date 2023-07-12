@@ -694,6 +694,9 @@ def runLilypadCLI(template, params, mediator):
     spinner.start()
     JC.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, index)
     spinner.stop_and_persist("🔗")
+
+    if os.environ.get('PRIVATE_KEY') is not None:
+        print(f"🔑 Loaded private key for {JC.address}")
     
     spinner = Halo(text='Registering job creator', spinner='pong')
     spinner.start()
