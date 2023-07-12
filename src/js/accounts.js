@@ -6,6 +6,9 @@ const FUND_FAUCET_AMOUNT = ethers.utils.parseEther('9999999')
 // how much to fund each service with
 const FUND_SERVICE_AMOUNT = ethers.utils.parseEther('9999999')
 
+// how much for throwaway accounts
+const FUND_THROWAWAY_AMOUNT = ethers.utils.parseEther('999')
+
 // the names of the accounts in order
 const accountNames = [
   'admin',
@@ -54,6 +57,7 @@ const getAccounts = () => {
 module.exports = {
   FUND_FAUCET_AMOUNT,
   FUND_SERVICE_AMOUNT,
+  FUND_THROWAWAY_AMOUNT,
   getAccount,
   getAccounts,
 }

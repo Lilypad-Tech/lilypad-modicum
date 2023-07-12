@@ -11,9 +11,6 @@ const transfer = async (fromName, toName, amount) => {
 
   const signer = new hre.ethers.Wallet(fromAccount.privateKey, hre.ethers.provider)
 
-
-  // signer.connect(hre.ethers.provider)
-
   const tx = await signer.sendTransaction({
     to: toAccount.address,
     value: amount,
