@@ -8,7 +8,8 @@ IFS=$'\n\t'
 export VERSION=${VERSION:="4a5f0f7-$(uname -m |sed 's/arm64/aarch64/')"}
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
 export RPC_URL=${RPC_URL:="http://testnet.lilypadnetwork.org:8545"}
-export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:="0x219F074D9b14410868105420eEEa9Ba768a7aAE1"}
+export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:="0x06fc6B2e51c8603B78f0eEF6c96Bef9e13511386"}
+export MEDIATOR_ADDRESSES=${MEDIATOR_ADDRESSES:="0x4b781676dfbf7d4e8cfa8f375c76360d06ad28f9"}
 export IMAGE_BASE=${IMAGE_BASE:="lilypad"}
 export IMAGE_MODICUM_NAME=${IMAGE_MODICUM_NAME:="${IMAGE_BASE}-modicum"}
 export IMAGE_MODICUM="${DOCKER_REGISTRY}/${IMAGE_MODICUM_NAME}:${VERSION}"
@@ -31,18 +32,20 @@ elif [[ $1 == "serve" ]]; then
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e PRIVATE_KEY \
-    -e CONTRACT_ADDRESS=${CONTRACT_ADDRESS} \
+    -e CONTRACT_ADDRESS \
     -e CONTRACT_ABI_FILE=/Modicum.json \
-    -e RPC_URL=${RPC_URL} \
+    -e MEDIATOR_ADDRESSES \
+    -e RPC_URL \
     $IMAGE_RESOURCE_PROVIDER
 
 elif [[ $1 == "run" ]]; then
   shift
   docker run -ti --rm --name submitjob \
     -e PRIVATE_KEY \
-    -e CONTRACT_ADDRESS=${CONTRACT_ADDRESS} \
+    -e CONTRACT_ADDRESS \
     -e CONTRACT_ABI_FILE=/Modicum.json \
-    -e RPC_URL=${RPC_URL} \
+    -e MEDIATOR_ADDRESSES \
+    -e RPC_URL \
     $IMAGE_MODICUM \
     runLilypadCLI \
     "$@"
