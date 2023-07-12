@@ -63,7 +63,8 @@ lilypad run --template cowsay:v0.0.1 --params "hello lilypad"
 ### run a node
 To contribute your resources to the network and get paid
 ```
-sudo lilypad serve
+export PRIVATE_KEY=<as above>
+sudo -E lilypad serve
 ```
 
 # usage
