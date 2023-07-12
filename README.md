@@ -112,12 +112,6 @@ NOTE: if you want a fresh installation - then:
 ./stack clean
 ```
 
-### running against hardhat for debugging
-
-It's possible to run the stack against hardhat which makes `console.log` work from inside the contract.
-
-To do this run `./stack hardhat` in place of `./stack geth` and then `export DEPLOYMENT=localhost` in all the other panes
-
 ### production initial node setup
 
 We use the terraform scripts to run a single google cloud node.
