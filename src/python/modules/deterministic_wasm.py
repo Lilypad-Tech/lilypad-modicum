@@ -46,4 +46,4 @@ def _deterministic_wasm(params: dict):
     }
 
 # denoted in eth
-_deterministic_wasm.price = 0.2
+_deterministic_wasm.price = 88

@@ -5,6 +5,7 @@ import time
 import zmq
 import logging
 import json
+from web3 import Web3
 from .JobCreator import JobFinished
 
 from .Enums import Architecture
@@ -523,11 +524,14 @@ def startRP(path,index,host,sim,mediator):
         time.sleep(1)
     print("RP has registered")
 
-    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None:
+    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None and os.environ.get('MEDIATOR_ADDRESSES') != "":
         mediator = os.environ.get('MEDIATOR_ADDRESSES').split(',')[0]
 
-    if mediator is None:
-        mediator = RP.getEthAccount(0)
+    if mediator is None or mediator == "":
+        raise Exception("No mediator specified in comma seperated MEDIATOR_ADDRESSES environment variable")
+
+
+    mediator = Web3.to_checksum_address(mediator)
 
     print("Resource Provider adding mediator... ")
     exitcode = RP.addMediator(RP.account, mediator)
@@ -690,6 +694,9 @@ def runLilypadCLI(template, params, mediator):
     spinner.start()
     JC.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, index)
     spinner.stop_and_persist("🔗")
+
+    if os.environ.get('PRIVATE_KEY') is not None:
+        print(f"🔑 Loaded private key for {JC.account}")
     
     spinner = Halo(text='Registering job creator', spinner='pong')
     spinner.start()
@@ -698,11 +705,13 @@ def runLilypadCLI(template, params, mediator):
         time.sleep(1)
     spinner.stop_and_persist("🔌")
 
-    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None:
+    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None and os.environ.get('MEDIATOR_ADDRESSES') != "":
         mediator = os.environ.get('MEDIATOR_ADDRESSES').split(',')[0]
 
-    if mediator is None:
-        mediator = JC.getEthAccount(0)
+    if mediator is None or mediator == "":
+        raise Exception("No mediator specified in comma seperated MEDIATOR_ADDRESSES environment variable")
+
+    mediator = Web3.to_checksum_address(mediator)
 
     spinner = Halo(text=f'Adding mediator {mediator}', spinner='pong')
     spinner.start()
@@ -725,15 +734,15 @@ def runLilypadCLI(template, params, mediator):
         "JobOfferPostedTwo": "💼",
     }
     descriptions = {
+        "JobOfferPostedTwo": "Scheduling on-chain...",
         "Matched": "Running job...",
         "ResultsPosted": "Fetching results...",
-        "JobOfferPostedTwo": "Job offer posted",
     }
     while not JC.finished:
         if JC.state != lastState:
             spinner.stop_and_persist(statemojis.get(lastSpinner, lastSpinner))
             lastSpinner = JC.state
-            spinner = Halo(text=f'{descriptions.get(JC.state, JC.state)}', spinner='pong')
+            spinner = Halo(text=f'{descriptions.get(JC.state, JC.state)} {JC.status}', spinner='pong')
             spinner.start()
             lastState = JC.state
         
@@ -742,7 +751,7 @@ def runLilypadCLI(template, params, mediator):
 
     spinner.stop_and_persist("🍃")
 
-    print(f"\n🍂 Lilypad job completed, results 👉 {JC.status}\n")
+    print(f"\n🍂 Lilypad job completed 👉 {JC.status}\n")
 
     os._exit(0)
 

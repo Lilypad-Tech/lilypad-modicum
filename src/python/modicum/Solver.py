@@ -44,7 +44,6 @@ class Solver(PlatformClient):
         self.account = account
         txHash = self.ethclient.contract.functions.registerSolver().transact({
           "from": self.account,
-          "gasPrice": self.ethclient.w3.eth.gas_price
         })
 
 
@@ -382,7 +381,6 @@ class Solver(PlatformClient):
                     i[2]
                 ).transact({
                   "from": self.account,
-                  "gasPrice": self.ethclient.w3.eth.gas_price
                 })
                 #remove matches from list
                 self.matched_jos[i[0]] = self.job_offers.pop(i[0])
