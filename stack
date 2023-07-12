@@ -9,14 +9,10 @@ export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
 export GCP_ZONE=${GCP_ZONE:="us-central1-a"}
 export GCP_NODE_NAME=${GCP_NODE_NAME:="bravo-testnet-vm-0"}
-export TRIM=${TRIM:="development"}
 # this means -d or -ti --rm
 # bash sucks sometimes because we can't just pass these as a single string
 # server or cli
 export CONTAINER_MODE=${CONTAINER_MODE:="server"}
-# we expect the contract address to be set in the environment
-# if we are production trim this will be handled by the deployment
-export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=""}
 export DATA_DIRECTORY=${DATA_DIRECTORY:="/tmp/geth"}
 export IMAGE_BASE=${IMAGE_BASE:="lilypad"}
 export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-hardhat"}
@@ -36,8 +32,6 @@ export IMAGE_MEDIATOR="${DOCKER_REGISTRY}/${IMAGE_MEDIATOR_NAME}:${VERSION}"
 export ADDRESS_ADMIN=${ADDRESS_ADMIN:=""}
 
 export LILYPAD_NODE_FLAGS=""
-
-
 
 function gSSH() {
   gcloud compute ssh --quiet --zone=$GCP_ZONE $GCP_NODE_NAME -- sudo $*
@@ -85,13 +79,16 @@ function push-images() {
 }
 
 function contract-address() {
-  if [[ "$TRIM" == "development" ]]; then
-    cat "src/js/deployments/${DEPLOYMENT}/Modicum.json" | jq -r .address
-  elif [[ "$TRIM" == "production" ]]; then
-    echo $CONTRACT_ADDRESS
-  elif [[ "$TRIM" == "production-client" ]]; then
-    echo $CONTRACT_ADDRESS
-  fi  
+  cat "src/js/deployments/${DEPLOYMENT}/Modicum.json" | jq -r .address
+}
+
+function compile-contract() {
+  (
+    set -euo pipefail
+    cd src/js
+    npm install
+    npx hardhat compile
+  )
 }
 
 function geth() {
@@ -150,8 +147,6 @@ function fund-services() {
 
 # this means run ipfs, bacalhau and the modicum resource provider
 # in the same service - it is what nodes will run on their hardware
-#
-# NB: Bind-mounting the code is debug trim, take this out for prod
 function lilypad-node() {
   if [[ -z "$LILYPAD_NODE_IMAGE" ]]; then
     echo >&2 "LILYPAD_NODE_IMAGE must be set"
@@ -165,13 +160,7 @@ function lilypad-node() {
     echo >&2 "RPC_URL must be set"
     exit 1
   fi
-  if [[ "$TRIM" == "development" ]]; then
-    local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app --network modicum"
-  elif [[ "$TRIM" == "production" ]]; then
-    local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS --network modicum"
-  elif [[ "$TRIM" == "production-client" ]]; then
-    local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS"
-  fi
+  local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app --network modicum"
   if [[ "$CONTAINER_MODE" == "server" ]]; then
     local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -d --restart always"
   elif [[ "$CONTAINER_MODE" == "cli" ]]; then
