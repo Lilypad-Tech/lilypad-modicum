@@ -146,6 +146,10 @@ function fund-services() {
   geth-script scripts/fund-services.js
 }
 
+function fund-throwaway() {
+  geth-script scripts/fund-throwaway.js
+}
+
 # this means run ipfs, bacalhau and the modicum resource provider
 # in the same service - it is what nodes will run on their hardware
 function lilypad-node() {
