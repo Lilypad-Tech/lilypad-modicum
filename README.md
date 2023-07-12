@@ -48,8 +48,9 @@ Now let's run a job!
 Requires:
 * [Docker](https://docs.docker.com/engine/install/)
 
+Works on Linux, macOS and WSL2 (x86_64 and arm64)
 
-Install `lilypad` CLI (shell wrapper, works on Linux, macOS and WSL2)
+Install `lilypad` CLI:
 ```
 curl -sSL -O https://bit.ly/get-lilypad && sudo install get-lilypad /usr/local/bin/lilypad
 ```
