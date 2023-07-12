@@ -57,7 +57,7 @@ curl -sSL -O https://bit.ly/get-lilypad && sudo install get-lilypad /usr/local/b
 ### run a job
 Run cowsay via the BLOCKCHAIN
 ```
-lilypad run --template cowsay --params "hello lilypad"
+lilypad run --template cowsay:v0.0.1 --params "hello lilypad"
 ```
 
 ### run a node
