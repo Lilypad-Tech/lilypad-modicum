@@ -9,8 +9,6 @@ This guide shows you (amongst other things) how to make crypto with your gaming 
 
 ## Get private key
 
-**It's safest to create a brand new Metamask account and not reuse the account/private key you create here for anything else**
-
 Set up metamask with our Lalechuza testnet.
 
 Click the down arrow on networks and click add network.
@@ -27,8 +25,8 @@ The variables you need are:
 
 Click save and click "switch to Lilypad Lalechuza testnet".
 
-* Click Account 1, the `...` next to Account 1 in the list
-* Account details
+* Click the **down arrow** next to Account 1 on the top bar, **then** click the `...` next to Account 1 in the list
+* Account details - then we'll **Show private key**
 
 <img src="https://github.com/bacalhau-project/lilypad/assets/264658/4e947efb-888c-4c85-9990-ab01cb889516" width="300">
 
@@ -50,8 +48,9 @@ Now let's run a job!
 Requires:
 * [Docker](https://docs.docker.com/engine/install/)
 
+Works on Linux, macOS and WSL2 (x86_64 and arm64)
 
-Install `lilypad` CLI (shell wrapper, works on Linux, macOS and WSL2)
+Install `lilypad` CLI:
 ```
 curl -sSL -O https://bit.ly/get-lilypad && sudo install get-lilypad /usr/local/bin/lilypad
 ```
@@ -59,13 +58,14 @@ curl -sSL -O https://bit.ly/get-lilypad && sudo install get-lilypad /usr/local/b
 ### run a job
 Run cowsay via the BLOCKCHAIN
 ```
-lilypad run --template cowsay --params "hello lilypad"
+lilypad run --template cowsay:v0.0.1 --params "hello lilypad"
 ```
 
 ### run a node
 To contribute your resources to the network and get paid
 ```
-sudo lilypad serve
+export PRIVATE_KEY=<as above>
+sudo -E lilypad serve
 ```
 
 # usage
