@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-declare -ga GLOBAL_ARGS
+declare -a GLOBAL_ARGS
 GLOBAL_ARGS=( "$@" )
 
 export VERSION=${VERSION:="4a5f0f7-$(uname -m)"}
@@ -49,7 +49,7 @@ function lilypad-node() {
     -e RPC_URL=${RPC_URL} \
     $LILYPAD_NODE_IMAGE \
     ${1:-""} \
-    $(for arg in ${GLOBAL_ARGS[@]:1}; do echo ${arg@Q}; done)
+    $(for arg in "${GLOBAL_ARGS[@]:1}"; do printf "%q " "$arg"; done)
 }
 
 function serve-logs() {
