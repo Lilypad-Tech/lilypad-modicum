@@ -39,7 +39,7 @@ Open a terminal on macOS, Linux or WSL2, and type:
 export PRIVATE_KEY=<the private key you copied>
 ```
 
-TODO: faucet
+Go get some funds from the faucet: [http://testnet.lilypadnetwork.org/](http://testnet.lilypadnetwork.org/)
 
 Now let's run a job!
 
