@@ -226,6 +226,7 @@ function resource-provider() {
   LILYPAD_NODE_IMAGE=$IMAGE_RESOURCE_PROVIDER \
   LILYPAD_NODE_NAME=resource-provider \
   CONTAINER_MODE=server \
+  PRIVATE_KEY=$PRIVATE_KEY_RESOURCE_PROVIDER \
   lilypad-node "$@"
 }
 
@@ -233,6 +234,7 @@ function mediator() {
   LILYPAD_NODE_IMAGE=$IMAGE_MEDIATOR \
   LILYPAD_NODE_NAME=mediator \
   CONTAINER_MODE=server \
+  PRIVATE_KEY=$PRIVATE_KEY_MEDIATOR \
   lilypad-node "$@"
 }
 
@@ -240,6 +242,7 @@ function solver() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=solver \
   CONTAINER_MODE=server \
+  PRIVATE_KEY=$PRIVATE_KEY_SOLVER \
   lilypad-node "runAsSolver"
 }
 
@@ -247,6 +250,7 @@ function submitjob() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=submitjob \
   CONTAINER_MODE=cli \
+  PRIVATE_KEY=$PRIVATE_KEY_JOB_CREATOR \
   lilypad-node "runLilypadCLI"
 }
 

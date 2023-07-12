@@ -48,7 +48,6 @@ class ResourceProvider(Mediator):
         self.account = account
         txHash = self.ethclient.contract.functions.registerResourceProvider(arch, timePerInstruction).transact({
             "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
         })
         return 0
 
@@ -56,7 +55,6 @@ class ResourceProvider(Mediator):
         self.logger.info("B: resourceProviderAddTrustedMediator")
         txHash = self.ethclient.contract.functions.resourceProviderAddTrustedMediator(mediator).transact({
             "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
         })
         # helper.wait4receipt(self.ethclient,txHash)
         return 0
@@ -79,7 +77,6 @@ class ResourceProvider(Mediator):
             ).transact({
               "from": self.account,
               "value": msg["deposit"],
-              "gasPrice": self.ethclient.w3.eth.gas_price
             })
             return 0
         else:
@@ -113,7 +110,6 @@ class ResourceProvider(Mediator):
         self.logger.info('JC Missed deadline for reacting to results.')
         txHash = self.ethclient.contract.functions.acceptResult(resultId).transact({
             "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
         })
 
     def scheduleAcceptResult(self, resultId, delay):
@@ -135,7 +131,6 @@ class ResourceProvider(Mediator):
         }),))
         txHash = self.ethclient.contract.functions.postResult(matchID, joid, contractStatus, uri, resultHash, cpuTime, bandwidthUsage).transact({
             "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
         })
 
 

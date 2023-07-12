@@ -70,7 +70,6 @@ class JobCreator(PlatformClient):
         self.account = account
         txHash = self.ethclient.contract.functions.registerJobCreator().transact({
             "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
         })
         return 0
 
@@ -78,7 +77,6 @@ class JobCreator(PlatformClient):
         self.logger.info("B: jobCreatorAddTrustedMediator")
         txHash = self.ethclient.contract.functions.jobCreatorAddTrustedMediator(mediator).transact({
             "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
         })
         return 0
 
@@ -106,7 +104,6 @@ class JobCreator(PlatformClient):
         self.logger.info("F: acceptResult = %s: " %joid)
         txHash = self.ethclient.contract.functions.acceptResult(resultID, joid).transact({
             "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
         })
 
         return 0
@@ -181,7 +178,6 @@ class JobCreator(PlatformClient):
 
         txHash = self.ethclient.contract.functions.timeout(matchId, joid).transact({
             "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
         })
 
     def scheduleTimeout(self, matchID, deadline_ms):
@@ -325,7 +321,6 @@ class JobCreator(PlatformClient):
                         # TODO: plugin the verification here
                         txHash = self.ethclient.contract.functions.acceptResult(resultId, joid).transact({
                             "from": self.account,
-                            "gasPrice": self.ethclient.w3.eth.gas_price
                         })
 
                         # print(textwrap.dedent(f"""
@@ -351,7 +346,6 @@ class JobCreator(PlatformClient):
                         #     self.logger.info("M: rejectResult = %s" % ijoid)
                         #     self.ethclient.contract.functions.rejectResult(resultId, joid).transact({
                         #         "from": self.account,
-                        #         "gasPrice": self.ethclient.w3.eth.gas_price
                         #     })
                         #     continue
                         # else:
@@ -384,7 +378,6 @@ class JobCreator(PlatformClient):
                         #         self.logger.info("M: Mediation requested = %s" % matchID)
                                   # self.ethclient.contract.functions.rejectResult(resultId, joid).transact({
                                   #     "from": self.account,
-                                  #     "gasPrice": self.ethclient.w3.eth.gas_price
                                   # })
                         # else:
                         #     _DIRIP_ = os.environ.get('DIRIP')
@@ -541,7 +534,6 @@ class JobCreator(PlatformClient):
         ).transact({
           "from": self.account,
           "value": deposit,
-          "gasPrice": self.ethclient.w3.eth.gas_price
         })
 
         self.logger.info("D: postJobOfferPartOne = %s" % (txHash,))
@@ -574,7 +566,6 @@ class JobCreator(PlatformClient):
             jsonData,
         ).transact({
           "from": self.account,
-          "gasPrice": self.ethclient.w3.eth.gas_price
         })
 
 #         (1,
