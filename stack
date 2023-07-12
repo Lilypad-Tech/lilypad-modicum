@@ -295,6 +295,7 @@ function start() {
   sleep 5
   mediator
   resource-provider
+  faucet
   echo "Now run (in separate terminals):"
   echo "./stack logs geth"
   echo "./stack logs solver"
