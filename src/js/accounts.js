@@ -1,10 +1,10 @@
 const ethers = require('ethers')
 
 // how much to fund the faucet with each time
-const FUND_FAUCET_AMOUNT = ethers.utils.parseEther('1000000')
+const FUND_FAUCET_AMOUNT = ethers.utils.parseEther('9999999')
 
 // how much to fund each service with
-const FUND_SERVICE_AMOUNT = ethers.utils.parseEther('1000000')
+const FUND_SERVICE_AMOUNT = ethers.utils.parseEther('9999999')
 
 // the names of the accounts in order
 const accountNames = [

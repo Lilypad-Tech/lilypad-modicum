@@ -197,6 +197,7 @@ function lilypad-node() {
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e DEBUG \
     -e PRIVATE_KEY \
+    -e MEDIATOR_ADDRESSES \
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \
     -e RPC_URL=$RPC_URL \
@@ -226,6 +227,7 @@ function resource-provider() {
   LILYPAD_NODE_IMAGE=$IMAGE_RESOURCE_PROVIDER \
   LILYPAD_NODE_NAME=resource-provider \
   CONTAINER_MODE=server \
+  MEDIATOR_ADDRESSES=$ADDRESS_MEDIATOR \
   PRIVATE_KEY=$PRIVATE_KEY_RESOURCE_PROVIDER \
   lilypad-node "$@"
 }
@@ -250,6 +252,7 @@ function submitjob() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=submitjob \
   CONTAINER_MODE=cli \
+  MEDIATOR_ADDRESSES=$ADDRESS_MEDIATOR \
   PRIVATE_KEY=$PRIVATE_KEY_JOB_CREATOR \
   lilypad-node "runLilypadCLI"
 }
@@ -276,7 +279,11 @@ function reset() {
   (cd src/js && npx hardhat deploy --network localgeth)
 }
 
+# it's IMPORTANT to stop geth gracefully so it commit's it's state to disk
+# https://github.com/ethereum/go-ethereum/issues/20383
 function stop() {
+  docker stop geth || true
+  sleep 5
   docker rm -f $(docker ps -aq)
 }
 
@@ -285,6 +292,7 @@ function start() {
   geth ||true
   echo "Waiting for geth to start"
   sleep 5
+  source .env
   solver
   sleep 5
   mediator

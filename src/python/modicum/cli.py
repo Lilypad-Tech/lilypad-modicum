@@ -523,11 +523,11 @@ def startRP(path,index,host,sim,mediator):
         time.sleep(1)
     print("RP has registered")
 
-    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None:
+    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None and os.environ.get('MEDIATOR_ADDRESSES') != "":
         mediator = os.environ.get('MEDIATOR_ADDRESSES').split(',')[0]
 
-    if mediator is None:
-        mediator = RP.getEthAccount(0)
+    if mediator is None or mediator == "":
+        raise Exception("No mediator specified in comma seperated MEDIATOR_ADDRESSES environment variable")
 
     print("Resource Provider adding mediator... ")
     exitcode = RP.addMediator(RP.account, mediator)
@@ -698,11 +698,11 @@ def runLilypadCLI(template, params, mediator):
         time.sleep(1)
     spinner.stop_and_persist("🔌")
 
-    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None:
+    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None and os.environ.get('MEDIATOR_ADDRESSES') != "":
         mediator = os.environ.get('MEDIATOR_ADDRESSES').split(',')[0]
 
-    if mediator is None:
-        mediator = JC.getEthAccount(0)
+    if mediator is None or mediator == "":
+        raise Exception("No mediator specified in comma seperated MEDIATOR_ADDRESSES environment variable")
 
     spinner = Halo(text=f'Adding mediator {mediator}', spinner='pong')
     spinner.start()
