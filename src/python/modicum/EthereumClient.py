@@ -87,21 +87,18 @@ class EthereumClient:
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
         # print(self.w3.is_connected())
 
-        self.addresses = self.w3.eth.accounts
-        for i in range(5):
-            pk = os.environ.get(f'PRIVATE_KEY_{i}')
-            if i == 0 and pk is None:
-                pk = os.environ.get('PRIVATE_KEY')
-            if pk is not None:
-                acct = self.w3.eth.account.from_key(pk)
-                self.addresses[i] = acct.address
+        self.addresses = []
+        pk = os.environ.get('PRIVATE_KEY')
+        if pk is not None:
+            acct = self.w3.eth.account.from_key(pk)
+            self.addresses.append(acct.address)
 
-                print(f"🔑 Loaded private key for {acct.address}")
-                # Add acct as auto-signer:
-                self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
-                # Transactions from `acct` will then be signed, under the hood, in
-                # the middleware.
-        
+            print(f"🔑 Loaded private key for {acct.address}")
+            # Add acct as auto-signer:
+            self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
+        else:
+            raise Exception("No private key found in environment variable PRIVATE_KEY")
+
         self._filter = None
         self.filter_id = None
         self._i = 0

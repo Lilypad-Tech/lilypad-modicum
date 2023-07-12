@@ -206,7 +206,7 @@ function lilypad-node() {
 }
 
 function logs() {
-  trap "sleep 1; reset" EXIT
+  # trap "sleep 1; reset" EXIT
   service="$1"
   if [[ "$service" == "geth" ]]; then
     docker logs -f geth
@@ -269,12 +269,10 @@ function reset() {
   source .env
   geth
   sleep 5
-  ./stack geth-fund-everything "$ADDRESS_ADMIN"
-  (
-    set -euo pipefail
-    cd src/js
-    npx hardhat --network localgeth run scripts/fund-accounts.js
-  )
+  fund-admin
+  fund-faucet
+  fund-services
+  balances
   (cd src/js && npx hardhat deploy --network localgeth)
 }
 
