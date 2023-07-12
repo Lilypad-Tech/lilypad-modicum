@@ -696,7 +696,7 @@ def runLilypadCLI(template, params, mediator):
     spinner.stop_and_persist("🔗")
 
     if os.environ.get('PRIVATE_KEY') is not None:
-        print(f"🔑 Loaded private key for {JC.address}")
+        print(f"🔑 Loaded private key for {JC.account}")
     
     spinner = Halo(text='Registering job creator', spinner='pong')
     spinner.start()
@@ -734,14 +734,15 @@ def runLilypadCLI(template, params, mediator):
         "JobOfferPostedTwo": "💼",
     }
     descriptions = {
+        "JobOfferPostedTwo": "Scheduling on-chain...",
         "Matched": "Running job...",
-        "ResultsPosted": "Fetching results...",
+        "ResultsPosted": "Fetching results...",   
     }
     while not JC.finished:
         if JC.state != lastState:
             spinner.stop_and_persist(statemojis.get(lastSpinner, lastSpinner))
             lastSpinner = JC.state
-            spinner = Halo(text=f'{descriptions.get(JC.state, JC.state)}', spinner='pong')
+            spinner = Halo(text=f'{descriptions.get(JC.state, JC.state)} {JC.status}', spinner='pong')
             spinner.start()
             lastState = JC.state
         
@@ -750,7 +751,7 @@ def runLilypadCLI(template, params, mediator):
 
     spinner.stop_and_persist("🍃")
 
-    print(f"\n🍂 Lilypad job completed, results 👉 {JC.status}\n")
+    print(f"\n🍂 Lilypad job completed 👉 {JC.status}\n")
 
     os._exit(0)
 

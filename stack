@@ -149,7 +149,7 @@ function balances() {
 # move ALL the money apart from 1 eth to the given account
 function fund-admin() {
   if [[ -z "$ADDRESS_ADMIN" ]]; then
-    echo >&2 "ADDRESS_ADMIN must be set"
+    echo >&2 "ADDRESS_ADMIN must be set (source .env)"
     exit 1
   fi
   geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${ADDRESS_ADMIN}\", value: new web3.BigNumber(eth.getBalance(eth.coinbase)).minus(web3.toWei(1, \"ether\"))  })"

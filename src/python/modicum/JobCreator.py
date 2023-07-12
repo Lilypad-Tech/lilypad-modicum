@@ -438,7 +438,7 @@ class JobCreator(PlatformClient):
                         self.logger.info("Q: %s joid = %s" %(name, joid))
                         self.logger.info("Q: %s ijoid = %s" %(name, ijoid))
                         self.logger.info("Q: %s roid = %s" %(name, roid))
-                        # self.logger.info("Q: %s iroid = %s" %(name, iroid))
+                        self.status = f"Released deposit of {Web3.from_wei(self.deposit, 'ether')} ETH to compute provider"
 
                 elif name == "MediationResultPosted":
                     self.state = "MediationResultPosted"
@@ -521,6 +521,9 @@ class JobCreator(PlatformClient):
 
         # send the cost of the job
         deposit = get_bacalhau_jobprice(template)
+        self.deposit = deposit
+
+        self.status = f"Sending deposit of {Web3.from_wei(self.deposit, 'ether')} ETH to contract"
 
         self.logger.info("🔵🔵🔵 post job offer")
         txHash = self.ethclient.contract.functions.postJobOfferPartOne(
