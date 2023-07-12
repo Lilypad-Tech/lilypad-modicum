@@ -58,8 +58,10 @@ curl -sSL -O https://bit.ly/get-lilypad && sudo install get-lilypad /usr/local/b
 ### run a job (x86_64 or arm64)
 Run cowsay via the BLOCKCHAIN
 ```
+export PRIVATE_KEY=<as above>
 lilypad run --template cowsay:v0.0.1 --params "hello lilypad"
 ```
+(ensure your user is in the docker group if necessary on your platform)
 
 ### run a node (x86_64 only)
 To contribute your resources to the network and get paid
