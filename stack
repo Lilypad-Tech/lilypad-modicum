@@ -273,16 +273,15 @@ function submitjob() {
 }
 
 function reset() {
+  set -x
   docker rm -f $(docker ps -aq) ||true
   sudo rm -rf $DATA_DIRECTORY
   rm -rf src/js/deployments/localgeth
-  (set -euo pipefail
-   cd src/js
+  (cd src/js
    npm install
    npx hardhat compile
   )
   node src/js/scripts/create-new-accounts.js > .env
-  source .env
   geth
   sleep 5
   geth-fund-admin

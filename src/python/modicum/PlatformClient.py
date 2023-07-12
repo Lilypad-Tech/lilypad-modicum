@@ -33,7 +33,7 @@ class PlatformClient():
         dotenv.load_dotenv(path)
 
         influx_ip = os.environ.get('INFLUX')
-        print(influx_ip)
+        # print(influx_ip)
         db = "collectd_db"
         # self.client = influxdb.InfluxDBClient(influx_ip, 8086, db)
         # self.client.switch_database("collectd")

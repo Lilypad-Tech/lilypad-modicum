@@ -5,8 +5,10 @@ import time
 import zmq
 import logging
 import json
+from .JobCreator import JobFinished
 
 from .Enums import Architecture
+from halo import Halo
 
 # logFormatter = logging.Formatter('%(levelname)s - %(threadName)s - %(asctime)s - %(name)s - %(message)s')
 logFormatter = logging.Formatter('%(asctime)s;%(name)s;%(message)s')
@@ -173,8 +175,8 @@ def startJC(playerpath,index,host,sim):
     click.echo(_GETHIP_)
     click.echo(_GETHPORT_)
 
-    print(playerpath)
-    print(index)
+    # print(playerpath)
+    # print(index)
 
     JC = JobCreator.JobCreator(index,sim=="True")
     JC.startCLIListener(cliport=7777)
@@ -183,7 +185,7 @@ def startJC(playerpath,index,host,sim):
     JC.register(JC.account)
     while not JC.registered:
         time.sleep(1)
-    click.echo("JC has registered")
+    # click.echo("JC has registered")
 
     # mediator = '0x067d6f1ee89b6ccc4a057a19f2071dcdfb42e40c'
     exitcode = JC.addMediator(JC.account, mediator)
@@ -660,8 +662,6 @@ def main(ctx):
 
     if ctx.invoked_subcommand is None:
         click.echo('I was invoked without subcommand')
-    else:
-        click.echo('I am about to invoke %s' % ctx.invoked_subcommand)
 
 
 # TODO: new runLilypadCLI subcommand for 'lilypad' cli to exec into.
@@ -670,20 +670,33 @@ def main(ctx):
 @click.option('--params', default="", show_default=True)
 @click.option('--mediator', default=None, show_default=True)
 def runLilypadCLI(template, params, mediator):
-    print("template: %s - params: %s" % (template, params))
     from modicum import JobCreator
-    index = 0
-    JC = JobCreator.JobCreator(index, False)
-
     _CONTRACT_ADDRESS_ = os.environ.get('CONTRACT_ADDRESS')
     _GETHIP_ = os.environ.get('GETHIP')
     _GETHPORT_ = os.environ.get('GETHPORT')
-    JC.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, index)
     
+    index = 0
+    JC = JobCreator.JobCreator(index, False)
+    
+    # User facing, quiet logging
+    import logging
+    logger = logging.getLogger("JobCreator")
+    # only log really bad events
+    logger.setLevel(logging.ERROR)
+
+    print(f"\n🌟 Lilypad submitting job {template}({repr(params)}) 🌟\n")
+
+    spinner = Halo(text='Connecting to smart contract', spinner='pong')
+    spinner.start()
+    JC.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, index)
+    spinner.stop_and_persist("🔗")
+    
+    spinner = Halo(text='Registering job creator', spinner='pong')
+    spinner.start()
     JC.register(JC.account)
     while not JC.registered:
         time.sleep(1)
-    click.echo("JC has registered")
+    spinner.stop_and_persist("🔌")
 
     if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None:
         mediator = os.environ.get('MEDIATOR_ADDRESSES').split(',')[0]
@@ -691,15 +704,48 @@ def runLilypadCLI(template, params, mediator):
     if mediator is None:
         mediator = JC.getEthAccount(0)
 
+    spinner = Halo(text=f'Adding mediator {mediator}', spinner='pong')
+    spinner.start()
     exitcode = JC.addMediator(JC.account, mediator)
     while not JC.mediator:
         time.sleep(1)
-    click.echo("Mediator has registered")
+    spinner.stop_and_persist("🧘")
     
+    lastSpinner = "Posting"
+    spinner = Halo(text=f'Posting offer for {template}', spinner='pong')
+    spinner.start()
     exitcode = JC.postLilypadOffer(template, params)
 
-    # TODO: why doesn't this work?
-    sys.exit(0)
+    # Threading is terrible. Poll a freaking shared variable.
+    lastState = JC.state
+
+    statemojis = {
+        "Posting": "💌",
+        "Matched": "🥰",
+        "JobOfferPostedTwo": "💼",
+    }
+    descriptions = {
+        "Matched": "Running job...",
+        "ResultsPosted": "Fetching results...",
+    }
+    while not JC.finished:
+        if JC.state != lastState:
+            spinner.stop_and_persist(statemojis.get(lastSpinner, lastSpinner))
+            lastSpinner = JC.state
+            spinner = Halo(text=f'{descriptions.get(JC.state, JC.state)}', spinner='pong')
+            spinner.start()
+            lastState = JC.state
+        
+        # print(f"STATUS --> {JC.state} {JC.status}")
+        time.sleep(0.01)
+
+    spinner.stop_and_persist("🍃")
+
+    print(f"\n🍂 Lilypad job completed, results 👉 {JC.status}\n")
+
+    os._exit(0)
+
+
 
 main.add_command(foo_command)
 main.add_command(build)
