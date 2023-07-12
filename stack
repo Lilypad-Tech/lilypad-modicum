@@ -235,16 +235,18 @@ function submitjob() {
 }
 
 function reset() {
+  set -x
   docker rm -f $(docker ps -aq) ||true
   sudo rm -rf /tmp/geth
   rm -rf src/js/deployments/localgeth
-  (cd src/js && \
-   npm install && npx hardhat compile
-   node scripts/create-new-account.js
+  (cd src/js
+   npm install
    node scripts/create-new-account.js \
     |sed 's/privateKey: /ADMIN_PRIVATE_KEY=/' \
     |sed 's/address: /ADMIN_ADDRESS=/' \
-    > .env)
+    > .env
+   npx hardhat compile
+  )
   geth
   sleep 5
   (source src/js/.env && \
