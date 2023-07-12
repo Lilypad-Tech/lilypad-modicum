@@ -23,32 +23,24 @@ if [[ $# -eq 0 ]]; then
   exit 1
 
 elif [[ $1 == "serve" ]]; then
-  LILYPAD_NODE_IMAGE=$IMAGE_RESOURCE_PROVIDER
-  LILYPAD_NODE_NAME=resource-provider
   shift
-  docker run -d --restart always --name $LILYPAD_NODE_NAME \
+  docker run -d --restart always --name resource-provider \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e PRIVATE_KEY \
     -e CONTRACT_ADDRESS=${CONTRACT_ADDRESS} \
     -e CONTRACT_ABI_FILE=/Modicum.json \
     -e RPC_URL=${RPC_URL} \
-    $LILYPAD_NODE_IMAGE \
-    runLilypadCLI \
-    "$@"
+    $IMAGE_RESOURCE_PROVIDER
 
 elif [[ $1 == "run" ]]; then
-  LILYPAD_NODE_IMAGE=$IMAGE_MODICUM
-  LILYPAD_NODE_NAME=submitjob
   shift
-  docker run -ti --rm --name $LILYPAD_NODE_NAME \
-    -v /tmp:/tmp \
-    -v /var/run/docker.sock:/var/run/docker.sock \
+  docker run -ti --rm --name submitjob \
     -e PRIVATE_KEY \
     -e CONTRACT_ADDRESS=${CONTRACT_ADDRESS} \
     -e CONTRACT_ABI_FILE=/Modicum.json \
     -e RPC_URL=${RPC_URL} \
-    $LILYPAD_NODE_IMAGE \
+    $IMAGE_MODICUM \
     runLilypadCLI \
     "$@"
 
