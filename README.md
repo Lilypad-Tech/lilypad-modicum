@@ -13,7 +13,7 @@ This guide shows you (amongst other things) how to make crypto with your gaming 
 
 Set up metamask with our Lalechuza testnet:
 
-<img src="https://github.com/bacalhau-project/lilypad/assets/264658/9f4bd43e-aef1-4d7b-8441-082b0355298f" width="200">
+<img src="https://github.com/bacalhau-project/lilypad/assets/264658/9f4bd43e-aef1-4d7b-8441-082b0355298f" width="300">
 
 The variables you need are:
 
@@ -28,7 +28,7 @@ Click save and click "switch to Lilypad Lalechuza testnet".
 * Click Account 1, the `...` next to Account 1 in the list
 * Account details
 
-<img src="https://github.com/bacalhau-project/lilypad/assets/264658/4e947efb-888c-4c85-9990-ab01cb889516" width="200">
+<img src="https://github.com/bacalhau-project/lilypad/assets/264658/4e947efb-888c-4c85-9990-ab01cb889516" width="300">
 
 * Show private key
 * Enter your metamask password
