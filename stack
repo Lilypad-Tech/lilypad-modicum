@@ -23,7 +23,7 @@ export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-hardhat"}
 export DEPLOYMENT=${DEPLOYMENT:="localgeth"}
 export RPC_URL=${RPC_URL:="http://geth:8545"}
 
-export VERSION=${VERSION:="$(cd $DIR; git rev-parse --short HEAD)"}
+export VERSION=${VERSION:="$(cd $DIR; git rev-parse --short HEAD)-$(uname -m)"}
 
 export IMAGE_MODICUM_NAME=${IMAGE_MODICUM_NAME:="${IMAGE_BASE}-modicum"}
 export IMAGE_RESOURCE_PROVIDER_NAME=${IMAGE_RESOURCE_PROVIDER_NAME:="${IMAGE_BASE}-resource-provider"}
