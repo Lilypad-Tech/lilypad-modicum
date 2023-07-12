@@ -25,6 +25,9 @@ lilypad run --template cowsay --params "oh hello my dear cow"
 ```
 
 TODO: How to run a node
+```
+sudo lilypad serve
+```
 
 # Development
 
