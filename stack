@@ -109,6 +109,19 @@ function geth() {
       --http.vhosts '*'
 }
 
+function faucet() {
+  local privateKey=$(echo -n "$PRIVATE_KEY_FAUCET" | sed 's/^0x//')
+  docker run -d \
+    --name faucet \
+    -p 80:8080 \
+    --network modicum \
+    -e WEB3_PROVIDER=http://geth:8545 \
+    -e PRIVATE_KEY=$privateKey \
+    chainflag/eth-faucet:1.1.0 \
+      --faucet.amount=100 \
+      --faucet.minutes=1    
+}
+
 function geth-command() {
   docker exec -ti geth geth --exec "$@" attach /data/geth/geth.ipc
 }
