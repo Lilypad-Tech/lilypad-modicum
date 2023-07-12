@@ -33,7 +33,11 @@ export IMAGE_MODICUM="${DOCKER_REGISTRY}/${IMAGE_MODICUM_NAME}:${VERSION}"
 export IMAGE_RESOURCE_PROVIDER="${DOCKER_REGISTRY}/${IMAGE_RESOURCE_PROVIDER_NAME}:${VERSION}"
 export IMAGE_MEDIATOR="${DOCKER_REGISTRY}/${IMAGE_MEDIATOR_NAME}:${VERSION}"
 
+export ADDRESS_ADMIN=${ADDRESS_ADMIN:=""}
+
 export LILYPAD_NODE_FLAGS=""
+
+
 
 function gSSH() {
   gcloud compute ssh --quiet --zone=$GCP_ZONE $GCP_NODE_NAME -- sudo $*
@@ -111,28 +115,37 @@ function geth-command() {
   docker exec -ti geth geth --exec "$@" attach /data/geth/geth.ipc
 }
 
-function geth-balance() {
-  address="$1"
-  # check if address is defined
-  if [[ -z "$address" ]]; then
-    echo >&2 "address must be set"
-    exit 1
-  fi
-  geth-command "eth.getBalance(\"${address}\")/1e18"
+function geth-cli() {
+  docker exec -ti geth geth attach /data/geth/geth.ipc
 }
 
-function geth-fund() {
-  address="$1"
-  # check if address is defined
-  if [[ -z "$address" ]]; then
-    echo >&2 "address must be set"
-    exit 1
-  fi
-  geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${address}\", value: web3.toWei(10000000000000, \"ether\")})"
+function geth-script() {
+  (
+    set -euo pipefail
+    cd src/js
+    npx hardhat --network $DEPLOYMENT run "$@"
+  )
 }
 
-function coinbase() {
-  geth-command "eth.coinbase"
+function balances() {
+  geth-script scripts/show-balances.js
+}
+
+# move ALL the money apart from 1 eth to the given account
+function fund-admin() {
+  if [[ -z "$ADDRESS_ADMIN" ]]; then
+    echo >&2 "ADDRESS_ADMIN must be set (source .env)"
+    exit 1
+  fi
+  geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${ADDRESS_ADMIN}\", value: new web3.BigNumber(eth.getBalance(eth.coinbase)).minus(web3.toWei(1, \"ether\"))  })"
+}
+
+function fund-faucet() {
+  geth-script scripts/fund-faucet.js
+}
+
+function fund-services() {
+  geth-script scripts/fund-services.js
 }
 
 # this means run ipfs, bacalhau and the modicum resource provider
@@ -142,12 +155,15 @@ function coinbase() {
 function lilypad-node() {
   if [[ -z "$LILYPAD_NODE_IMAGE" ]]; then
     echo >&2 "LILYPAD_NODE_IMAGE must be set"
+    exit 1
   fi
   if [[ -z "$LILYPAD_NODE_NAME" ]]; then
     echo >&2 "LILYPAD_NODE_NAME must be set"
+    exit 1
   fi
   if [[ -z "$RPC_URL" ]]; then
     echo >&2 "RPC_URL must be set"
+    exit 1
   fi
   if [[ "$TRIM" == "development" ]]; then
     local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app --network modicum"
@@ -166,6 +182,7 @@ function lilypad-node() {
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e DEBUG \
     -e PRIVATE_KEY \
+    -e MEDIATOR_ADDRESSES \
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \
     -e RPC_URL=$RPC_URL \
@@ -175,7 +192,7 @@ function lilypad-node() {
 }
 
 function logs() {
-  trap "sleep 1; reset" EXIT
+  # trap "sleep 1; reset" EXIT
   service="$1"
   if [[ "$service" == "geth" ]]; then
     docker logs -f geth
@@ -183,10 +200,10 @@ function logs() {
   if [[ "$service" == "solver" ]]; then
     docker logs -f solver
   fi
-  docker exec -ti $service supervisorctl tail -f bacalhau-serve stdout &
-  docker exec -ti $service supervisorctl tail -f bacalhau-serve stderr &
-  docker exec -ti $service supervisorctl tail -f ipfs stdout &
-  docker exec -ti $service supervisorctl tail -f ipfs stderr &
+  # docker exec -ti $service supervisorctl tail -f bacalhau-serve stdout &
+  # docker exec -ti $service supervisorctl tail -f bacalhau-serve stderr &
+  # docker exec -ti $service supervisorctl tail -f ipfs stdout &
+  # docker exec -ti $service supervisorctl tail -f ipfs stderr &
   docker exec -ti $service supervisorctl tail -f $service stdout &
   docker exec -ti $service supervisorctl tail -f $service stderr
 }
@@ -195,6 +212,8 @@ function resource-provider() {
   LILYPAD_NODE_IMAGE=$IMAGE_RESOURCE_PROVIDER \
   LILYPAD_NODE_NAME=resource-provider \
   CONTAINER_MODE=server \
+  MEDIATOR_ADDRESSES=$ADDRESS_MEDIATOR \
+  PRIVATE_KEY=$PRIVATE_KEY_RESOURCE_PROVIDER \
   lilypad-node "$@"
 }
 
@@ -202,6 +221,7 @@ function mediator() {
   LILYPAD_NODE_IMAGE=$IMAGE_MEDIATOR \
   LILYPAD_NODE_NAME=mediator \
   CONTAINER_MODE=server \
+  PRIVATE_KEY=$PRIVATE_KEY_MEDIATOR \
   lilypad-node "$@"
 }
 
@@ -209,6 +229,7 @@ function solver() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=solver \
   CONTAINER_MODE=server \
+  PRIVATE_KEY=$PRIVATE_KEY_SOLVER \
   lilypad-node "runAsSolver"
 }
 
@@ -216,31 +237,38 @@ function submitjob() {
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=submitjob \
   CONTAINER_MODE=cli \
+  MEDIATOR_ADDRESSES=$ADDRESS_MEDIATOR \
+  PRIVATE_KEY=$PRIVATE_KEY_JOB_CREATOR \
   lilypad-node "runLilypadCLI"
 }
 
 function reset() {
   set -x
   docker rm -f $(docker ps -aq) ||true
-  sudo rm -rf /tmp/geth
+  sudo rm -rf $DATA_DIRECTORY
   rm -rf src/js/deployments/localgeth
-  (cd src/js
-   npm install
-   node scripts/create-new-account.js \
-    |sed 's/privateKey: /ADMIN_PRIVATE_KEY=/' \
-    |sed 's/address: /ADMIN_ADDRESS=/' \
-    > .env
-   npx hardhat compile
+  (
+    set -euo pipefail
+    cd src/js
+    npm install
+    npx hardhat compile
   )
+  node src/js/scripts/create-new-accounts.js > .env
+  source .env
   geth
   sleep 5
-  (source src/js/.env && \
-   ./stack geth-fund $ADMIN_ADDRESS && \
-   ./stack geth-balance $ADMIN_ADDRESS)
+  fund-admin
+  fund-faucet
+  fund-services
+  balances
   (cd src/js && npx hardhat deploy --network localgeth)
 }
 
+# it's IMPORTANT to stop geth gracefully so it commit's it's state to disk
+# https://github.com/ethereum/go-ethereum/issues/20383
 function stop() {
+  docker stop geth || true
+  sleep 5
   docker rm -f $(docker ps -aq)
 }
 
@@ -249,6 +277,7 @@ function start() {
   geth ||true
   echo "Waiting for geth to start"
   sleep 5
+  source .env
   solver
   sleep 5
   mediator

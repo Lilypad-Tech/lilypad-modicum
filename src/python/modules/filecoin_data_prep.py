@@ -69,4 +69,4 @@ def _filecoin_data_prep(params: dict):
 
 
 # denoted in eth
-_filecoin_data_prep.price = 0.2
+_filecoin_data_prep.price = 89

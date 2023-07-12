@@ -44,22 +44,14 @@ The first thing we need to do is compile the smart contract so we have the ABI a
 (cd src/js && npm install && npx hardhat compile)
 ```
 
-#### admin address
+#### create addresses
 
 Then we create a new address using:
 
 ```bash
-(cd src/js && node scripts/create-new-account.js)
+node src/js/scripts/create-new-accounts.js > .env
+source .env
 ```
-
-Create a `src/js/.env` file like this:
-
-```
-ADMIN_ADDRESS=...
-ADMIN_PRIVATE_KEY=...
-```
-
-Copy the values into the `src/js/.env` file.
 
 #### run geth
 
@@ -70,12 +62,15 @@ In first pane:
 ./stack geth
 ```
 
-We then need to move some funds to our admin wallet address:
+#### fund accounts
+
+Now we need to fund all of our accounts:
 
 ```bash
-source src/js/.env
-./stack geth-fund $ADMIN_ADDRESS
-./stack geth-balance $ADMIN_ADDRESS
+./stack fund-admin
+./stack fund-faucet
+./stack fund-services
+./stack balances
 ```
 
 #### deloy contract
@@ -90,19 +85,25 @@ The smart contract is now deployed and the address is written to the JSON file l
 
 #### run services
 
+Each of these in a different window.
+
 ```bash
+source .env
 ./stack solver && ./stack logs solver
 ```
 
 ```bash
+source .env
 ./stack mediator && ./stack logs mediator
 ```
 
 ```bash
+source .env
 ./stack resource-provider && ./stack logs resource-provider
 ```
 
 ```bash
+source .env
 ./stack submitjob --template cowsay:v0.0.1 --params "hello"
 ```
 
