@@ -88,6 +88,10 @@ class EthereumClient:
         # print(self.w3.is_connected())
 
         self.addresses = []
+
+        if os.environ.get('DEBUG') is not None:
+            self.addresses = self.w3.eth.accounts
+
         pk = os.environ.get('PRIVATE_KEY')
         if pk is not None:
             acct = self.w3.eth.account.from_key(pk)
@@ -97,7 +101,8 @@ class EthereumClient:
             # Add acct as auto-signer:
             self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
         else:
-            raise Exception("No private key found in environment variable PRIVATE_KEY")
+            if os.environ.get('DEBUG') is None:
+                raise Exception("No private key found in environment variable PRIVATE_KEY")
 
         self._filter = None
         self.filter_id = None
