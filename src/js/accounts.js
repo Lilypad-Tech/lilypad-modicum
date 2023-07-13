@@ -38,6 +38,11 @@ const getAccount = (accountName) => {
   }
 }
 
+const getWallet = (accountName) => {
+  const account = getAccount(accountName)
+  return new ethers.Wallet(account.privateKey)
+}
+
 const getAccounts = () => {
   const namedAccounts = {}
   const allAccounts = []
@@ -60,4 +65,5 @@ module.exports = {
   FUND_THROWAWAY_AMOUNT,
   getAccount,
   getAccounts,
+  getWallet,
 }

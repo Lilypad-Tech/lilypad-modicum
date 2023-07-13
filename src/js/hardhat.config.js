@@ -29,13 +29,11 @@ const config = {
       url: 'http://localhost:8545',
       chainId: 1337,
       accounts: allAccounts,
-      blockGasLimit: 68719476736000,
     },
     production: {
       url: 'http://testnet.lilypadnetwork.org:8545',
       chainId: 1337,
       accounts: allAccounts,
-      blockGasLimit: 68719476736000,
     }
   },
 };

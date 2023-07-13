@@ -45,4 +45,4 @@ def _stable_diffusion(params: str):
     }
 
 # denoted in eth
-_stable_diffusion.price = 91
+_stable_diffusion.price = 1
