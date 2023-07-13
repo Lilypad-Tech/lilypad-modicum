@@ -871,6 +871,7 @@ contract Modicum {
 
         string calldata hash,
 
+        // TODO: consider putting these back in
         // uint256 instructionCount,
         // uint256 bandwidthUsage,
 
