@@ -560,8 +560,8 @@ class JobCreator(PlatformClient):
         """
         txHash = self.ethclient.contract.functions.postJobOfferPartTwo(
             Web3.to_int(msg['ijoid']),
-            Web3.to_int(msg['ramLimit']),
-            Web3.to_int(msg['localStorageLimit']),
+            # Web3.to_int(msg['ramLimit']),
+            # Web3.to_int(msg['localStorageLimit']),
             "arf",
             Web3.to_checksum_address(msg['directory']),
             Web3.to_int(msg['hash']),
