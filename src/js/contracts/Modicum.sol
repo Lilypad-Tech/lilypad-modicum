@@ -1,5 +1,9 @@
 pragma solidity ^0.4.25;
-// import "hardhat/console.sol";
+//import "hardhat/console.sol";
+
+interface ClientCallingContract {
+  function postJobResults(uint256 jobID, string cid) external;
+}
 
 contract Modicum {
 
@@ -253,6 +257,10 @@ contract Modicum {
     mapping(uint256 => bool) isResOfferCanceled;
     mapping(uint256 => bool) isMatchClosed;
 
+
+    uint256 runModuleIncrementingID = 0;
+    mapping(uint256 => address) runModuleJobOwners;
+
     function () external payable {
         revert("Why are you calling me?");
     }
@@ -462,6 +470,44 @@ contract Modicum {
         emit EtherTransferred(msg.sender, address(this), msg.value, EtherTransferCause.PostResourceOffer);
     }
 
+    function runModule(string moduleSpec) external payable returns (uint256) {
+      // * register job creator address
+      // * auto-assign jobid
+      // * record against the jobid, the calling address (so we can send results there)
+      // * postJobOfferPartOne
+      // * postJobOfferPartTwo 
+      registerJobCreator();
+      runModuleIncrementingID++;
+      runModuleJobOwners[runModuleIncrementingID] = msg.sender;
+      postJobOfferPartOne(
+        runModuleIncrementingID,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      );
+      postJobOfferPartTwo(
+        runModuleIncrementingID,
+        0,
+        0,
+        "",
+        address(0),
+        0,
+        Architecture.amd64,
+        moduleSpec
+      );
+
+      //console.log("🟢🟢🟢 WE RUN A JOB");
+      
+      return runModuleIncrementingID;
+    }
+
+    // NOTE: this is an example - so there are lots of "require" statements missing
+    // e.g. if the calling address is a contract - then we are running in "client contract" mode
+    // in this case - we should check the remote contract adheres to the required callback interface
+    // and throw if not otherwise this is a black hole for your dosh
     function postJobOfferPartOne(
         uint256 ijoid,
         uint256 instructionLimit,
@@ -471,6 +517,8 @@ contract Modicum {
         uint256 completionDeadline,
         uint256 matchIncentive
     ) public payable {
+
+      
         // require(jobCreators[msg.sender].trustedMediators.length != 0,
         //    "You are not registered as a JobCreator");
 

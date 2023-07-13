@@ -36,26 +36,28 @@ describe("Modicum", async () => {
     await examplesContract.deployed()
   }
 
+  const deployContracts = async () => {
+    await deployModicum()
+    await deployExamples(modicumContract.address)
+    console.log(`modicumContract: ${modicumContract.address}`)
+    console.log(`examplesContract: ${examplesContract.address}`)
+  }
+
   
   context('contract', () => {
-
     beforeEach(async () => {
       [
         adminAccount,
       ] = await ethers.getSigners()
+      await deployContracts()
     })
 
     describe('constructor', () => {
       it('deploys', async () => {
-        await deployModicum()
-        await deployExamples(modicumContract.address)
-        console.log(modicumContract.address)
-        console.log(examplesContract.address)
-
         const template = `apples"oranges`
         const params = `Here's a "thing"`
 
-        const jobSpec = await examplesContract.getJobSpec(template, params)
+        const jobSpec = await examplesContract.getModuleSpec(template, params)
 
         console.log('--------------------------------------------')
         console.log(jobSpec)
@@ -64,6 +66,13 @@ describe("Modicum", async () => {
 
         expect(parsedJobSpec.template).to.equal(template)
         expect(parsedJobSpec.params).to.equal(params)
+      })
+
+      it('runs a job', async () => {
+        const jobID = await examplesContract.runCowsay("holy cow")
+
+        console.log('--------------------------------------------')
+        console.log(jobID)
       })
     })
   })

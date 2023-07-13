@@ -1,33 +1,44 @@
 pragma solidity ^0.4.25;
 // import "hardhat/console.sol";
 
+interface ModicumContract {
+  function runModule(string moduleSpec) external payable returns (uint256);
+}
+
 contract ExamplesClient {
 
   address public _contractAddress;
+  ModicumContract remoteContractInstance;
 
   constructor (address contractAddress) public {
     require(contractAddress != address(0), "ExamplesClient: contract cannot be zero address");
+    // NOTE: this is an example - so there are lots of "require" statements missing
+    // e.g. we should check the address that is passed in is a valid contract address
     _contractAddress = contractAddress;
+    remoteContractInstance = ModicumContract(contractAddress);
   }
 
-  function runCowsay(/*string sayWhat*/) public pure returns (uint256) {
-    return 0;
+  function runCowsay(string sayWhat) public returns (uint256) {
+    return runModuleSpec(getModuleSpec("cowsay:v0.0.1", sayWhat));
   }
 
-  function runStablediffsion(/*string prompt*/) public pure returns (uint256) {
-
-    return 0;
+  function runStablediffsion(string prompt) public returns (uint256) {
+    return runModuleSpec(getModuleSpec("stable_diffusion:v0.0.1", prompt));
   }
 
-// {
-//           "template": template,
-//           "params": params
-//         }
-  function getJobSpec(string template, string params) public pure returns (string) {
+  function getModuleSpec(string template, string params) public pure returns (string) {
     string memory saneTemplate = stringReplaceAll(template, "\"", "\\\"");
     string memory saneParams = stringReplaceAll(params, "\"", "\\\"");
     return string(abi.encodePacked("{\"template\": \"", saneTemplate, "\", \"params\": \"", saneParams, "\"}"));
   }
+
+  function runModuleSpec(string jobSpec) public returns (uint256) {
+    return remoteContractInstance.runModule(jobSpec);
+  }
+
+  // function postJobResults(uint256 jobID, string cid) external {
+    
+  // }
 
   function stringReplaceAll(string memory _str, string memory _find, string memory _replace) private pure returns (string memory) {
     bytes memory str = bytes(_str);

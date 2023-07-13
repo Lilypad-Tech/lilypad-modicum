@@ -19,7 +19,10 @@ const config = {
   namedAccounts,
   networks: {
     hardhat: {
-      blockGasLimit: 68719476736000,
+      blockGasLimit: 68719476,
+      baseFeePerGas: 1000, // 1 gwei, change to a sensible value for your network
+      maxPriorityFeePerGas: 2000, // 2 gwei, change to a sensible value for your network
+      maxFeePerGas: 10000, // 10 gwei, change to a sensible value for your network
     },
     localhost: {},
     localgeth: {
