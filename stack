@@ -109,6 +109,19 @@ function geth() {
       --http.vhosts '*'
 }
 
+function hardhat() {
+  docker network ls | grep modicum || docker network create modicum
+  docker run -d --restart always \
+    --name geth \
+    --network modicum \
+    -p 8545:8545 \
+    -v $DIR/src/js/deployments:/app/deployments \
+    -v $DIR/src/js/contracts:/app/contracts \
+    -v $DIR/src/js/scripts:/app/scripts \
+    $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port 8545
+}
+
+
 function faucet() {
   local privateKey=$(echo -n "$PRIVATE_KEY_FAUCET" | sed 's/^0x//')
   docker run -d \
