@@ -14,15 +14,15 @@ const {
 } = getAccounts()
 
 const config = {
-  solidity: '0.4.25',
+  solidity: '0.8.6',
   defaultNetwork: 'hardhat',
   namedAccounts,
   networks: {
     hardhat: {
       blockGasLimit: 68719476,
-      baseFeePerGas: 1000, // 1 gwei, change to a sensible value for your network
-      maxPriorityFeePerGas: 2000, // 2 gwei, change to a sensible value for your network
-      maxFeePerGas: 10000, // 10 gwei, change to a sensible value for your network
+      baseFeePerGas: 1000,
+      maxPriorityFeePerGas: 2000,
+      maxFeePerGas: 10000,
     },
     localhost: {},
     localgeth: {

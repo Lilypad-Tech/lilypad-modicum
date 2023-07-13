@@ -1,8 +1,8 @@
-pragma solidity ^0.4.25;
-//import "hardhat/console.sol";
+// SPDX-License-Identifier: GPLv3
+pragma solidity ^0.8.6;
 
 interface ClientCallingContract {
-  function postJobResults(uint256 jobID, string cid) external;
+  function postJobResults(uint256 jobID, string calldata cid) external;
 }
 
 contract Modicum {
@@ -258,12 +258,9 @@ contract Modicum {
     mapping(uint256 => bool) isMatchClosed;
 
 
-    uint256 runModuleIncrementingID = 0;
+    uint256 runModuleIncrementingID = 1;
     mapping(uint256 => address) runModuleJobOwners;
-
-    function () external payable {
-        revert("Why are you calling me?");
-    }
+    address[] defaultMediators;
 
     function test(uint256 value) public{
       require(value > 0,
@@ -288,6 +285,9 @@ contract Modicum {
         emit reactionDeadlineSet(_reactionDeadline);
     }
 
+    function setDefaultMediators(address[] calldata _defaultMediators) public administrative {
+        defaultMediators = _defaultMediators;
+    }
 
     function registerMediator(
         Architecture arch,
@@ -434,18 +434,20 @@ contract Modicum {
         // require(msg.value >= depositValue,
         //    "You need to deposit more money to offer this resource");
 
-        uint256 index = resourceOffers.push(ResourceOffer({
-            resProvider: msg.sender,
-            instructionPrice: instructionPrice,
-            instructionCap: instructionCap,
-            memoryCap: memoryCap,
-            localStorageCap: localStorageCap,
-            bandwidthCap: bandwidthCap,
-            bandwidthPrice: bandwidthPrice,
-            depositValue: msg.value,
-            matchIncentive: matchIncentive,
-            verificationCount: verificationCount
-            })) - 1;
+        resourceOffers.push(ResourceOffer({
+          resProvider: msg.sender,
+          instructionPrice: instructionPrice,
+          instructionCap: instructionCap,
+          memoryCap: memoryCap,
+          localStorageCap: localStorageCap,
+          bandwidthCap: bandwidthCap,
+          bandwidthPrice: bandwidthPrice,
+          depositValue: msg.value,
+          matchIncentive: matchIncentive,
+          verificationCount: verificationCount
+        }));
+
+        uint256 index = resourceOffers.length - 1;
 
         uint256 iroid = misc;
         // console.log("🟢🟢🟢 EMIT ResourceOfferPosted");
@@ -470,13 +472,43 @@ contract Modicum {
         emit EtherTransferred(msg.sender, address(this), msg.value, EtherTransferCause.PostResourceOffer);
     }
 
-    function runModule(string moduleSpec) external payable returns (uint256) {
+    function stringReplaceAll(string memory _str, string memory _find, string memory _replace) private pure returns (string memory) {
+      bytes memory str = bytes(_str);
+      bytes memory find = bytes(_find);
+      bytes memory replace = bytes(_replace);
+      string memory result = "";
+
+      for(uint i = 0; i < str.length; i++) {
+        bool found = true;
+        for(uint j = 0; j < find.length && found; j++) {
+          if(i+j >= str.length || str[i+j] != find[j]) {
+            found = false;
+          }
+        }
+        if(found) {
+          result = string(abi.encodePacked(result, replace));
+          i += find.length - 1;
+        } else {
+          result = string(abi.encodePacked(result, string(abi.encodePacked(str[i]))));
+        }
+      }
+      return result;
+    }
+
+    function getModuleSpec(string calldata template, string calldata params) public pure returns (string memory) {
+      string memory saneTemplate = stringReplaceAll(template, "\"", "\\\"");
+      string memory saneParams = stringReplaceAll(params, "\"", "\\\"");
+      return string(abi.encodePacked("{\"template\": \"", saneTemplate, "\", \"params\": \"", saneParams, "\"}"));
+    }
+
+    function _runModule(string calldata moduleName, string calldata params, address[] memory _mediators) private returns (uint256) {
       // * register job creator address
       // * auto-assign jobid
       // * record against the jobid, the calling address (so we can send results there)
       // * postJobOfferPartOne
       // * postJobOfferPartTwo 
       registerJobCreator();
+      jobCreatorAddTrustedMediator(_mediators[0]);
       runModuleIncrementingID++;
       runModuleJobOwners[runModuleIncrementingID] = msg.sender;
       postJobOfferPartOne(
@@ -496,12 +528,20 @@ contract Modicum {
         address(0),
         0,
         Architecture.amd64,
-        moduleSpec
+        getModuleSpec(moduleName, params)
       );
 
-      //console.log("🟢🟢🟢 WE RUN A JOB");
+      // console.log("🟢🟢🟢 WE RUN A JOB");
       
       return runModuleIncrementingID;
+    }
+
+    function runModule(string calldata name, string calldata params, address[] calldata _mediators) external payable returns (uint256) {
+      return _runModule(name, params, _mediators);
+    }
+
+    function runModuleWithDefaultMediators(string calldata name, string calldata params) external payable returns (uint256) {
+      return _runModule(name, params, defaultMediators);
     }
 
     // NOTE: this is an example - so there are lots of "require" statements missing
@@ -570,11 +610,11 @@ contract Modicum {
         uint256 ijoid,
         uint256 ramLimit,
         uint256 localStorageLimit,
-        string uri,
+        string memory uri,
         address directory,
         uint256 jobHash,
         Architecture arch,
-        string extras
+        string memory extras
     ) public {
 
         // require(jobCreators[msg.sender].trustedMediators.length != 0,
@@ -711,12 +751,13 @@ contract Modicum {
         //     "The offers cannot be matched"
         // );
 
+        matches.push(Match({
+          resourceOffer: resourceOfferId,
+          jobOffer: jobOfferId,
+          mediator: mediator
+        }));
 
-        uint256 index = matches.push(Match({
-            resourceOffer: resourceOfferId,
-            jobOffer: jobOfferId,
-            mediator: mediator
-        })) - 1;
+        uint256 index = matches.length - 1;
 
         jobOfferMatched[jobOfferId] = true;
         resOfferMatched[resourceOfferId] = true;
@@ -738,8 +779,8 @@ contract Modicum {
         uint256 matchId,
         uint256 jobOfferId,
         ResultStatus status,
-        string uri,
-        string hash,
+        string calldata uri,
+        string calldata hash,
         uint256 instructionCount,
         uint256 bandwidthUsage
     ) public returns (uint256) {
@@ -752,16 +793,17 @@ contract Modicum {
         // require(isMatchClosed[matchId] == false,
         //     "This match is already closed.");
 
-        uint256 index = results.push(JobResult({
-            status: status,
-            matchId: matchId,
-            uri: uri,
-            instructionCount: instructionCount,
-            bandwidthUsage: bandwidthUsage,
-            hash: hash,
-            reacted: Reaction.None,
-            timestamp: now
-            })) - 1;
+        results.push(JobResult({
+          status: status,
+          matchId: matchId,
+          uri: uri,
+          instructionCount: instructionCount,
+          bandwidthUsage: bandwidthUsage,
+          hash: hash,
+          reacted: Reaction.None,
+          timestamp: block.timestamp
+        }));
+        uint256 index = results.length - 1;
 
         matchToResult[matchId] = index;
         resultAvailable[matchId] = true;
@@ -821,17 +863,16 @@ contract Modicum {
 
     }
 
-
     function postMediationResult(
         uint256 matchId,
         uint256 jobOfferId,
         ResultStatus status,
-        string uri,
+        string calldata uri,
 
-        string hash,
+        string calldata hash,
 
-        uint256 instructionCount,
-        uint256 bandwidthUsage,
+        // uint256 instructionCount,
+        // uint256 bandwidthUsage,
 
         Verdict verdict,
         Party faultyParty
@@ -843,30 +884,33 @@ contract Modicum {
 
         mediated[matchId] = true;
 
-        uint256 index = mediatorResults.push(MediatorResult({
-            status: status,
-            uri: uri,
-            matchId: matchId,
-            hash: hash,
-            instructionCount: instructionCount,
-            bandwidthUsage: bandwidthUsage,
-            verdict: verdict,
-            faultyParty: faultyParty
-        })) - 1;
+        mediatorResults.push(MediatorResult({
+          status: status,
+          uri: uri,
+          matchId: matchId,
+          hash: hash,
+          instructionCount: 0,
+          bandwidthUsage: 0,
+          verdict: verdict,
+          faultyParty: faultyParty
+        }));
 
-        uint256 cost = (instructionCount * mediators[msg.sender].instructionPrice +
-                        bandwidthUsage * mediators[msg.sender].bandwidthPrice) *
-                        resourceOffers[matches[matchId].resourceOffer].verificationCount;
+        // uint256 cost = (instructionCount * mediators[msg.sender].instructionPrice +
+        //                 bandwidthUsage * mediators[msg.sender].bandwidthPrice) *
+        //                 resourceOffers[matches[matchId].resourceOffer].verificationCount;
+
+        uint256 cost = 0;
+
 
         // emit MediationResultPosted( index, faultyParty, verdict, matchId,
         //                             status, uri, hash, instructionCount, bandwidthUsage, cost);
 
-        emit MediationResultPosted(matchId, msg.sender, index, faultyParty, verdict, status, uri, hash, instructionCount, cost);
+        emit MediationResultPosted(matchId, msg.sender, mediatorResults.length - 1, faultyParty, verdict, status, uri, hash, 0, cost);
 
         punish(matchId, faultyParty);
         //msg.sender.transfer(cost);
-        emit EtherTransferred(address(this), msg.sender, cost, EtherTransferCause.Mediation);
-        emit MatchClosed(matchId, cost);
+        //emit EtherTransferred(address(this), msg.sender, cost, EtherTransferCause.Mediation);
+        emit MatchClosed(matchId, 0);
         return faultyParty;
     }
 
@@ -927,7 +971,7 @@ contract Modicum {
         //address(uint160(m)).transfer(2 * mediatorAvailabilityIncentive);
         // address(uint160(ro.resProvider)).transfer(cost);
 
-        ro.resProvider.transfer(cost);
+        payable(ro.resProvider).transfer(cost);
         emit MatchClosed(matchId, cost);
         emit EtherTransferred(address(this), ro.resProvider, cost, EtherTransferCause.FinishingJob);
         // emit EtherTransferred(address(this), jo.jobCreator, jo_deposit - cost, EtherTransferCause.FinishingJob);
@@ -950,7 +994,7 @@ contract Modicum {
     }
 
     function receiveValues(address toAccount, uint256 amount) public administrative {
-        address(uint160(toAccount)).transfer(amount);
+        payable(address(uint160(toAccount))).transfer(amount);
     }
 
 }

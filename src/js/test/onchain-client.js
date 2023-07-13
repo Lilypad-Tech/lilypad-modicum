@@ -13,6 +13,10 @@ describe("Modicum", async () => {
   let modicumContract
   let examplesContract
   let adminAccount
+  let solverAccount
+  let mediatorAccount
+  let resourceProviderAccount
+  let jobCreatorAccount
 
   const deployModicum = async () => {
     const modicumFactory = (await ethers.getContractFactory(
@@ -43,11 +47,14 @@ describe("Modicum", async () => {
     console.log(`examplesContract: ${examplesContract.address}`)
   }
 
-  
   context('contract', () => {
     beforeEach(async () => {
       [
         adminAccount,
+        solverAccount,
+        mediatorAccount,
+        resourceProviderAccount,
+        jobCreatorAccount,
       ] = await ethers.getSigners()
       await deployContracts()
     })
@@ -57,7 +64,9 @@ describe("Modicum", async () => {
         const template = `apples"oranges`
         const params = `Here's a "thing"`
 
-        const jobSpec = await examplesContract.getModuleSpec(template, params)
+        const jobSpec = await examplesContract
+          .connect(jobCreatorAccount)
+          .getModuleSpec(template, params)
 
         console.log('--------------------------------------------')
         console.log(jobSpec)
@@ -69,10 +78,38 @@ describe("Modicum", async () => {
       })
 
       it('runs a job', async () => {
-        const jobID = await examplesContract.runCowsay("holy cow")
+        await examplesContract
+          .connect(mediatorAccount)
+          .registerMediator(
+            1, //Architecture arch,
+            0, //instructionPrice
+            0, //bandwidthPrice
+            0, //availabilityValue
+            0  //verificationCount
+          )
+
+        await examplesContract
+          .connect(resourceProviderAccount)
+          .registerResourceProvider(
+            1, //Architecture arch,
+            0, //timePerInstruction
+          )
+
+        await examplesContract
+          .connect(resourceProviderAccount)
+          .resourceProviderAddTrustedMediator(
+            mediatorAccount.address,
+          )
+
+        //resourceProviderAddTrustedMediator
+        //jobCreatorAddTrustedMediator
+
+        const jobID = await examplesContract
+          .connect(jobCreatorAccount)
+          .runCowsay("holy cow")
 
         console.log('--------------------------------------------')
-        console.log(jobID)
+        console.log(jobID.value.toString())
       })
     })
   })
