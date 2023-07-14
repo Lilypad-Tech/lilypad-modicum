@@ -60,6 +60,7 @@ class Mediator(PlatformClient):
         })
 
     def getJob(self, matchID, JO, execute):
+        self.logger.info("🔵🔵🔵 RUN JOB NOW")
         JID = JO.jobCreator
         ijoid = JO.ijoid
         uri = JO.uri

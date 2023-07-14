@@ -455,7 +455,8 @@ class JobCreator(PlatformClient):
         #            msg["bandwidthLimit"]*msg["bandwidthMaxPrice"])*self.penaltyRate
 
         # send the cost of the job
-        deposit = get_bacalhau_jobprice(template)
+
+        deposit = self.ethclient.contract.functions.getModuleCost().call(template)
         self.deposit = deposit
 
         self.status = f"Sending deposit of {Web3.from_wei(self.deposit, 'ether')} ETH to contract"

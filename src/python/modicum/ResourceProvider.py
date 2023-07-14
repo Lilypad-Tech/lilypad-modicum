@@ -250,7 +250,7 @@ class ResourceProvider(Mediator):
                     self.logger.info("%s offerId= %s" % (name, matchID))
                     self.logger.info("Job offer %s = %s" % (name, self.job_offers[joid].ijoid))
                     self.logger.info("Resource offer %s = %s" % (name, self.resource_offers[roid].iroid))
-                    self.logger.info("🔵🔵🔵 RUN JOB NOW")
+
                     match = Pstruct.Match(
                         joid, roid, params["mediator"]
                     )
@@ -272,6 +272,7 @@ class ResourceProvider(Mediator):
                                           seriesname="state", value=2)
 
                     if os.environ.get('BAD_ACTOR') is not None:
+                        self.logger.info("🔵🔵🔵 BAD ACTOR JOB")
                         resultHash = "muaahaaha"
                     else:
                         resultHash = self.getJob(matchID, JO, True)
