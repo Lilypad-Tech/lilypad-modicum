@@ -98,13 +98,41 @@ function deploy-contract() {
   (cd src/js && npx hardhat deploy --network ${DEPLOYMENT})
 }
 
+function geth-proxy() {
+  source ${DIR}/.env
+  docker network ls | grep modicum || docker network create modicum
+  docker run -d --restart always \
+    --name geth-proxy \
+    --network modicum \
+    -p 8545:80 \
+    -e "NOXY_GETH_FRONT=/" \
+    -e "NOXY_GETH_HOST=geth " \
+    -e "NOXY_GETH_PORT=80" \
+    -e "NOXY_GETH_BACK=/" \
+    binocarlos/noxy
+}
+
+function faucet-proxy() {
+  source ${DIR}/.env
+  docker network ls | grep modicum || docker network create modicum
+  docker run -d --restart always \
+    --name faucet-proxy \
+    --network modicum \
+    -p 80:80 \
+    -e "NOXY_GETH_FRONT=/" \
+    -e "NOXY_GETH_HOST=faucet " \
+    -e "NOXY_GETH_PORT=80" \
+    -e "NOXY_GETH_BACK=/" \
+    binocarlos/noxy
+}
+
 function geth() {
   source ${DIR}/.env
   docker network ls | grep modicum || docker network create modicum
   docker run -d --restart always \
     --name geth \
     --network modicum \
-    -p 8545:8545 \
+    -p 8546:8545 \
     -v ${DATA_DIRECTORY}:/data/geth \
     ethereum/client-go \
       --datadir /data/geth \
@@ -135,13 +163,13 @@ function faucet() {
   local privateKey=$(echo -n "$PRIVATE_KEY_FAUCET" | sed 's/^0x//')
   docker run -d \
     --name faucet \
-    -p 80:8080 \
+    -p 81:8080 \
     --network modicum \
     -e WEB3_PROVIDER=http://geth:8545 \
     -e PRIVATE_KEY=$privateKey \
     chainflag/eth-faucet:1.1.0 \
       --faucet.amount=100 \
-      --faucet.minutes=1    
+      --faucet.minutes=1
 }
 
 function geth-command() {
@@ -303,6 +331,7 @@ function reset() {
     npx hardhat compile
   )
   geth
+  geth-proxy
   sleep 5
   fund-admin
   fund-faucet
@@ -323,6 +352,7 @@ function start() {
   source ${DIR}/.env
   build
   geth ||true
+  geth-proxy ||true
   echo "Waiting for geth to start"
   sleep 5
   source ${DIR}/.env
