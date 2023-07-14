@@ -93,6 +93,15 @@ function compile-contract() {
   )
 }
 
+function unit-tests() {
+  source ${DIR}/.env
+  (
+    set -euo pipefail
+    cd src/js
+    npx hardhat test --network hardhat
+  )
+}
+
 function deploy-contract() {
   source ${DIR}/.env
   (cd src/js && npx hardhat deploy --network ${DEPLOYMENT})

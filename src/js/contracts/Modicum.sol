@@ -261,6 +261,7 @@ contract Modicum {
     uint256 internalRunModuleIncrementingID = 1;
     mapping(uint256 => address) runModuleJobOwners;
     address[] defaultMediators;
+    mapping(string => uint256) moduleCosts;
 
     function test(uint256 value) public{
       require(value > 0,
@@ -287,6 +288,10 @@ contract Modicum {
 
     function setDefaultMediators(address[] calldata _defaultMediators) public administrative {
         defaultMediators = _defaultMediators;
+    }
+
+    function setModuleCost(string calldata name, uint256 cost) public administrative {
+        moduleCosts[name] = cost;
     }
 
     function registerMediator(
@@ -506,12 +511,13 @@ contract Modicum {
       // * auto-assign jobid
       // * record against the jobid, the calling address (so we can send results there)
       // * postJobOfferPartOne
-      // * postJobOfferPartTwo 
+      // * postJobOfferPartTwo
       registerJobCreator();
       jobCreatorAddTrustedMediator(_mediators[0]);
       internalRunModuleIncrementingID++;
       
       uint256 jobID = postJobOfferPartOne(
+        moduleName,
         internalRunModuleIncrementingID,
         1,
         1,
@@ -547,6 +553,7 @@ contract Modicum {
     // in this case - we should check the remote contract adheres to the required callback interface
     // and throw if not otherwise this is a black hole for your dosh
     function postJobOfferPartOne(
+        string memory moduleName,
         uint256 ijoid,
         uint256 instructionLimit,
         uint256 bandwidthLimit,
@@ -555,7 +562,8 @@ contract Modicum {
         uint256 completionDeadline,
         uint256 matchIncentive
     ) public payable returns (uint256) {
-
+        require(moduleCosts[moduleName] > 0, "Module not found");
+        require(msg.value >= moduleCosts[moduleName], "Not enough funds sent for job");
       
         // require(jobCreators[msg.sender].trustedMediators.length != 0,
         //    "You are not registered as a JobCreator");
