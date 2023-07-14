@@ -103,27 +103,13 @@ function geth-proxy() {
   docker network ls | grep modicum || docker network create modicum
   docker run -d --restart always \
     --name geth-proxy \
-    --network modicum \
-    -p 8545:80 \
+    --net host \
+    -e "NOXY_PORT=8545" \
     -e "NOXY_GETH_FRONT=/" \
-    -e "NOXY_GETH_HOST=geth " \
-    -e "NOXY_GETH_PORT=80" \
+    -e "NOXY_GETH_HOST=localhost " \
+    -e "NOXY_GETH_PORT=8546" \
     -e "NOXY_GETH_BACK=/" \
-    binocarlos/noxy
-}
-
-function faucet-proxy() {
-  source ${DIR}/.env
-  docker network ls | grep modicum || docker network create modicum
-  docker run -d --restart always \
-    --name faucet-proxy \
-    --network modicum \
-    -p 80:80 \
-    -e "NOXY_GETH_FRONT=/" \
-    -e "NOXY_GETH_HOST=faucet " \
-    -e "NOXY_GETH_PORT=80" \
-    -e "NOXY_GETH_BACK=/" \
-    binocarlos/noxy
+    quay.io/lilypad/noxy:v0.0.1
 }
 
 function geth() {
@@ -144,17 +130,19 @@ function geth() {
       --http.vhosts '*'
 }
 
-function hardhat() {
+function faucet-proxy() {
   source ${DIR}/.env
   docker network ls | grep modicum || docker network create modicum
   docker run -d --restart always \
-    --name geth \
-    --network modicum \
-    -p 8545:8545 \
-    -v $DIR/src/js/deployments:/app/deployments \
-    -v $DIR/src/js/contracts:/app/contracts \
-    -v $DIR/src/js/scripts:/app/scripts \
-    $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port 8545
+    --name faucet-proxy \
+    --network host \
+    -p 80:81 \
+    -e "NOXY_PORT=80" \
+    -e "NOXY_FAUCET_FRONT=/" \
+    -e "NOXY_FAUCET_HOST=localhost " \
+    -e "NOXY_FAUCET_PORT=80" \
+    -e "NOXY_FAUCET_BACK=/" \
+    quay.io/lilypad/noxy:v0.0.1
 }
 
 
@@ -171,6 +159,20 @@ function faucet() {
       --faucet.amount=100 \
       --faucet.minutes=1
 }
+
+function hardhat() {
+  source ${DIR}/.env
+  docker network ls | grep modicum || docker network create modicum
+  docker run -d --restart always \
+    --name geth \
+    --network modicum \
+    -p 8545:8545 \
+    -v $DIR/src/js/deployments:/app/deployments \
+    -v $DIR/src/js/contracts:/app/contracts \
+    -v $DIR/src/js/scripts:/app/scripts \
+    $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port 8545
+}
+
 
 function geth-command() {
   docker exec -ti geth geth --exec "$@" attach /data/geth/geth.ipc
