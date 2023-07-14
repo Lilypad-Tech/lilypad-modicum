@@ -32,13 +32,13 @@ The variables you need are:
 Click save and click "switch to Lilypad Lalechuza testnet".
 
 * Click the **down arrow** next to Account 1 on the top bar, **then** click the `...` next to Account 1 in the list
-* Account details - then we'll **Show private key**
+* Account details - then click **Show private key**
 
 <img src="https://github.com/bacalhau-project/lilypad/assets/264658/4e947efb-888c-4c85-9990-ab01cb889516" width="300">
 
 * Show private key
 * Enter your metamask password
-* Copy private key for account
+* Copy private key for account - **DO NOT COPY THE WALLET ADDRESS BY MISTAKE**
 
 Open a terminal on macOS, Linux or WSL2, and type:
 ```
