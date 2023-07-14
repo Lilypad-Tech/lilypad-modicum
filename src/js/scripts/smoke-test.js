@@ -27,9 +27,9 @@ async function main() {
       gasLimit: ethers.BigNumber.from('10000000'),
     })
 
-  console.log('--------------------------------------------')
-  console.log(trx)
-  console.log(`job ID: ${trx.value.toString()}`)
+  const receipt = await trx.wait()
+  console.log(`trx: ${JSON.stringify(trx)}`)
+  console.log(`receipt: ${JSON.stringify(receipt)}`)
 }
 
 main().catch((error) => {

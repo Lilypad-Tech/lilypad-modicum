@@ -6,5 +6,10 @@ module.exports = async ({getNamedAccounts, deployments}) => {
     args: [],
     log: true,
   });
+  const deploymentModicum = await deployments.get('Modicum')
+  console.log('--------------------------------------------')
+  console.log('--------------------------------------------')
+  console.log('--------------------------------------------')
+  console.log(`DEPLOYED MODICUM: ${deploymentModicum.address}`)
 };
 module.exports.tags = ['Modicum'];
