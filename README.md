@@ -4,7 +4,11 @@ This cloud is just someone else's computer.
 
 ![image](https://github.com/bacalhau-project/lilypad/assets/264658/d91dad9a-ca46-43d4-a94b-d33454efc7ae)
 
-This guide shows you (amongst other things) how to make crypto with your gaming GPU by running Stable Diffusion fine-tuning & inference jobs for someone else.
+This guide shows you (amongst other things) how to:
+
+* trigger jobs on other peoples' computers with just a metamask wallet and our CLI
+* trigger the same jobs from a smart contract deployed to our testnet
+* make crypto with your GPU by running Stable Diffusion fine-tuning & inference jobs for someone else.
 
 > Caveat: today it is just worthless test crypto, but one day soon it will be real crypto!
 
