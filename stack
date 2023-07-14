@@ -261,6 +261,7 @@ function lilypad-node() {
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e DEBUG \
     -e PRIVATE_KEY \
+    -e BAD_ACTOR \
     -e MEDIATOR_ADDRESSES \
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \

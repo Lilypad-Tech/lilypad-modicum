@@ -14,6 +14,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from . import helper
 import datetime
 from .Enums import ResultStatus
+import os
 
 class ResourceProvider(Mediator):
     def __init__(self, index=0, sim=False):
@@ -269,7 +270,11 @@ class ResourceProvider(Mediator):
 
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "RP" + str(self.index)},
                                           seriesname="state", value=2)
-                    resultHash = self.getJob(matchID, JO, True)
+
+                    if os.environ.get('BAD_ACTOR') is not None:
+                        resultHash = "muaahaaha"
+                    else:
+                        resultHash = self.getJob(matchID, JO, True)
 
                     self.postResult(matchID, JO.offerId, resultHash)
 
