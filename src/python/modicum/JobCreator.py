@@ -14,6 +14,7 @@ from . import PlatformStructs as Pstruct
 from .PlatformClient import PlatformClient
 from . import helper
 from web3 import Web3
+from .Enums import Architecture
 
 import datetime
 
@@ -565,7 +566,7 @@ class JobCreator(PlatformClient):
             "arf",
             Web3.to_checksum_address(msg['directory']),
             Web3.to_int(msg['hash']),
-            Web3.to_int(1),
+            Architecture.amd64.value,
             jsonData,
         ).transact({
           "from": self.account,
