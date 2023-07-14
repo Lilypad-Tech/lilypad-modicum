@@ -195,6 +195,39 @@ describe("Modicum", async () => {
         ).to.not.be.reverted
       })
 
+      it('will not let us post a resource offer with too little of a deposit', async () => {
+        const JOB_COST = ethers.BigNumber.from("1000")
+        const DEPOSIT_MULTIPLE = ethers.BigNumber.from("10")
+        await modicumContract
+          .connect(adminAccount)
+          .setModuleCost('cowsay:v0.0.1', JOB_COST)
+        await modicumContract
+          .connect(adminAccount)
+          .setResourceProviderDepositMultiple(DEPOSIT_MULTIPLE)
+        await modicumContract
+          .connect(resourceProviderAccount)
+          .registerResourceProvider(
+            1, //Architecture arch,
+            0, //timePerInstruction
+          )
+        await expect(
+          modicumContract
+            .connect(resourceProviderAccount)
+            .postResOffer(0,0,0,0,0,0,0,0,0, {
+              value: JOB_COST.mul(DEPOSIT_MULTIPLE).sub(1),
+            })
+        ).to.be.revertedWith("You need to deposit more money to offer this resource")
+
+        const resourceDeposit = await modicumContract.getRequiredResourceProviderDeposit()
+        await expect(
+          modicumContract
+            .connect(resourceProviderAccount)
+            .postResOffer(0,0,0,0,0,0,0,0,0, {
+              value: resourceDeposit,
+            })
+        ).to.not.be.reverted
+      })
+
       it('runs a job', async () => {
         const JOB_COST = ethers.utils.parseEther("100")
         const CID = "i_am_cid"

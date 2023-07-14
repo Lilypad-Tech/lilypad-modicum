@@ -262,6 +262,10 @@ contract Modicum {
     mapping(uint256 => address) runModuleJobOwners;
     address[] defaultMediators;
     mapping(string => uint256) moduleCosts;
+    string[] moduleNames;
+
+    // used to enforce the deposit given by the compute provider
+    uint256 resourceProviderDepositMultiple = 0;
 
     function test(uint256 value) public{
       require(value > 0,
@@ -270,28 +274,59 @@ contract Modicum {
     }
 
     function check(Architecture arch) public{
-        //Architecture arch = Architecture.amd64;
-        emit Debug(5);
-        emit DebugArch(arch);
-        emit DebugUint(1);
+      //Architecture arch = Architecture.amd64;
+      emit Debug(5);
+      emit DebugArch(arch);
+      emit DebugUint(1);
     }
 
     function setPenaltyRate(uint256 _penaltyRate) public administrative {
-        penaltyRate = _penaltyRate;
-        emit penaltyRateSet(penaltyRate);
+      penaltyRate = _penaltyRate;
+      emit penaltyRateSet(penaltyRate);
     }
 
     function setReactionDeadline(uint256 _reactionDeadline) public administrative {
-        reactionDeadline = _reactionDeadline;
-        emit reactionDeadlineSet(_reactionDeadline);
+      reactionDeadline = _reactionDeadline;
+      emit reactionDeadlineSet(_reactionDeadline);
     }
 
     function setDefaultMediators(address[] calldata _defaultMediators) public administrative {
-        defaultMediators = _defaultMediators;
+      defaultMediators = _defaultMediators;
     }
 
     function setModuleCost(string calldata name, uint256 cost) public administrative {
-        moduleCosts[name] = cost;
+      moduleCosts[name] = cost;
+      if(!stringExists(name, moduleNames)) {
+        moduleNames.push(name);
+      }
+    }
+
+    function setResourceProviderDepositMultiple(uint256 multiple) public administrative {
+      resourceProviderDepositMultiple = multiple;
+    }
+
+    function getModuleCost(string calldata name) public view returns (uint256) {
+      return moduleCosts[name];
+    }
+
+    function getRequiredResourceProviderDeposit() public view returns (uint256) {
+      uint256 mostExpensiveModuleCost = 0;
+      // loop over moduleNames and if the moduleCosts is the most expensive - make it be the mostExpensiveModule
+      for(uint i = 0; i < moduleNames.length; i++) {
+        if(moduleCosts[moduleNames[i]] > mostExpensiveModuleCost) {
+          mostExpensiveModuleCost = moduleCosts[moduleNames[i]];
+        }
+      }
+      return mostExpensiveModuleCost * resourceProviderDepositMultiple;
+    }
+
+    function stringExists(string memory _myString, string[] memory _arr) public pure returns(bool) {
+      for(uint i = 0; i < _arr.length; i++) {
+        if(keccak256(bytes(_arr[i])) == keccak256(bytes(_myString))) {
+          return true;
+        }
+      }
+      return false;
     }
 
     function registerMediator(
@@ -420,6 +455,7 @@ contract Modicum {
 
         uint256 misc
     ) public payable {
+        require(msg.value >= getRequiredResourceProviderDeposit(), "You need to deposit more money to offer this resource");
         // require(resourceProviders[msg.sender].trustedMediators.length != 0,
         //     "You are not registered as a ResourceProvider");
 
@@ -666,31 +702,31 @@ contract Modicum {
         return index;
     }
 
-    function cancelJobOffer(uint256 offerId) public {
-        // require(jobOffersPartOne[offerId].jobCreator == msg.sender, "This offer is not yours.");
-        // require(jobOfferMatched[offerId] == false, "You cannot cancel a jop which is running.");
+    // function cancelJobOffer(uint256 offerId) public {
+    //     // require(jobOffersPartOne[offerId].jobCreator == msg.sender, "This offer is not yours.");
+    //     // require(jobOfferMatched[offerId] == false, "You cannot cancel a jop which is running.");
 
-        //msg.sender.transfer(jobOffersPartOne[offerId].depositValue);
-        jobOffersPartOne[offerId].depositValue = 0;
+    //     //msg.sender.transfer(jobOffersPartOne[offerId].depositValue);
+    //     jobOffersPartOne[offerId].depositValue = 0;
 
-        isJobOfferCanceled[offerId] = true;
+    //     isJobOfferCanceled[offerId] = true;
 
-        emit JobOfferCanceled(offerId);
-        emit EtherTransferred(address(this), msg.sender, jobOffersPartOne[offerId].depositValue, EtherTransferCause.CancelJobOffer);
-    }
+    //     emit JobOfferCanceled(offerId);
+    //     emit EtherTransferred(address(this), msg.sender, jobOffersPartOne[offerId].depositValue, EtherTransferCause.CancelJobOffer);
+    // }
 
-    function cancelResOffer(uint256 offerId) public {
-        // require(resourceOffers[offerId].resProvider == msg.sender, "This offer is not yours.");
-        // require(resOfferMatched[offerId] == false, "You cannot cancel a jop which is running.");
+    // function cancelResOffer(uint256 offerId) public {
+    //     // require(resourceOffers[offerId].resProvider == msg.sender, "This offer is not yours.");
+    //     // require(resOfferMatched[offerId] == false, "You cannot cancel a jop which is running.");
 
-        //msg.sender.transfer(resourceOffers[offerId].depositValue);
-        resourceOffers[offerId].depositValue = 0;
+    //     //msg.sender.transfer(resourceOffers[offerId].depositValue);
+    //     resourceOffers[offerId].depositValue = 0;
 
-        isResOfferCanceled[offerId] = true;
+    //     isResOfferCanceled[offerId] = true;
 
-        emit ResourceOfferCanceled(offerId);
-        emit EtherTransferred(address(this), msg.sender, resourceOffers[offerId].depositValue, EtherTransferCause.CancelResOffer);
-    }
+    //     emit ResourceOfferCanceled(offerId);
+    //     emit EtherTransferred(address(this), msg.sender, resourceOffers[offerId].depositValue, EtherTransferCause.CancelResOffer);
+    // }
 
     function postMatch(
         uint256 jobOfferId,
@@ -998,20 +1034,20 @@ contract Modicum {
         return cost;
     }
 
-    function timeout(uint256 matchId, uint256 jobOfferId) public {
-        require(jobOfferId >= 0);
-        // require(jobOffersPartOne[matches[matchId].jobOffer].jobCreator == msg.sender,
-        //     "You cannot make a timeout on this offer");
-        // require(jobOffersPartOne[matches[matchId].jobOffer].completionDeadline < now,
-        //     "RP has more time to finish this job");
-        // require(isMatchClosed[matchId] == false,
-        //     "This match is closed.");
+    // function timeout(uint256 matchId, uint256 jobOfferId) public {
+    //     require(jobOfferId >= 0);
+    //     // require(jobOffersPartOne[matches[matchId].jobOffer].jobCreator == msg.sender,
+    //     //     "You cannot make a timeout on this offer");
+    //     // require(jobOffersPartOne[matches[matchId].jobOffer].completionDeadline < now,
+    //     //     "RP has more time to finish this job");
+    //     // require(isMatchClosed[matchId] == false,
+    //     //     "This match is closed.");
 
-        punish(matchId, Party.ResourceProvider);
-    }
+    //     punish(matchId, Party.ResourceProvider);
+    // }
 
-    function receiveValues(address toAccount, uint256 amount) public administrative {
-        payable(address(uint160(toAccount))).transfer(amount);
-    }
+    // function receiveValues(address toAccount, uint256 amount) public administrative {
+    //     payable(address(uint160(toAccount))).transfer(amount);
+    // }
 
 }
