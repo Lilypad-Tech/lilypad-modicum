@@ -259,18 +259,21 @@ function reset() {
   set -x
   docker rm -f $(docker ps -aq) ||true
   sudo rm -rf $DATA_DIRECTORY
-  (cd src/js && npm install)
+  local sleepSeconds="1"
+  if [[ -z "$QUICK_RESET" ]]; then
+    (cd src/js && npm install)
+    sleepSeconds="5"
+  fi
   node src/js/scripts/create-new-accounts.js > .env
   source .env
   rm -rf src/js/deployments/localgeth
   (
     set -euo pipefail
     cd src/js
-    npm install
     npx hardhat compile
   )
   geth
-  sleep 5
+  sleep $sleepSeconds
   fund-admin
   fund-faucet
   fund-services
@@ -287,13 +290,17 @@ function stop() {
 }
 
 function start() {
-  build
-  geth ||true
+  local sleepSeconds="1"
+  if [[ -z "$QUICK_RESET" ]]; then
+    build
+    sleepSeconds="5"
+  fi
+  geth || true
   echo "Waiting for geth to start"
-  sleep 5
+  sleep $sleepSeconds
   source .env
   solver
-  sleep 5
+  sleep $sleepSeconds
   mediator
   resource-provider
   faucet
