@@ -98,13 +98,27 @@ function deploy-contract() {
   (cd src/js && npx hardhat deploy --network ${DEPLOYMENT})
 }
 
+function geth-proxy() {
+  source ${DIR}/.env
+  docker network ls | grep modicum || docker network create modicum
+  docker run -d --restart always \
+    --name geth-proxy \
+    --net host \
+    -e "NOXY_PORT=8545" \
+    -e "NOXY_GETH_FRONT=/" \
+    -e "NOXY_GETH_HOST=localhost " \
+    -e "NOXY_GETH_PORT=8546" \
+    -e "NOXY_GETH_BACK=/" \
+    quay.io/lilypad/noxy:v0.0.1
+}
+
 function geth() {
   source ${DIR}/.env
   docker network ls | grep modicum || docker network create modicum
   docker run -d --restart always \
     --name geth \
     --network modicum \
-    -p 8545:8545 \
+    -p 8546:8545 \
     -v ${DATA_DIRECTORY}:/data/geth \
     ethereum/client-go \
       --datadir /data/geth \
@@ -114,6 +128,36 @@ function geth() {
       --http.corsdomain '*' \
       --http.port 8545 \
       --http.vhosts '*'
+}
+
+function faucet-proxy() {
+  source ${DIR}/.env
+  docker network ls | grep modicum || docker network create modicum
+  docker run -d --restart always \
+    --name faucet-proxy \
+    --network host \
+    -p 80:81 \
+    -e "NOXY_PORT=80" \
+    -e "NOXY_FAUCET_FRONT=/" \
+    -e "NOXY_FAUCET_HOST=localhost " \
+    -e "NOXY_FAUCET_PORT=80" \
+    -e "NOXY_FAUCET_BACK=/" \
+    quay.io/lilypad/noxy:v0.0.1
+}
+
+
+function faucet() {
+  source ${DIR}/.env
+  local privateKey=$(echo -n "$PRIVATE_KEY_FAUCET" | sed 's/^0x//')
+  docker run -d \
+    --name faucet \
+    -p 81:8080 \
+    --network modicum \
+    -e WEB3_PROVIDER=http://geth:8545 \
+    -e PRIVATE_KEY=$privateKey \
+    chainflag/eth-faucet:1.1.0 \
+      --faucet.amount=100 \
+      --faucet.minutes=1
 }
 
 function hardhat() {
@@ -129,20 +173,6 @@ function hardhat() {
     $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port 8545
 }
 
-
-function faucet() {
-  source ${DIR}/.env
-  local privateKey=$(echo -n "$PRIVATE_KEY_FAUCET" | sed 's/^0x//')
-  docker run -d \
-    --name faucet \
-    -p 80:8080 \
-    --network modicum \
-    -e WEB3_PROVIDER=http://geth:8545 \
-    -e PRIVATE_KEY=$privateKey \
-    chainflag/eth-faucet:1.1.0 \
-      --faucet.amount=100 \
-      --faucet.minutes=1    
-}
 
 function geth-command() {
   docker exec -ti geth geth --exec "$@" attach /data/geth/geth.ipc
@@ -306,6 +336,7 @@ function reset() {
     npx hardhat compile
   )
   geth
+  geth-proxy
   sleep $sleepSeconds
   fund-admin
   fund-faucet
@@ -330,6 +361,7 @@ function start() {
     sleepSeconds="5"
   fi
   geth || true
+  geth-proxy ||true
   echo "Waiting for geth to start"
   sleep $sleepSeconds
   solver
