@@ -15,7 +15,7 @@ const {
 
 const config = {
   solidity: '0.8.6',
-  defaultNetwork: 'hardhat',
+  defaultNetwork: 'localgeth',
   namedAccounts,
   networks: {
     hardhat: {
