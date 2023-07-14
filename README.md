@@ -4,7 +4,7 @@ This cloud is just someone else's computer.
 
 ![image](https://github.com/bacalhau-project/lilypad/assets/264658/d91dad9a-ca46-43d4-a94b-d33454efc7ae)
 
-This guide shows you (amongst other things) how to make crypto with your gaming GPU by running stable diffusion jobs for someone else. (caveat, today it is just worthless test crypto, but one day soon it will be real crypto!)
+This guide shows you (amongst other things) how to make crypto with your gaming GPU by running Stable Diffusion fine-tuning & inference jobs for someone else. (caveat, today it is just worthless test crypto, but one day soon it will be real crypto!)
 
 
 ## Get private key
