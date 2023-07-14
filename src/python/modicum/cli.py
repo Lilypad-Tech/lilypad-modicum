@@ -133,7 +133,7 @@ def runAsMediator(index,sim):
 
 
     click.echo("Mediator is registering... %s" % (M.account,))
-    M.register(M.account, Architecture.armv7.value, instructionPrice=1,
+    M.register(M.account, Architecture.amd64.value, instructionPrice=1,
                bandwidthPrice=1,availabilityValue=1, verificationCount=1)
 
     while not M.registered:
@@ -378,7 +378,7 @@ def build(path, tag, tar, skip_build):
                             "jobHash_int" :  jobHash_int,
                             "uri" : tag,
                             "size" : job_size, #size of the docker image
-                            "arch" : "armv7",
+                            "arch" : "amd64",
                             "cpuTime" : -1, #Not set during build
                             "LocalStorageLimit" :  -1 , #Not set during build
                             "instructionMaxPrice" : 1,
@@ -430,7 +430,7 @@ def profile(path, tag, name):
                     "uri":-1,
                     "directory":-1,
                     "hash":-1,
-                    "arch":"armv7"}
+                    "arch":"amd64"}
 
 
 @click.command('getResult')
@@ -518,7 +518,7 @@ def startRP(path,index,host,sim,mediator):
     # the first (unlocked) account or the overriden account supplied by the env
     RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, 0)
     print("Resource Provider Daemon is registering... ")
-    exitcode = RP.register(RP.account,Architecture.armv7.value, 1)# ratio to 1Gz processor # XXX should this be arm64???
+    exitcode = RP.register(RP.account,Architecture.amd64.value, 1)# ratio to 1Gz processor # XXX should this be arm64???
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
         time.sleep(1)
@@ -562,7 +562,7 @@ def startRPDaemon(index):
 
     RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_,index)
     print("Resource Provider Daemon is registering... ")
-    exitcode = RP.register(RP.account,Architecture.armv7.value, 1)# ratio to 1Gz processor
+    exitcode = RP.register(RP.account,Architecture.amd64.value, 1)# ratio to 1Gz processor
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
         time.sleep(1)

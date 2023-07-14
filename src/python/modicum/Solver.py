@@ -278,6 +278,7 @@ class Solver(PlatformClient):
                 self.getReceipt(name, transactionHash)
 
                 self.logger.info("{}({}).".format(name, params))
+                self.logger.info("🔴🔴🔴 {}: \n({}).".format(name, params))
                 if name == "MediatorRegistered":
                     self.logger.info("🔴 MediatorRegistered: \n({}).".format(params))
                     self.logger.info("%s" %name)

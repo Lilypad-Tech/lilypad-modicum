@@ -14,25 +14,26 @@ const {
 } = getAccounts()
 
 const config = {
-  solidity: '0.4.25',
-  defaultNetwork: 'hardhat',
+  solidity: '0.8.6',
+  defaultNetwork: 'localgeth',
   namedAccounts,
   networks: {
     hardhat: {
-      blockGasLimit: 68719476736000,
+      blockGasLimit: 68719476,
+      baseFeePerGas: 1000,
+      maxPriorityFeePerGas: 2000,
+      maxFeePerGas: 10000,
     },
     localhost: {},
     localgeth: {
       url: 'http://localhost:8545',
       chainId: 1337,
       accounts: allAccounts,
-      blockGasLimit: 68719476736000,
     },
     production: {
       url: 'http://testnet.lilypadnetwork.org:8545',
       chainId: 1337,
       accounts: allAccounts,
-      blockGasLimit: 68719476736000,
     }
   },
 };

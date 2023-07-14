@@ -32,4 +32,4 @@ def _cowsay(params: str):
     }
 
 # denoted in eth
-_cowsay.price = 87
+_cowsay.price = 1
