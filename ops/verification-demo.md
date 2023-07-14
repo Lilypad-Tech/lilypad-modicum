@@ -39,7 +39,7 @@ The job should get triggered for mediation after running on the resource provide
 2023-07-14 18:01:11,134;Mediator;🟣🟣🟣🟣 ✅✅✅✅✅✅✅✅✅✅✅ mediation correct result
 ```
 
-Now - re-run the `./stack balances` command and you should see the job-creator have 1ETH less and the resource provider 1ETH more
+Now - re-run the `./stack balances` command and you should see the job-creator have 1ETH less and the resource provider 9ETH less (the resource provider has been paid 1ETH and then put a deposit of 10 for the next offer)
 
 Now - let's make the resource provider cheat:
 
