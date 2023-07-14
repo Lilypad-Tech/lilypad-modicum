@@ -623,7 +623,8 @@ contract Modicum {
             depositValue: msg.value,
             instructionLimit: instructionLimit,
             bandwidthLimit: bandwidthLimit,
-            instructionMaxPrice: instructionMaxPrice,
+            // this means we are using the smart contract to control pricing
+            instructionMaxPrice: moduleCosts[moduleName],
             bandwidthMaxPrice: bandwidthMaxPrice,
             completionDeadline: completionDeadline,
             matchIncentive: matchIncentive
@@ -993,60 +994,15 @@ contract Modicum {
     }
 
     function close(uint256 matchId) private returns (uint256) {
-        //require(results[matchToResult[matchId]].reacted == Reaction.Accepted,
-        //    "The job is not done yet.");
-
-        JobResult memory r = results[matchToResult[matchId]];
         ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer];
         JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer];
-        // address m = matches[matchId].mediator;
-
-        //require(isMatchClosed[matchId] == false, "This match is already closed.");
         isMatchClosed[matchId] = true;
 
-        uint256 cost = r.instructionCount;
+        payable(address(ro.resProvider)).transfer(ro.depositValue + jo.instructionMaxPrice);
 
-        // uint256 cost = r.instructionCount * ro.instructionPrice +
-        //     r.bandwidthUsage * ro.bandwidthPrice;
-        // uint256 mediatorAvailabilityIncentive = mediators[m].availabilityValue;
+        emit MatchClosed(matchId, jo.instructionMaxPrice);
+        emit EtherTransferred(address(this), ro.resProvider, ro.depositValue + jo.instructionMaxPrice, EtherTransferCause.FinishingJob);
 
-        // uint256 jo_deposit = jo.depositValue;
-        // uint256 ro_deposit = ro.depositValue;
-
-        // jo.depositValue = 0;
-        // ro.depositValue = 0;
-
-        //address(uint160(jo.jobCreator)).transfer(jo_deposit - cost - jo.matchIncentive - mediatorAvailabilityIncentive);
-        //address(uint160(ro.resProvider)).transfer(jo_deposit + cost - ro.matchIncentive - mediatorAvailabilityIncentive);
-        //address(uint160(m)).transfer(2 * mediatorAvailabilityIncentive);
-        // address(uint160(ro.resProvider)).transfer(cost);
-
-        payable(address(ro.resProvider)).transfer(cost + ro.depositValue);
-        payable(address(jo.jobCreator)).transfer(jo.depositValue);
-
-        emit MatchClosed(matchId, cost);
-        emit EtherTransferred(address(this), ro.resProvider, cost, EtherTransferCause.FinishingJob);
-        // emit EtherTransferred(address(this), jo.jobCreator, jo_deposit - cost, EtherTransferCause.FinishingJob);
-        // emit EtherTransferred(address(this), ro.resProvider, ro_deposit + cost, EtherTransferCause.FinishingResource);
-        // emit EtherTransferred(address(this), m, 2 * mediatorAvailabilityIncentive, EtherTransferCause.MediatorAvailability);
-
-        return cost;
+        return jo.instructionMaxPrice;
     }
-
-    // function timeout(uint256 matchId, uint256 jobOfferId) public {
-    //     require(jobOfferId >= 0);
-    //     // require(jobOffersPartOne[matches[matchId].jobOffer].jobCreator == msg.sender,
-    //     //     "You cannot make a timeout on this offer");
-    //     // require(jobOffersPartOne[matches[matchId].jobOffer].completionDeadline < now,
-    //     //     "RP has more time to finish this job");
-    //     // require(isMatchClosed[matchId] == false,
-    //     //     "This match is closed.");
-
-    //     punish(matchId, Party.ResourceProvider);
-    // }
-
-    // function receiveValues(address toAccount, uint256 amount) public administrative {
-    //     payable(address(uint160(toAccount))).transfer(amount);
-    // }
-
 }
