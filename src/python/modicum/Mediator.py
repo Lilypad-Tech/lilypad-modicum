@@ -6,7 +6,7 @@ import textwrap
 import docker.errors
 from . import DockerWrapper
 from .PlatformClient import PlatformClient
-from .Modules import get_bacalhau_jobspec, get_bacalhau_jobprice
+from .Modules import get_bacalhau_jobspec
 from . import PlatformStructs as Pstruct
 from . import helper
 import dotenv
@@ -72,15 +72,6 @@ class Mediator(PlatformClient):
             extrasData["params"]
         )
 
-        jobPrice = get_bacalhau_jobprice(extrasData["template"])
-
-        # we set the cpuTime to the jobPrice in wei
-        # the "price per cpu instruction" is set to 1
-        # and so the total price is dictated by the cpuTime (in wei)
-        # this is obviously completely shit and will replaced
-        # asap with a non-time constrained hack
-        cpuTime = jobPrice
-
         _DIRIP_ = os.environ.get('DIRIP')
         _DIRPORT_ = os.environ.get('DIRPORT')
         _KEY_ = os.environ.get('pubkey')
@@ -103,53 +94,63 @@ class Mediator(PlatformClient):
                 yaml.dump(bacalhauJobSpec, f)
                 f.close()
 
-        # RUN BACALHAU JOB AND GET THE ID
-        result = subprocess.run(['bacalhau', 'create', '--wait', '--id-only', tmpfile], text=True, capture_output=True)
-        jobID = result.stdout.strip()
+                # RUN BACALHAU JOB AND GET THE ID
+                result = subprocess.run(['bacalhau', 'create', '--wait', '--id-only', tmpfile], text=True, capture_output=True)
+                jobID = result.stdout.strip()
 
-        # extrac the CID of the result to report back
-        listOutput = subprocess.run(['bacalhau', 'list', '--output', 'json', '--id-filter', jobID], text=True, capture_output=True)
+                # extrac the CID of the result to report back
+                listOutput = subprocess.run(['bacalhau', 'list', '--output', 'json', '--id-filter', jobID], text=True, capture_output=True)
 
-        # load the listOutput string as a JSON object
-        listOutputJSON = json.loads(listOutput.stdout)
+                print(textwrap.dedent(f"""
+                ---------------------------------------------------------------------------------------
 
-        resultHash = listOutputJSON[0]['State']['Executions'][0]['PublishedResults']['CID']
-        resultStatus = listOutputJSON[0]['State']['Executions'][0]['State']
+                {listOutput.stdout}
 
-        print(textwrap.dedent(f"""
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                """))
 
-        {open(tmpfile).read()}
+                # load the listOutput string as a JSON object
+                listOutputJSON = json.loads(listOutput.stdout)
 
-        https://dashboard.bacalhau.org/jobs/{jobID}
+                resultHash = listOutputJSON[0]['State']['Executions'][0]['PublishedResults']['CID']
+                resultStatus = listOutputJSON[0]['State']['Executions'][0]['State']
 
-        Get stdout, status:
-        docker exec -ti resource-provider bacalhau describe {jobID}
+                print(textwrap.dedent(f"""
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
 
-        Download results CID from IPFS:
-        docker exec -ti resource-provider bacalhau get {jobID}
+                {open(tmpfile).read()}
 
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        """))
+                https://dashboard.bacalhau.org/jobs/{jobID}
 
-        describe = subprocess.run(['bacalhau', 'describe', jobID], text=True, capture_output=True).stdout
-        print(textwrap.dedent(f"""
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
+                Get stdout, status:
+                docker exec -ti resource-provider bacalhau describe {jobID}
 
-        {describe}
+                Download results CID from IPFS:
+                docker exec -ti resource-provider bacalhau get {jobID}
 
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        ---------------------------------------------------------------------------------------
-        """))
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                """))
 
-        return resultHash
+                describe = subprocess.run(['bacalhau', 'describe', jobID], text=True, capture_output=True).stdout
+                print(textwrap.dedent(f"""
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+
+                {describe}
+
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                ---------------------------------------------------------------------------------------
+                """))
+
+                return resultHash
+
+        
 
         # self.postResult(matchID, JO.offerId, resultStatus, urix, resultHash, cpuTime, 0)
                 
@@ -157,14 +158,16 @@ class Mediator(PlatformClient):
         reason = Verdict.WrongResults.value
         if self.myMatches[matchID]['resHash'] == resultHash:
             reason = Verdict.CorrectResults.value
+            self.logger.info("🟣🟣🟣🟣 ✅✅✅✅✅✅✅✅✅✅✅ mediation correct result")
+        else:
+            reason = Verdict.WrongResults.value
+            self.logger.info("🟣🟣🟣🟣 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨 mediation wrong result")
         txHash = self.ethclient.contract.functions.postMediationResult(
           matchID,
           joid,
           ResultStatus.Completed.value, 
           "",
           resultHash,
-          0,
-          0, 
           reason,
           Party.ResourceProvider.value
         ).transact({

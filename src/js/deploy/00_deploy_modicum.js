@@ -12,6 +12,8 @@ const {
 } = require('../accounts')
 
 const DEPOSIT_MULTIPLE = 10
+
+// this is in ETH
 const JOB_COST = 1
 
 const MODULES = [
@@ -41,24 +43,23 @@ module.exports = async ({getNamedAccounts, deployments}) => {
   const adminWallet = getWallet('admin')
   const mediatorAccount = getWallet('mediator')
   const adminSigner = adminWallet.connect(hre.ethers.provider)
-  const trx = await modicumContract
+  const trxMediators = await modicumContract
     .connect(adminSigner)
     .setDefaultMediators([
       mediatorAccount.address,
     ])
-  const receipt = await trx.wait()
-  console.log(`add mediator trx: ${JSON.stringify(trx)}`)
+  const receipt = await trxMediators.wait()
+  console.log(`add mediator trx: ${JSON.stringify(trxMediators)}`)
   console.log(`add mediator receipt: ${JSON.stringify(receipt)}`)
 
   await modicumContract
     .connect(adminSigner)
     .setResourceProviderDepositMultiple(BigNumber.from(DEPOSIT_MULTIPLE))
-    .wait()
 
   await bluebird.mapSeries(MODULES, async (moduleName) => {
     const trx = await modicumContract
       .connect(adminSigner)
-      .setModuleCost(moduleName, BigNumber.from(JOB_COST))
+      .setModuleCost(moduleName, ethers.utils.parseEther(`${JOB_COST}`))
     const receipt = await trx.wait()
     console.log(`register module trx: ${JSON.stringify(trx)}`)
     console.log(`register module receipt: ${JSON.stringify(receipt)}`)

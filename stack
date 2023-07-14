@@ -262,6 +262,7 @@ function lilypad-node() {
     -e DEBUG \
     -e PRIVATE_KEY \
     -e BAD_ACTOR \
+    -e MEDIATION_CHANCE_PERCENT \
     -e MEDIATOR_ADDRESSES \
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \

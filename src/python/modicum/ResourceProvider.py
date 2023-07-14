@@ -64,7 +64,7 @@ class ResourceProvider(Mediator):
         if self.idle:
             self.idle = False
             self.logger.info("C: postResOffer = %s" %msg["iroid"])
-            self.logger.info("🔵🔵🔵 post resource offer")
+            self.logger.info("🟠 post resource offer")
             txHash = self.ethclient.contract.functions.postResOffer(
                 msg["instructionPrice"],
                 msg["instructionCap"],
@@ -86,13 +86,10 @@ class ResourceProvider(Mediator):
             return 1
 
     def postDefaultOffer(self):
+        deposit = self.ethclient.contract.functions.getRequiredResourceProviderDeposit().call()
         self.postOffer({"request": "post",
-                        "deposit" : 1,
-                        # it's important this is 1 because it gives us control over the price
-                        # from the number of units used once the job has run by setting the
-                        # cpuTime parameter when we call postResult
-                        "instructionPrice" : 1,
-                        # it's important this is 0 so bandwidth does not affect the price
+                        "deposit" : deposit,
+                        "instructionPrice" : 0,
                         "bandwidthPrice" : 0,
                         "instructionCap" : 15*60*1000, #ms on 1Ghz processor
                         "memoryCap": 100000000,
@@ -121,13 +118,10 @@ class ResourceProvider(Mediator):
     # the resource offer will have given us a cpu cost per instruction of 1
     # so we set the price by controlling the number of units
     def postResult(self, matchID, joid, resultHash):
-        contractStatus = ResultStatus.Declined.value
-        if resultStatus == "Completed":
-            contractStatus = ResultStatus.Completed.value
         self.logger.info("🟢🟢🟢 Posting result: \n%s" % (json.dumps({
           "matchID": matchID,
           "joid": joid,
-          "contractStatus": contractStatus,
+          "contractStatus": ResultStatus.Completed.value,
           "resultHash": resultHash,
         }),))
         txHash = self.ethclient.contract.functions.postResult(

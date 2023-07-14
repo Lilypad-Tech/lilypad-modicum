@@ -237,7 +237,7 @@ class Solver(PlatformClient):
         if(newJobOfferDebugString != self._jobOfferDebugString or newResourceOfferDebugString != self._resourceOfferDebugString):
             self._jobOfferDebugString = newJobOfferDebugString
             self._resourceOfferDebugString = newResourceOfferDebugString
-            self.logger.info("🟢\n#JOs: %s\n#ROs: %s" %(newJobOfferDebugString, newResourceOfferDebugString))
+            self.logger.info("🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢\n#JOs: %s\n#ROs: %s" %(newJobOfferDebugString, newResourceOfferDebugString))
 
         #create edges for each node
         for i in self.job_offers:
