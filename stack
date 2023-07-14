@@ -100,7 +100,6 @@ function deploy-contract() {
 
 function geth-proxy() {
   source ${DIR}/.env
-  docker network ls | grep modicum || docker network create modicum
   docker run -d --restart always \
     --name geth-proxy \
     --net host \
@@ -132,15 +131,13 @@ function geth() {
 
 function faucet-proxy() {
   source ${DIR}/.env
-  docker network ls | grep modicum || docker network create modicum
   docker run -d --restart always \
     --name faucet-proxy \
-    --network host \
-    -p 80:81 \
+    --net host \
     -e "NOXY_PORT=80" \
     -e "NOXY_FAUCET_FRONT=/" \
     -e "NOXY_FAUCET_HOST=localhost " \
-    -e "NOXY_FAUCET_PORT=80" \
+    -e "NOXY_FAUCET_PORT=81" \
     -e "NOXY_FAUCET_BACK=/" \
     quay.io/lilypad/noxy:v0.0.1
 }
@@ -369,6 +366,7 @@ function start() {
   mediator
   resource-provider
   faucet
+  faucet-proxy
   echo "Now run (in separate terminals):"
   echo "./stack logs geth"
   echo "./stack logs solver"
