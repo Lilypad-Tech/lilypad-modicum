@@ -84,6 +84,7 @@ function contract-address() {
 }
 
 function compile-contract() {
+  source ${DIR}/.env
   (
     set -euo pipefail
     cd src/js
@@ -92,7 +93,13 @@ function compile-contract() {
   )
 }
 
+function deploy-contract() {
+  source ${DIR}/.env
+  (cd src/js && npx hardhat deploy --network ${DEPLOYMENT})
+}
+
 function geth() {
+  source ${DIR}/.env
   docker network ls | grep modicum || docker network create modicum
   docker run -d --restart always \
     --name geth \
@@ -109,7 +116,22 @@ function geth() {
       --http.vhosts '*'
 }
 
+function hardhat() {
+  source ${DIR}/.env
+  docker network ls | grep modicum || docker network create modicum
+  docker run -d --restart always \
+    --name geth \
+    --network modicum \
+    -p 8545:8545 \
+    -v $DIR/src/js/deployments:/app/deployments \
+    -v $DIR/src/js/contracts:/app/contracts \
+    -v $DIR/src/js/scripts:/app/scripts \
+    $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port 8545
+}
+
+
 function faucet() {
+  source ${DIR}/.env
   local privateKey=$(echo -n "$PRIVATE_KEY_FAUCET" | sed 's/^0x//')
   docker run -d \
     --name faucet \
@@ -131,6 +153,7 @@ function geth-cli() {
 }
 
 function geth-script() {
+  source ${DIR}/.env
   (
     set -euo pipefail
     cd src/js
@@ -139,33 +162,39 @@ function geth-script() {
 }
 
 function balances() {
+  source ${DIR}/.env
   geth-script scripts/show-balances.js
 }
 
 # move ALL the money apart from 1 eth to the given account
 function fund-admin() {
+  source ${DIR}/.env
   if [[ -z "$ADDRESS_ADMIN" ]]; then
-    echo >&2 "ADDRESS_ADMIN must be set (source .env)"
+    echo >&2 "ADDRESS_ADMIN must be set (source ${DIR}/.env)"
     exit 1
   fi
   geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${ADDRESS_ADMIN}\", value: new web3.BigNumber(eth.getBalance(eth.coinbase)).minus(web3.toWei(1, \"ether\"))  })"
 }
 
 function fund-faucet() {
+  source ${DIR}/.env
   geth-script scripts/fund-faucet.js
 }
 
 function fund-services() {
+  source ${DIR}/.env
   geth-script scripts/fund-services.js
 }
 
 function fund-throwaway() {
+  source ${DIR}/.env
   geth-script scripts/fund-throwaway.js
 }
 
 # this means run ipfs, bacalhau and the modicum resource provider
 # in the same service - it is what nodes will run on their hardware
 function lilypad-node() {
+  source ${DIR}/.env
   if [[ -z "$LILYPAD_NODE_IMAGE" ]]; then
     echo >&2 "LILYPAD_NODE_IMAGE must be set"
     exit 1
@@ -222,6 +251,7 @@ function logs() {
 }
 
 function resource-provider() {
+  source ${DIR}/.env
   LILYPAD_NODE_IMAGE=$IMAGE_RESOURCE_PROVIDER \
   LILYPAD_NODE_NAME=resource-provider \
   CONTAINER_MODE=server \
@@ -231,6 +261,7 @@ function resource-provider() {
 }
 
 function mediator() {
+  source ${DIR}/.env
   LILYPAD_NODE_IMAGE=$IMAGE_MEDIATOR \
   LILYPAD_NODE_NAME=mediator \
   CONTAINER_MODE=server \
@@ -239,6 +270,7 @@ function mediator() {
 }
 
 function solver() {
+  source ${DIR}/.env
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=solver \
   CONTAINER_MODE=server \
@@ -247,6 +279,7 @@ function solver() {
 }
 
 function submitjob() {
+  source ${DIR}/.env
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=submitjob \
   CONTAINER_MODE=cli \
@@ -261,7 +294,7 @@ function reset() {
   sudo rm -rf $DATA_DIRECTORY
   (cd src/js && npm install)
   node src/js/scripts/create-new-accounts.js > .env
-  source .env
+  source ${DIR}/.env
   rm -rf src/js/deployments/localgeth
   (
     set -euo pipefail
@@ -287,11 +320,12 @@ function stop() {
 }
 
 function start() {
+  source ${DIR}/.env
   build
   geth ||true
   echo "Waiting for geth to start"
   sleep 5
-  source .env
+  source ${DIR}/.env
   solver
   sleep 5
   mediator
