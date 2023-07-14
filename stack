@@ -109,6 +109,7 @@ function geth-proxy() {
     -e "NOXY_GETH_HOST=localhost " \
     -e "NOXY_GETH_PORT=8546" \
     -e "NOXY_GETH_BACK=/" \
+    -e "NOXY_GETH_WS=1" \
     quay.io/lilypad/noxy:v0.0.1
 }
 
@@ -140,6 +141,7 @@ function faucet-proxy() {
     -e "NOXY_FAUCET_HOST=localhost " \
     -e "NOXY_FAUCET_PORT=81" \
     -e "NOXY_FAUCET_BACK=/" \
+    -e "NOXY_FAUCET_WS=1" \
     quay.io/lilypad/noxy:v0.0.1
 }
 
