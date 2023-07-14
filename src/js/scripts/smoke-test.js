@@ -21,7 +21,7 @@ async function main() {
   const signerExamples = walletExamples.connect(hre.ethers.provider)
   const trx = await examplesContract
     .connect(signerExamples)
-    .runCowsay('holy cow this is a job', {
+    .runCowsay(`holy cow this is a job ran at timestamp: ${new Date().getTime()}`, {
       value: ethers.utils.parseEther("1"),
     })
   await trx.wait()
