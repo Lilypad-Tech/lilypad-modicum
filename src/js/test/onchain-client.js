@@ -68,28 +68,140 @@ describe("Modicum", async () => {
       await deployContracts()
     })
 
-    describe('constructor', () => {
-      // it('deploys', async () => {
-      //   const template = `apples"oranges`
-      //   const params = `Here's a "thing"`
+    describe('modicum', () => {
+      it('deploys', async () => {
+        const template = `apples"oranges`
+        const params = `Here's a "thing"`
 
-      //   const jobSpec = await examplesContract
-      //     .connect(jobCreatorAccount)
-      //     .getModuleSpec(template, params)
+        const jobSpec = await modicumContract
+          .connect(jobCreatorAccount)
+          .getModuleSpec(template, params)
 
-      //   console.log('--------------------------------------------')
-      //   console.log(jobSpec)
+        console.log('--------------------------------------------')
+        console.log(jobSpec)
 
-      //   const parsedJobSpec = JSON.parse(jobSpec)
+        const parsedJobSpec = JSON.parse(jobSpec)
 
-      //   expect(parsedJobSpec.template).to.equal(template)
-      //   expect(parsedJobSpec.params).to.equal(params)
-      // })
+        expect(parsedJobSpec.template).to.equal(template)
+        expect(parsedJobSpec.params).to.equal(params)
+      })
+
+      it('reverts if we don\'t pay enough or there are no mediators', async () => {
+        const JOB_COST = ethers.utils.parseEther("100")
+        const JOB_COST_NOT_ENOUGH = ethers.utils.parseEther("99")
+        const CID = "i_am_cid"
+
+        await expect(
+          examplesContract
+            .connect(jobCreatorAccount)
+            .runCowsay("holy cow", {
+              value: JOB_COST,
+            })
+        ).to.be.revertedWith('No mediators provided')
+
+        await modicumContract
+          .connect(mediatorAccount)
+          .registerMediator(
+            1, //Architecture arch,
+            0, //instructionPrice
+            0, //bandwidthPrice
+            0, //availabilityValue
+            0  //verificationCount
+          )
+
+        await modicumContract
+          .connect(adminAccount)
+          .setDefaultMediators([
+            mediatorAccount.address,
+          ])
+
+        await expect(
+          examplesContract
+            .connect(jobCreatorAccount)
+            .runCowsay("holy cow", {
+              value: JOB_COST,
+            })
+        ).to.be.revertedWith('Module not found')
+
+        await expect(
+          modicumContract
+            .connect(jobCreatorAccount)
+            .postJobOfferPartOne(
+              'cowsay:v0.0.1',
+              1,
+              1,
+              1,
+              1,
+              1,
+              168933053300,
+              1, {
+                value: JOB_COST,
+              }
+            )
+        ).to.be.revertedWith('Module not found')
+
+        await modicumContract
+          .connect(adminAccount)
+          .setModuleCost('cowsay:v0.0.1', JOB_COST)
+
+        await expect(
+          examplesContract
+            .connect(jobCreatorAccount)
+            .runCowsay("holy cow", {
+              value: JOB_COST_NOT_ENOUGH,
+            })
+        ).to.be.revertedWith('Not enough funds sent for job')
+
+        await expect(
+          modicumContract
+            .connect(jobCreatorAccount)
+            .postJobOfferPartOne(
+              'cowsay:v0.0.1',
+              1,
+              1,
+              1,
+              1,
+              1,
+              168933053300,
+              1, {
+                value: JOB_COST_NOT_ENOUGH,
+              }
+            )
+        ).to.be.revertedWith('Not enough funds sent for job')
+
+        await expect(
+          examplesContract
+            .connect(jobCreatorAccount)
+            .runCowsay("holy cow", {
+              value: JOB_COST,
+            })
+        ).to.not.be.reverted
+
+        await expect(
+          modicumContract
+            .connect(jobCreatorAccount)
+            .postJobOfferPartOne(
+              'cowsay:v0.0.1',
+              1,
+              1,
+              1,
+              1,
+              1,
+              168933053300,
+              1, {
+                value: JOB_COST,
+              }
+            )
+        ).to.not.be.reverted
+      })
 
       it('runs a job', async () => {
-
         const JOB_COST = ethers.utils.parseEther("100")
         const CID = "i_am_cid"
+
+        await modicumContract
+          .connect(adminAccount)
+          .setModuleCost('cowsay:v0.0.1', JOB_COST)
 
         await modicumContract
           .connect(mediatorAccount)
@@ -200,13 +312,13 @@ describe("Modicum", async () => {
 
         console.dir({
           resourceProviderBalanceBefore: resourceProviderBalanceBefore,
-          jobCreatorBalanceBefore: jobCreatorBalanceBefore,
           resourceProviderBalanceAfter: resourceProviderBalanceAfter,
+          jobCreatorBalanceBefore: jobCreatorBalanceBefore,
           jobCreatorBalanceAfter: jobCreatorBalanceAfter,
         })
 
-        expect(jobCreatorBalanceAfter).to.equal(9900)
-        expect(resourceProviderBalanceAfter).to.equal(10100)
+        expect(jobCreatorBalanceAfter).to.equal(jobCreatorBalanceBefore - 100)
+        expect(resourceProviderBalanceAfter).to.equal(resourceProviderBalanceBefore + 100)
       })
     })
   })

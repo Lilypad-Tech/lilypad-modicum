@@ -507,6 +507,7 @@ contract Modicum {
     }
 
     function _runModule(string calldata moduleName, string calldata params, address[] memory _mediators) private returns (uint256) {
+      require(_mediators.length > 0, "No mediators provided");
       // * register job creator address
       // * auto-assign jobid
       // * record against the jobid, the calling address (so we can send results there)
