@@ -233,6 +233,9 @@ describe("Modicum", async () => {
         const DEPOSIT_MULTIPLE = ethers.BigNumber.from("10")
         const CID = "i_am_cid"
 
+        const resourceProviderBalanceBefore = await getBalance(resourceProviderAccount.address)
+        const jobCreatorBalanceBefore = await getBalance(jobCreatorAccount.address)
+
         await modicumContract
           .connect(adminAccount)
           .setModuleCost('cowsay:v0.0.1', JOB_COST)
@@ -284,8 +287,7 @@ describe("Modicum", async () => {
 
         const resourceOfferId = resourceOfferEvent.args.offerId
 
-        const resourceProviderBalanceBefore = await getBalance(resourceProviderAccount.address)
-        const jobCreatorBalanceBefore = await getBalance(jobCreatorAccount.address)
+        
 
         const runCowsayTrx = await examplesContract
           .connect(jobCreatorAccount)

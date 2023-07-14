@@ -998,13 +998,11 @@ contract Modicum {
 
         JobResult memory r = results[matchToResult[matchId]];
         ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer];
-        // JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer];
+        JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer];
         // address m = matches[matchId].mediator;
 
         //require(isMatchClosed[matchId] == false, "This match is already closed.");
         isMatchClosed[matchId] = true;
-
-        
 
         uint256 cost = r.instructionCount;
 
