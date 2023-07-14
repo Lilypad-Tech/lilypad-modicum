@@ -119,7 +119,7 @@ class ResourceProvider(Mediator):
     # we are using cpuTime as the way to actually price the job
     # the resource offer will have given us a cpu cost per instruction of 1
     # so we set the price by controlling the number of units
-    def postResult(self, matchID, joid, resultStatus, uri, resultHash, cpuTime, bandwidthUsage):
+    def postResult(self, matchID, joid, resultHash):
         contractStatus = ResultStatus.Declined.value
         if resultStatus == "Completed":
             contractStatus = ResultStatus.Completed.value
@@ -129,7 +129,15 @@ class ResourceProvider(Mediator):
           "contractStatus": contractStatus,
           "resultHash": resultHash,
         }),))
-        txHash = self.ethclient.contract.functions.postResult(matchID, joid, contractStatus, uri, resultHash, cpuTime, bandwidthUsage).transact({
+        txHash = self.ethclient.contract.functions.postResult(
+          matchID,
+          joid,
+          ResultStatus.Completed.value,
+          "",
+          resultHash,
+          0,
+          0
+        ).transact({
             "from": self.account,
         })
 
@@ -261,7 +269,10 @@ class ResourceProvider(Mediator):
 
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "RP" + str(self.index)},
                                           seriesname="state", value=2)
-                    ResultStatus = self.getJob(matchID, JO, True)
+                    resultHash = self.getJob(matchID, JO, True)
+
+                    self.postResult(matchID, JO.offerId, resultHash)
+
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "RP" + str(self.index)},
                                           seriesname="state", value=1)
 

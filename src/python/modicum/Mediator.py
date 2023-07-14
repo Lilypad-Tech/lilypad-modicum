@@ -16,8 +16,7 @@ import json
 import datetime
 import tempfile
 import yaml
-
-
+from .Enums import ResultStatus, Verdict, Party
 
 class Mediator(PlatformClient):
     def __init__(self, index,sim):
@@ -103,82 +102,70 @@ class Mediator(PlatformClient):
                 yaml.dump(bacalhauJobSpec, f)
                 f.close()
 
-                # RUN BACALHAU JOB AND GET THE ID
-                result = subprocess.run(['bacalhau', 'create', '--wait', '--id-only', tmpfile], text=True, capture_output=True)
-                jobID = result.stdout.strip()
+        # RUN BACALHAU JOB AND GET THE ID
+        result = subprocess.run(['bacalhau', 'create', '--wait', '--id-only', tmpfile], text=True, capture_output=True)
+        jobID = result.stdout.strip()
 
-                # extrac the CID of the result to report back
-                listOutput = subprocess.run(['bacalhau', 'list', '--output', 'json', '--id-filter', jobID], text=True, capture_output=True)
+        # extrac the CID of the result to report back
+        listOutput = subprocess.run(['bacalhau', 'list', '--output', 'json', '--id-filter', jobID], text=True, capture_output=True)
 
-                # load the listOutput string as a JSON object
-                listOutputJSON = json.loads(listOutput.stdout)
+        # load the listOutput string as a JSON object
+        listOutputJSON = json.loads(listOutput.stdout)
 
-                resultHash = listOutputJSON[0]['State']['Executions'][0]['PublishedResults']['CID']
-                resultStatus = listOutputJSON[0]['State']['Executions'][0]['State']
+        resultHash = listOutputJSON[0]['State']['Executions'][0]['PublishedResults']['CID']
+        resultStatus = listOutputJSON[0]['State']['Executions'][0]['State']
 
-                print(textwrap.dedent(f"""
-                ---------------------------------------------------------------------------------------
-                ---------------------------------------------------------------------------------------
-                ---------------------------------------------------------------------------------------
+        print(textwrap.dedent(f"""
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
 
-                {open(tmpfile).read()}
+        {open(tmpfile).read()}
 
-                https://dashboard.bacalhau.org/jobs/{jobID}
+        https://dashboard.bacalhau.org/jobs/{jobID}
 
-                Get stdout, status:
-                docker exec -ti resource-provider bacalhau describe {jobID}
+        Get stdout, status:
+        docker exec -ti resource-provider bacalhau describe {jobID}
 
-                Download results CID from IPFS:
-                docker exec -ti resource-provider bacalhau get {jobID}
+        Download results CID from IPFS:
+        docker exec -ti resource-provider bacalhau get {jobID}
 
-                ---------------------------------------------------------------------------------------
-                ---------------------------------------------------------------------------------------
-                ---------------------------------------------------------------------------------------
-                """))
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
+        """))
 
-                describe = subprocess.run(['bacalhau', 'describe', jobID], text=True, capture_output=True).stdout
-                print(textwrap.dedent(f"""
-                ---------------------------------------------------------------------------------------
-                ---------------------------------------------------------------------------------------
-                ---------------------------------------------------------------------------------------
+        describe = subprocess.run(['bacalhau', 'describe', jobID], text=True, capture_output=True).stdout
+        print(textwrap.dedent(f"""
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
 
-                {describe}
+        {describe}
 
-                ---------------------------------------------------------------------------------------
-                ---------------------------------------------------------------------------------------
-                ---------------------------------------------------------------------------------------
-                """))
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
+        """))
 
-                self.postResult(matchID, JO.offerId, resultStatus, urix, resultHash, cpuTime, 0)
+        return resultHash
+
+        # self.postResult(matchID, JO.offerId, resultStatus, urix, resultHash, cpuTime, 0)
                 
-    def postResult(self, matchID, joid, resultStatus, uri, resultHash, cpuTime, bandwidthUsage):
-        contractStatus = 1
-        if resultStatus!="Completed":
-            if self.account:
-                self.logger.info("N: postMediationResult: %s, JC at fault = %s" %(endStatus,uri))
-                reason = 'InvalidResultStatus'
-                faultyParty = 'JobCreator'
-        else :
-            if self.myMatches[matchID]['resHash'] == resultHash:
-                self.logger.info("N: postMediationResult: %s, JC at fault = %s" %(endStatus,uri))
-                reason = 'CorrectResults'
-                faultyParty = 'JobCreator'
-                contractStatus = 0
-            else:
-                self.logger.info("N: postMediationResult: %s, RP at fault = %s" %(endStatus,uri))
-                reason = 'WrongResults'
-                faultyParty = 'ResourceProvider'
-                
+    def postResult(self, matchID, joid, resultHash):
+        reason = Verdict.WrongResults.value
+        if self.myMatches[matchID]['resHash'] == resultHash:
+            reason = Verdict.CorrectResults.value
         txHash = self.ethclient.contract.functions.postMediationResult(
           matchID,
           joid,
-          contractStatus, 
-          uri,
+          ResultStatus.Completed.value, 
+          "",
           resultHash,
-          cpuTime,
+          0,
           0, 
           reason,
-          faultyParty
+          Party.ResourceProvider.value
         ).transact({
             "from": self.account,
         })
@@ -267,7 +254,10 @@ class Mediator(PlatformClient):
 
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "M" + str(self.index)},
                                           seriesname="state", value=2)
-                    self.getJob(matchID, JO, True)
+                    resultHash = self.getJob(matchID, JO, True)
+
+                    self.postResult(matchID, JO.offerId, resultHash)
+
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "M" + str(self.index)},
                                           seriesname="state", value=1)
 
