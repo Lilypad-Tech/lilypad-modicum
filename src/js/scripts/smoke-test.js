@@ -21,19 +21,16 @@ async function main() {
   const signerExamples = walletExamples.connect(hre.ethers.provider)
   const trx = await examplesContract
     .connect(signerExamples)
-    .runCowsay('holy cow', {
+    .runCowsay('holy cow this is a job', {
       value: ethers.utils.parseEther("1"),
     })
-  const receipt = await trx.wait()
-
-  
-
-
-
-
-
-  console.log(`trx2: ${JSON.stringify(trx2)}`)
-  console.log(`receipt2: ${JSON.stringify(receipt2)}`)
+  await trx.wait()
+  examplesContract.on('ReceivedJobResults', (jobID, cid) => {
+    console.log(`jobID: ${jobID}`)
+    console.log(`results CID: ${cid}`)
+    console.log(`https://ipfs.io/ipfs/${cid}`)
+    process.exit(0)
+  })
 }
 
 main().catch((error) => {
