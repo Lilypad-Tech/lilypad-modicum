@@ -1,6 +1,25 @@
+const hre = require('hardhat')
+const bluebird = require('bluebird')
+
+const {
+  ethers: {
+    BigNumber,
+  }
+} = hre
+
 const {
   getWallet,
 } = require('../accounts')
+
+const DEPOSIT_MULTIPLE = 10
+const JOB_COST = 1
+
+const MODULES = [
+  'stable_diffusion:v0.0.1',
+  'cowsay:v0.0.1',
+  'filecoin_data_prep:v0.0.1',
+  'deterministic_wasm:v0.0.1',
+]
 
 module.exports = async ({getNamedAccounts, deployments}) => {
   const {deploy} = deployments
@@ -22,7 +41,6 @@ module.exports = async ({getNamedAccounts, deployments}) => {
   const adminWallet = getWallet('admin')
   const mediatorAccount = getWallet('mediator')
   const adminSigner = adminWallet.connect(hre.ethers.provider)
-
   const trx = await modicumContract
     .connect(adminSigner)
     .setDefaultMediators([
@@ -31,5 +49,19 @@ module.exports = async ({getNamedAccounts, deployments}) => {
   const receipt = await trx.wait()
   console.log(`add mediator trx: ${JSON.stringify(trx)}`)
   console.log(`add mediator receipt: ${JSON.stringify(receipt)}`)
+
+  await modicumContract
+    .connect(adminSigner)
+    .setResourceProviderDepositMultiple(BigNumber.from(DEPOSIT_MULTIPLE))
+    .wait()
+
+  await bluebird.mapSeries(MODULES, async (moduleName) => {
+    const trx = await modicumContract
+      .connect(adminSigner)
+      .setModuleCost(moduleName, BigNumber.from(JOB_COST))
+    const receipt = await trx.wait()
+    console.log(`register module trx: ${JSON.stringify(trx)}`)
+    console.log(`register module receipt: ${JSON.stringify(receipt)}`)
+  })
 };
 module.exports.tags = ['Modicum'];

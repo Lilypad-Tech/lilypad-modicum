@@ -294,15 +294,15 @@ contract Modicum {
       defaultMediators = _defaultMediators;
     }
 
+    function setResourceProviderDepositMultiple(uint256 multiple) public administrative {
+      resourceProviderDepositMultiple = multiple;
+    }
+
     function setModuleCost(string calldata name, uint256 cost) public administrative {
       moduleCosts[name] = cost;
       if(!stringExists(name, moduleNames)) {
         moduleNames.push(name);
       }
-    }
-
-    function setResourceProviderDepositMultiple(uint256 multiple) public administrative {
-      resourceProviderDepositMultiple = multiple;
     }
 
     function getModuleCost(string calldata name) public view returns (uint256) {

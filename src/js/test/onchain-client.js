@@ -230,11 +230,16 @@ describe("Modicum", async () => {
 
       it('runs a job', async () => {
         const JOB_COST = ethers.utils.parseEther("100")
+        const DEPOSIT_MULTIPLE = ethers.BigNumber.from("10")
         const CID = "i_am_cid"
 
         await modicumContract
           .connect(adminAccount)
           .setModuleCost('cowsay:v0.0.1', JOB_COST)
+
+        await modicumContract
+          .connect(adminAccount)
+          .setResourceProviderDepositMultiple(DEPOSIT_MULTIPLE)
 
         await modicumContract
           .connect(mediatorAccount)
@@ -261,7 +266,9 @@ describe("Modicum", async () => {
 
         const postResourceOfferTrx = await modicumContract
           .connect(resourceProviderAccount)
-          .postResOffer(0,0,0,0,0,0,0,0,0,)
+          .postResOffer(0,0,0,0,0,0,0,0,0,{
+            value: JOB_COST.mul(DEPOSIT_MULTIPLE),
+          })
 
         const postResourceOfferReceipt = await postResourceOfferTrx.wait();
         let resourceOfferEvent
