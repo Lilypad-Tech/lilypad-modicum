@@ -499,7 +499,7 @@ class JobCreator(PlatformClient):
           "uri":1,
           "directory":"0xc590dd7eed9f093d88d2f3c894b769c746bc8c9b",
           "hash":66153838227408534191608590763201001504128600065912625980963590518282769258064,
-          "arch":"armv7"
+          "arch":"amd64"
         }
 
         # self.logger.info("cpuTime: %s Type: %s" %(msg["cpuTime"],type(msg["cpuTime"])))
@@ -577,7 +577,7 @@ class JobCreator(PlatformClient):
 #  1,
 #  '0xc590dd7eed9f093d88d2f3c894b769c746bc8c9b',
 #  66153838227408534191608590763201001504128600065912625980963590518282769258064,
-#  'armv7',
+#  'amd64',
 #  '{"template": "stable-diffusion", "params": ""}')
 
 

@@ -513,12 +513,12 @@ contract Modicum {
       
       uint256 jobID = postJobOfferPartOne(
         internalRunModuleIncrementingID,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
+        1,
+        1,
+        1,
+        1,
+        168933053300,
+        1
       );
       postJobOfferPartTwo(
         internalRunModuleIncrementingID,
@@ -822,8 +822,6 @@ contract Modicum {
 
         if(runModuleJobOwners[jobOfferId] != address(0)) {
           ClientCallingContract(runModuleJobOwners[jobOfferId]).receiveJobResults(jobOfferId, hash);
-          // TODO: the client contract should decide if they accept the result or not
-          // this is just a demo - so we accept all results
           close(matchId);
         }
 

@@ -93,6 +93,11 @@ function compile-contract() {
   )
 }
 
+function deploy-contract() {
+  source ${DIR}/.env
+  (cd src/js && npx hardhat deploy --network ${DEPLOYMENT})
+}
+
 function geth() {
   source ${DIR}/.env
   docker network ls | grep modicum || docker network create modicum
