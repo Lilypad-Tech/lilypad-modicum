@@ -107,7 +107,7 @@ class Solver(PlatformClient):
 
         #JO.arch = RP.arch
         if self.resource_providers[resource_offer.resourceProvider].arch != job_offer.arch:
-            self.logger.info("Architecture mismatch")
+            self.logger.info(f"Architecture mismatch (RP={self.resource_providers[resource_offer.resourceProvider].arch}, JO={job_offer.arch})")
             return(False, False)
 
 

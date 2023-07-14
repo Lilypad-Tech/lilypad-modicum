@@ -118,6 +118,7 @@ function geth-proxy() {
     -e "NOXY_GETH_HOST=localhost " \
     -e "NOXY_GETH_PORT=8546" \
     -e "NOXY_GETH_BACK=/" \
+    -e "NOXY_GETH_WS=1" \
     quay.io/lilypad/noxy:v0.0.1
 }
 
@@ -149,6 +150,7 @@ function faucet-proxy() {
     -e "NOXY_FAUCET_HOST=localhost " \
     -e "NOXY_FAUCET_PORT=81" \
     -e "NOXY_FAUCET_BACK=/" \
+    -e "NOXY_FAUCET_WS=1" \
     quay.io/lilypad/noxy:v0.0.1
 }
 
@@ -359,7 +361,9 @@ function reset() {
 function stop() {
   docker stop geth || true
   sleep 5
-  docker rm -f $(docker ps -aq)
+  # Don't kill other containers that someone else started in production, e.g.
+  # datadog logging agent
+  docker rm -f faucet-proxy faucet resource-provider mediator solver geth-proxy geth
 }
 
 function start() {
