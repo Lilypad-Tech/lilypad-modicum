@@ -565,7 +565,7 @@ class JobCreator(PlatformClient):
             "arf",
             Web3.to_checksum_address(msg['directory']),
             Web3.to_int(msg['hash']),
-            Web3.to_int(1),
+            Web3.to_int(0),
             jsonData,
         ).transact({
           "from": self.account,
