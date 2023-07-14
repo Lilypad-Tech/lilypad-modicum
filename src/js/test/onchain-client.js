@@ -362,6 +362,237 @@ describe("Modicum", async () => {
         expect(jobCreatorBalanceAfter).to.equal(jobCreatorBalanceBefore - 100)
         expect(resourceProviderBalanceAfter).to.equal(resourceProviderBalanceBefore + 100)
       })
+
+      context('verification', () => {
+
+        const JOB_COST = ethers.utils.parseEther("100")
+        const DEPOSIT_MULTIPLE = ethers.BigNumber.from("10")
+        const CID = "i_am_cid"
+        let resourceOfferId
+        let jobOfferId
+        let resultId
+        let matchId
+
+        const setupVerificationTest = async () => {
+          await modicumContract
+            .connect(adminAccount)
+            .setModuleCost('cowsay:v0.0.1', JOB_COST)
+
+          await modicumContract
+            .connect(adminAccount)
+            .setResourceProviderDepositMultiple(DEPOSIT_MULTIPLE)
+
+          await modicumContract
+            .connect(mediatorAccount)
+            .registerMediator(
+              1, //Architecture arch,
+              0, //instructionPrice
+              0, //bandwidthPrice
+              0, //availabilityValue
+              0  //verificationCount
+            )
+
+          await modicumContract
+            .connect(adminAccount)
+            .setDefaultMediators([
+              mediatorAccount.address,
+            ])
+
+          await modicumContract
+            .connect(resourceProviderAccount)
+            .registerResourceProvider(
+              1, //Architecture arch,
+              0, //timePerInstruction
+            )
+
+          const postResourceOfferTrx = await modicumContract
+            .connect(resourceProviderAccount)
+            .postResOffer(0,0,0,0,0,0,0,0,0,{
+              value: JOB_COST.mul(DEPOSIT_MULTIPLE),
+            })
+
+          const postResourceOfferReceipt = await postResourceOfferTrx.wait();
+          let resourceOfferEvent
+
+          for (let i = 0; i < postResourceOfferReceipt.logs.length; i++) {
+            const parsedLog = modicumContract.interface.parseLog(postResourceOfferReceipt.logs[i])
+            if(parsedLog.name == 'ResourceOfferPosted') {
+              resourceOfferEvent = parsedLog
+            }
+          }
+
+          expect(resourceOfferEvent).to.not.be.undefined
+
+          resourceOfferId = resourceOfferEvent.args.offerId
+
+          await modicumContract
+            .connect(jobCreatorAccount)
+            .registerJobCreator()
+
+          await modicumContract
+            .connect(jobCreatorAccount)
+            .jobCreatorAddTrustedMediator(mediatorAccount.address)
+
+          await modicumContract
+            .connect(jobCreatorAccount)
+            .postJobOfferPartOne(
+              'cowsay:v0.0.1',
+              1,
+              1,
+              1,
+              1,
+              1,
+              168933053300,
+              1,
+              {
+                value: JOB_COST,
+              }
+            )
+
+          const runCowsayTrx = await modicumContract
+            .connect(jobCreatorAccount)
+            .postJobOfferPartTwo(
+              1,
+              "",
+              jobCreatorAccount.address,
+              0,
+              0,
+              `{"template":"cowsay:v0.0.1","params":"holy cow"}`,
+          )
+
+          const runCowsayReceipt = await runCowsayTrx.wait();
+          let runCowsayEvent
+
+          for (let i = 0; i < runCowsayReceipt.logs.length; i++) {
+            const parsedLog = modicumContract.interface.parseLog(runCowsayReceipt.logs[i])
+            if(parsedLog.name == 'JobOfferPostedPartTwo') {
+              runCowsayEvent = parsedLog
+            }
+          }
+
+          expect(runCowsayEvent).to.not.be.undefined
+
+          jobOfferId = runCowsayEvent.args.offerId
+
+          await modicumContract
+            .connect(solverAccount)
+            .postMatch(
+              jobOfferId,
+              resourceOfferId,
+              mediatorAccount.address, 
+            )
+
+          const postResultTrx = await modicumContract
+            .connect(resourceProviderAccount)
+            .postResult(
+              0,
+              jobOfferId,
+              0,
+              "",
+              CID,
+              JOB_COST,
+              0,
+            )
+
+          const postResultReceipt = await postResultTrx.wait();
+          let postResultEvent
+
+          for (let i = 0; i < postResultReceipt.logs.length; i++) {
+            const parsedLog = modicumContract.interface.parseLog(postResultReceipt.logs[i])
+            if(parsedLog.name == 'ResultPosted') {
+              postResultEvent = parsedLog
+            }
+          }
+
+          expect(postResultEvent).to.not.be.undefined
+
+          resultId = postResultEvent.args.resultId
+          
+          const rejectTrx = await modicumContract
+            .connect(jobCreatorAccount)
+            .rejectResult(
+              resultId,
+            )
+
+          const rejectReceipt = await rejectTrx.wait();
+          let rejectEvent
+
+          for (let i = 0; i < rejectReceipt.logs.length; i++) {
+            const parsedLog = modicumContract.interface.parseLog(rejectReceipt.logs[i])
+            if(parsedLog.name == 'JobAssignedForMediation') {
+              rejectEvent = parsedLog
+            }
+          }
+
+          expect(rejectEvent).to.not.be.undefined
+
+          matchId = rejectEvent.args.matchId
+        }
+
+        it('handles verification for a bad actor', async () => {
+          const resourceProviderBalanceBefore = await getBalance(resourceProviderAccount.address)
+          const jobCreatorBalanceBefore = await getBalance(jobCreatorAccount.address)
+
+          await setupVerificationTest()
+
+          await modicumContract
+            .connect(mediatorAccount)
+            .postMediationResult(
+              matchId,
+              jobOfferId,
+              0, // ResultStatus = Completed
+              "",
+              "567",
+              2, // Verdict = WrongResults,
+              0, // Party = ResourceProvider
+            )
+
+            const resourceProviderBalanceAfter = await getBalance(resourceProviderAccount.address)
+            const jobCreatorBalanceAfter = await getBalance(jobCreatorAccount.address)
+
+            console.dir({
+              resourceProviderBalanceBefore: resourceProviderBalanceBefore,
+              resourceProviderBalanceAfter: resourceProviderBalanceAfter,
+              jobCreatorBalanceBefore: jobCreatorBalanceBefore,
+              jobCreatorBalanceAfter: jobCreatorBalanceAfter,
+            })
+
+            expect(jobCreatorBalanceAfter).to.equal(jobCreatorBalanceBefore)
+            expect(resourceProviderBalanceAfter).to.equal(resourceProviderBalanceBefore - (100 * 10))
+        })
+
+        it('handles verification for a good actor', async () => {
+          const resourceProviderBalanceBefore = await getBalance(resourceProviderAccount.address)
+          const jobCreatorBalanceBefore = await getBalance(jobCreatorAccount.address)
+
+          await setupVerificationTest()
+
+          await modicumContract
+            .connect(mediatorAccount)
+            .postMediationResult(
+              matchId,
+              jobOfferId,
+              0, // ResultStatus = Completed
+              "",
+              "567",
+              3, // Verdict = CorrectResults,
+              0, // Party = ResourceProvider
+            )
+
+            const resourceProviderBalanceAfter = await getBalance(resourceProviderAccount.address)
+            const jobCreatorBalanceAfter = await getBalance(jobCreatorAccount.address)
+
+            console.dir({
+              resourceProviderBalanceBefore: resourceProviderBalanceBefore,
+              resourceProviderBalanceAfter: resourceProviderBalanceAfter,
+              jobCreatorBalanceBefore: jobCreatorBalanceBefore,
+              jobCreatorBalanceAfter: jobCreatorBalanceAfter,
+            })
+
+            expect(jobCreatorBalanceAfter).to.equal(jobCreatorBalanceBefore - 100)
+            expect(resourceProviderBalanceAfter).to.equal(resourceProviderBalanceBefore + 100)
+        })
+      })
     })
   })
   

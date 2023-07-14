@@ -874,15 +874,7 @@ contract Modicum {
         return index;
     }
 
-    function rejectResult(uint256 resultId, uint256 jobOfferId) public {
-        require(jobOfferId >= 0);
-        // require(jobOffersPartOne[matches[results[resultId].matchId].jobOffer].jobCreator == msg.sender,
-        //     "You cannot reject a result which is not yours.");
-        // require(results[resultId].reacted == Reaction.None,
-        //     "You have already reacted to this result");
-        // require(isMatchClosed[results[resultId].matchId] == false,
-        //     "This match is already closed.");
-
+    function rejectResult(uint256 resultId) public {
         results[resultId].reacted = Reaction.Rejected;
         mediationRequested[results[resultId].matchId] = true;
 
@@ -893,16 +885,7 @@ contract Modicum {
         emit JobAssignedForMediation(msg.sender, results[resultId].matchId);
     }
 
-    function acceptResult(uint256 resultId, uint256 jobOfferId) public returns (uint256) {
-        require(jobOfferId >= 0);
-        //require(jobOffers[matches[results[resultId].matchId].jobOffer].jobCreator == msg.sender ||
-        //    (resourceOffers[matches[results[resultId].matchId].resourceOffer].resProvider == msg.sender && results[resultId].timestamp + reactionDeadline > now),
-        //    "You cannot reject a result which is not yours or deadline has not been missed yet.");
-        //require(results[resultId].reacted == Reaction.None,
-        //    "You have already reacted to this result");
-        //require(isMatchClosed[results[resultId].matchId] == false,
-        //    "This match is already closed.");
-
+    function acceptResult(uint256 resultId) public returns (uint256) {
         results[resultId].reacted = Reaction.Accepted;
 
         emit ResultReaction(msg.sender, resultId,results[resultId].matchId,  0);
@@ -910,7 +893,6 @@ contract Modicum {
         emit DebugString("result accepted");
 
         return close(results[resultId].matchId);
-
     }
 
     function postMediationResult(
@@ -921,18 +903,11 @@ contract Modicum {
 
         string calldata hash,
 
-        // TODO: consider putting these back in
-        // uint256 instructionCount,
-        // uint256 bandwidthUsage,
-
         Verdict verdict,
         Party faultyParty
     ) public returns (Party) {
         require(jobOfferId >= 0);
-        // require(matches[matchId].mediator == msg.sender, "You are not this job's mediator");
-        // require(mediationRequested[matchId] == true, "JC did not request mediation for this match.");
-        // require(mediated[matchId] == false, "You have already mediated this match.");
-
+        JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer];
         mediated[matchId] = true;
 
         mediatorResults.push(MediatorResult({
@@ -946,63 +921,35 @@ contract Modicum {
           faultyParty: faultyParty
         }));
 
-        // uint256 cost = (instructionCount * mediators[msg.sender].instructionPrice +
-        //                 bandwidthUsage * mediators[msg.sender].bandwidthPrice) *
-        //                 resourceOffers[matches[matchId].resourceOffer].verificationCount;
+        emit MediationResultPosted(matchId, msg.sender, mediatorResults.length - 1, faultyParty, verdict, status, uri, hash, 0, jo.instructionMaxPrice);
 
-        uint256 cost = 0;
-
-
-        // emit MediationResultPosted( index, faultyParty, verdict, matchId,
-        //                             status, uri, hash, instructionCount, bandwidthUsage, cost);
-
-        emit MediationResultPosted(matchId, msg.sender, mediatorResults.length - 1, faultyParty, verdict, status, uri, hash, 0, cost);
-
-        punish(matchId, faultyParty);
-        //msg.sender.transfer(cost);
-        //emit EtherTransferred(address(this), msg.sender, cost, EtherTransferCause.Mediation);
-        emit MatchClosed(matchId, 0);
+        if(verdict == Verdict.WrongResults) {
+          punishResourceProvider(matchId);
+        } else {
+          close(matchId);
+        }
+        
         return faultyParty;
     }
 
-    function punish(uint256 matchId, Party faultyParty) private {
-        // require(isMatchClosed[matchId] == false, "This match is already closed.");
-        isMatchClosed[matchId] = true;
-
-        ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer];
-        JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer];
-
-        uint256 roDeposit = ro.depositValue;
-        uint256 joDeposit = jo.depositValue;
-
-        jo.depositValue = 0;
-        ro.depositValue = 0;
-
-        uint256 joValue = jo.bandwidthLimit * jo.bandwidthMaxPrice + jo.instructionLimit * jo.instructionMaxPrice;
-        uint256 roValue = ro.bandwidthCap * ro.bandwidthPrice + ro.instructionCap * ro.instructionPrice;
-
-        if (faultyParty == Party.JobCreator) {
-
-            //address(uint160(ro.resProvider)).transfer(roDeposit + roValue);
-            emit EtherTransferred(address(this), ro.resProvider, roDeposit + roValue, EtherTransferCause.Punishment);
-
-        } else if (faultyParty == Party.ResourceProvider) {
-
-            //address(uint160(jo.jobCreator)).transfer(joDeposit + joValue);
-            emit EtherTransferred(address(this), jo.jobCreator, joDeposit + joValue, EtherTransferCause.Punishment);
-        }
+    function punishResourceProvider(uint256 matchId) private returns (uint256)  {
+      require(isMatchClosed[matchId] == false, "This match is already closed.");
+      JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer];
+      isMatchClosed[matchId] = true;
+      payable(address(jo.jobCreator)).transfer(jo.depositValue);
+      emit MatchClosed(matchId, jo.instructionMaxPrice);
+      emit EtherTransferred(address(this), jo.jobCreator, jo.depositValue, EtherTransferCause.Mediation);
+      return jo.instructionMaxPrice;
     }
 
     function close(uint256 matchId) private returns (uint256) {
-        ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer];
-        JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer];
-        isMatchClosed[matchId] = true;
-
-        payable(address(ro.resProvider)).transfer(ro.depositValue + jo.instructionMaxPrice);
-
-        emit MatchClosed(matchId, jo.instructionMaxPrice);
-        emit EtherTransferred(address(this), ro.resProvider, ro.depositValue + jo.instructionMaxPrice, EtherTransferCause.FinishingJob);
-
-        return jo.instructionMaxPrice;
+      require(isMatchClosed[matchId] == false, "This match is already closed.");
+      ResourceOffer memory ro = resourceOffers[matches[matchId].resourceOffer];
+      JobOfferPartOne memory jo = jobOffersPartOne[matches[matchId].jobOffer];
+      isMatchClosed[matchId] = true;
+      payable(address(ro.resProvider)).transfer(ro.depositValue + jo.instructionMaxPrice);
+      emit MatchClosed(matchId, jo.instructionMaxPrice);
+      emit EtherTransferred(address(this), ro.resProvider, ro.depositValue + jo.instructionMaxPrice, EtherTransferCause.FinishingJob);
+      return jo.instructionMaxPrice;
     }
 }
