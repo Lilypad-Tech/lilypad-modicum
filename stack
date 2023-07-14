@@ -350,7 +350,9 @@ function reset() {
 function stop() {
   docker stop geth || true
   sleep 5
-  docker rm -f $(docker ps -aq)
+  # Don't kill other containers that someone else started in production, e.g.
+  # datadog logging agent
+  docker rm -f faucet-proxy faucet resource-provider mediator solver geth-proxy geth
 }
 
 function start() {
