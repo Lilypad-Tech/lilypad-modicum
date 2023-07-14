@@ -272,6 +272,7 @@ function reset() {
   set -x
   docker rm -f $(docker ps -aq) ||true
   sudo rm -rf $DATA_DIRECTORY
+  (cd src/js && npm install)
   node src/js/scripts/create-new-accounts.js > .env
   source .env
   rm -rf src/js/deployments/localgeth
