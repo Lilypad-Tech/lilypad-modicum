@@ -17,9 +17,6 @@ def get_bacalhau_jobspec(template_name, params):
     """
     return modules[template_name](params)
 
-def get_bacalhau_jobprice(template_name):
-    return Web3.to_wei(modules[template_name].price, 'ether')
-
 modules = {
     "stable_diffusion:v0.0.1": _stable_diffusion,
     "cowsay:v0.0.1": _cowsay,

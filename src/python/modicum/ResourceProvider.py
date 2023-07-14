@@ -14,6 +14,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from . import helper
 import datetime
 from .Enums import ResultStatus
+import os
 
 class ResourceProvider(Mediator):
     def __init__(self, index=0, sim=False):
@@ -63,7 +64,7 @@ class ResourceProvider(Mediator):
         if self.idle:
             self.idle = False
             self.logger.info("C: postResOffer = %s" %msg["iroid"])
-            self.logger.info("🔵🔵🔵 post resource offer")
+            self.logger.info("🟠 post resource offer")
             txHash = self.ethclient.contract.functions.postResOffer(
                 msg["instructionPrice"],
                 msg["instructionCap"],
@@ -85,13 +86,10 @@ class ResourceProvider(Mediator):
             return 1
 
     def postDefaultOffer(self):
+        deposit = self.ethclient.contract.functions.getRequiredResourceProviderDeposit().call()
         self.postOffer({"request": "post",
-                        "deposit" : 1,
-                        # it's important this is 1 because it gives us control over the price
-                        # from the number of units used once the job has run by setting the
-                        # cpuTime parameter when we call postResult
-                        "instructionPrice" : 1,
-                        # it's important this is 0 so bandwidth does not affect the price
+                        "deposit" : deposit,
+                        "instructionPrice" : 0,
                         "bandwidthPrice" : 0,
                         "instructionCap" : 15*60*1000, #ms on 1Ghz processor
                         "memoryCap": 100000000,
@@ -119,17 +117,22 @@ class ResourceProvider(Mediator):
     # we are using cpuTime as the way to actually price the job
     # the resource offer will have given us a cpu cost per instruction of 1
     # so we set the price by controlling the number of units
-    def postResult(self, matchID, joid, resultStatus, uri, resultHash, cpuTime, bandwidthUsage):
-        contractStatus = ResultStatus.Declined.value
-        if resultStatus == "Completed":
-            contractStatus = ResultStatus.Completed.value
+    def postResult(self, matchID, joid, resultHash):
         self.logger.info("🟢🟢🟢 Posting result: \n%s" % (json.dumps({
           "matchID": matchID,
           "joid": joid,
-          "contractStatus": contractStatus,
+          "contractStatus": ResultStatus.Completed.value,
           "resultHash": resultHash,
         }),))
-        txHash = self.ethclient.contract.functions.postResult(matchID, joid, contractStatus, uri, resultHash, cpuTime, bandwidthUsage).transact({
+        txHash = self.ethclient.contract.functions.postResult(
+          matchID,
+          joid,
+          ResultStatus.Completed.value,
+          "",
+          resultHash,
+          0,
+          0
+        ).transact({
             "from": self.account,
         })
 
@@ -241,7 +244,7 @@ class ResourceProvider(Mediator):
                     self.logger.info("%s offerId= %s" % (name, matchID))
                     self.logger.info("Job offer %s = %s" % (name, self.job_offers[joid].ijoid))
                     self.logger.info("Resource offer %s = %s" % (name, self.resource_offers[roid].iroid))
-                    self.logger.info("🔵🔵🔵 RUN JOB NOW")
+
                     match = Pstruct.Match(
                         joid, roid, params["mediator"]
                     )
@@ -261,7 +264,15 @@ class ResourceProvider(Mediator):
 
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "RP" + str(self.index)},
                                           seriesname="state", value=2)
-                    ResultStatus = self.getJob(matchID, JO, True)
+
+                    if os.environ.get('BAD_ACTOR') is not None:
+                        self.logger.info("🔵🔵🔵 BAD ACTOR JOB")
+                        resultHash = "muaahaaha"
+                    else:
+                        resultHash = self.getJob(matchID, JO, True)
+
+                    self.postResult(matchID, JO.offerId, resultHash)
+
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "RP" + str(self.index)},
                                           seriesname="state", value=1)
 
