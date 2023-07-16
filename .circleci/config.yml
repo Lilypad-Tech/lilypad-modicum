@@ -16,7 +16,7 @@ commands:
 jobs:
   build:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2204:2023.04.2
     steps:
       - setup
       - run:
