@@ -26,12 +26,21 @@ jobs:
       - run:
           name: Build multiarch docker image and push
           command: |
-            # Uninstall wrong node
-            sudo apt-get remove -y nodejs npm
-            sudo apt-get autoremove -y
-            # Right version of node
-            curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-            sudo apt-get install -y nodejs npm
+            # Try to reconcile node per https://stackoverflow.com/questions/55464934/npm-depends-node-gyp-3-6-2-but-it-is-not-going-to-be-installed
+            sudo apt remove --purge nodejs npm
+            sudo apt clean
+            sudo apt autoclean
+            sudo apt install -f
+            sudo apt autoremove
+            sudo apt install curl
+            curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+            echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+            sudo apt update
+            sudo apt install npm
+            node -v && npm -v
+
             # Build contract
             ./stack reset
             # Build and push docker images
