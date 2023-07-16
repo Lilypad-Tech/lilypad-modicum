@@ -262,10 +262,16 @@ function lilypad-node() {
   elif [[ "$CONTAINER_MODE" == "cli" ]]; then
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -ti --rm"
   fi
+  GPU_ARG=""
+  GPU_VALUE=""
+  if [ -f "/usr/bin/nvidia-smi" ]; then
+      GPU_ARG="--gpu"
+      GPU_VALUE="all"
+  fi
   eval docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    --gpus all \
+    $GPU_ARG $GPU_VALUE \
     -e DEBUG \
     -e PRIVATE_KEY \
     -e BAD_ACTOR \
