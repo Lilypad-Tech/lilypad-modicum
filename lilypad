@@ -34,6 +34,7 @@ elif [[ $1 == "serve" ]]; then
   docker run -d --restart always --name resource-provider \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    --gpus all \
     -e PRIVATE_KEY \
     -e CONTRACT_ADDRESS \
     -e CONTRACT_ABI_FILE=/Modicum.json \
