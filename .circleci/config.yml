@@ -26,6 +26,7 @@ jobs:
       - run:
           name: Build multiarch docker image and push
           command: |
+            set -x
             # Try to reconcile node per https://stackoverflow.com/questions/55464934/npm-depends-node-gyp-3-6-2-but-it-is-not-going-to-be-installed
             sudo apt remove --purge nodejs npm
             sudo apt clean
