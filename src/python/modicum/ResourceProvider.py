@@ -269,7 +269,12 @@ class ResourceProvider(Mediator):
                         self.logger.info("🔵🔵🔵 BAD ACTOR JOB")
                         resultHash = "muaahaaha"
                     else:
-                        resultHash = self.getJob(matchID, JO, True)
+                        try:
+                            resultHash = self.getJob(matchID, JO, True)
+                        except Exception as e:
+                            # TODO: pass this error state as more structured
+                            # data through the rest of the system
+                            resultHash = f"JOB_FAILED:{e}"
 
                     self.postResult(matchID, JO.offerId, resultHash)
 

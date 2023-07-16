@@ -318,14 +318,17 @@ class JobCreator(PlatformClient):
                         roid = self.matches[matchID].resourceOfferId
                         # iroid = self.resource_offers[roid].iroid
                         # RID = self.resource_offers[roid].resourceProvider
-                        
+
                         self.logger.info("%s Job = %s" %(name, ijoid))
                         self.logger.info("%s Resource = %s" %(name, roid))
 
                         self.logger.info("result status: %s" %params["status"])
                         self.logger.info("result status type: %s" %type(params["status"]))
 
-                        self.status = f"https://ipfs.io/ipfs/{params['hash']}"
+                        if params['hash'].startswith("JOB_FAILED"):
+                            self.status = f"❌ {params['hash']}"
+                        else:
+                            self.status = f"https://ipfs.io/ipfs/{params['hash']}"
                         if(should_mediate()):
                             self.logger.info("🟣🟣🟣🟣 mediation triggered !!!!!")
                             txHash = self.ethclient.contract.functions.rejectResult(resultId).transact({
