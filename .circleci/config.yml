@@ -26,6 +26,9 @@ jobs:
       - run:
           name: Build multiarch docker image and push
           command: |
+            # Build contract
+            ./stack reset
+            # Build and push docker images
             DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --push --platform linux/arm64,linux/amd64 -t quay.io/lilypad/lilypad-modicum:$(git rev-parse --short HEAD) .
 workflows:
   version: 2.1
