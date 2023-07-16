@@ -26,6 +26,9 @@ jobs:
       - run:
           name: Build multiarch docker image and push
           command: |
+            # Right version of node
+            curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+            sudo apt-get install -y nodejs
             # Build contract
             ./stack reset
             # Build and push docker images
