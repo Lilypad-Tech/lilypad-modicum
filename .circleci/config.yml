@@ -81,7 +81,12 @@ jobs:
             # Build contract
             ./stack reset
             # Build and push docker images
-            DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --push --platform linux/arm64,linux/amd64 -t quay.io/lilypad/lilypad-modicum:$(git rev-parse --short HEAD) .
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+            for X in modicum resource-provider mediator; do
+              docker buildx build --target $X --push \
+                --platform linux/arm64,linux/amd64 \
+                -t quay.io/lilypad/lilypad-$X:$(git rev-parse --short HEAD) .
+            done
 workflows:
   version: 2.1
   build-push-test:
