@@ -275,6 +275,7 @@ function lilypad-node() {
 
   # Workaround https://github.com/bacalhau-project/lilypad/issues/39
   if [[ "$DATA_DIRECTORY" == "$DEFAULT_DATA_DIR" ]]; then
+      sleep 5
       docker exec -ti $LILYPAD_NODE_NAME pip install -e .
   fi
 }
