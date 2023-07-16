@@ -104,11 +104,11 @@ class Mediator(PlatformClient):
                 f.close()
 
                 # RUN BACALHAU JOB AND GET THE ID
-                result = subprocess.run(['bacalhau', 'create', '--wait', '--id-only', tmpfile], text=True, capture_output=True)
+                result = subprocess.run(['bacalhau', 'create', '--wait', '--id-only', tmpfile], text=True, capture_output=True, check=True)
                 jobID = result.stdout.strip()
 
                 # extrac the CID of the result to report back
-                listOutput = subprocess.run(['bacalhau', 'list', '--output', 'json', '--id-filter', jobID], text=True, capture_output=True)
+                listOutput = subprocess.run(['bacalhau', 'list', '--output', 'json', '--id-filter', jobID], text=True, capture_output=True, check=True)
 
                 # load the listOutput string as a JSON object
                 listOutputJSON = json.loads(listOutput.stdout)
