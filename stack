@@ -250,6 +250,9 @@ function lilypad-node() {
   # this is for dev trim
   if [[ "$DATA_DIRECTORY" == "$DEFAULT_DATA_DIR" ]]; then
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app"
+
+    # Workaround https://github.com/bacalhau-project/lilypad/issues/39
+    docker run -ti --entrypoint /bin/bash $LILYPAD_NODE_IMAGE -c "pip install -e ."
   else
     echo >&2 "running in production mode..."
   fi
@@ -273,11 +276,6 @@ function lilypad-node() {
     ${1:-""} \
     $(for arg in ${GLOBAL_ARGS[@]:1}; do echo ${arg@Q}; done)
 
-  # Workaround https://github.com/bacalhau-project/lilypad/issues/39
-  if [[ "$DATA_DIRECTORY" == "$DEFAULT_DATA_DIR" ]]; then
-      sleep 5
-      docker exec -ti $LILYPAD_NODE_NAME pip install -e .
-  fi
 }
 
 function logs() {
