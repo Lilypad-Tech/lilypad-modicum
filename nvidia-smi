@@ -1,2 +1,3 @@
 #!/bin/bash
-docker run -q -ti --gpus all nvidia/cuda:11.0.3-devel-ubuntu20.04 nvidia-smi "$@"
+docker pull -q nvidia/cuda:11.0.3-devel-ubuntu20.04 >/dev/null
+docker run -ti --gpus all nvidia/cuda:11.0.3-devel-ubuntu20.04 nvidia-smi "$@"
