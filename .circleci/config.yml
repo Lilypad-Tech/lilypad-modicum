@@ -27,7 +27,7 @@ jobs:
           name: Build multiarch docker image and push
           command: |
             # Uninstall wrong node
-            sudo apt-get remove -y nodejs
+            sudo apt-get remove -y nodejs npm
             sudo apt-get autoremove -y
             # Right version of node
             curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
