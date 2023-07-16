@@ -24,6 +24,8 @@ RUN pip3 install -r /tmp/requirements.txt
 ADD ./src/python /app
 RUN pip3 install -e .
 ENV BACALHAU_API_HOST=localhost
+# nvidia-smi wrapper script which actually runs a container from inside a container
+ADD nvidia-smi /usr/bin/nvidia-smi
 ENTRYPOINT ["/usr/local/bin/modicum"]
 
 FROM modicum AS resource-provider

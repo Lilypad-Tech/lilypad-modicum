@@ -265,6 +265,7 @@ function lilypad-node() {
   eval docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    --gpus all \
     -e DEBUG \
     -e PRIVATE_KEY \
     -e BAD_ACTOR \
