@@ -252,7 +252,8 @@ function lilypad-node() {
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app"
 
     # Workaround https://github.com/bacalhau-project/lilypad/issues/39
-    docker run -ti --entrypoint /bin/bash $LILYPAD_NODE_IMAGE -c "pip install -e ."
+    docker run -ti --entrypoint /bin/bash -v $DIR/src/python:/app \
+        $LILYPAD_NODE_IMAGE -c "pip install -e ."
   else
     echo >&2 "running in production mode..."
   fi
