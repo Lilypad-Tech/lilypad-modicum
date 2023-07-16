@@ -8,7 +8,6 @@ import json
 import textwrap
 import dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
-from .Modules import get_bacalhau_jobprice
 from . import DockerWrapper
 from . import PlatformStructs as Pstruct
 from .PlatformClient import PlatformClient
@@ -17,6 +16,14 @@ from web3 import Web3
 from .Enums import Architecture
 
 import datetime
+
+def should_mediate():
+    mediation_chance = os.getenv('MEDIATION_CHANCE_PERCENT', "20")
+    #  parse the string into an int
+    mediation_chance = int(mediation_chance)
+    if(mediation_chance > 100):
+        mediation_chance = 100
+    return random.randint(1, 100) <= int(mediation_chance)
 
 class JobFinished(Exception):
     pass
@@ -318,87 +325,18 @@ class JobCreator(PlatformClient):
                         self.logger.info("result status: %s" %params["status"])
                         self.logger.info("result status type: %s" %type(params["status"]))
 
-                        # immediately accept the result
-                        # TODO: plugin the verification here
-                        txHash = self.ethclient.contract.functions.acceptResult(resultId, joid).transact({
-                            "from": self.account,
-                        })
-
-                        # print(textwrap.dedent(f"""
-                        # ---------------------------------------------------------------------------------------
-                        # ---------------------------------------------------------------------------------------
-                        # ---------------------------------------------------------------------------------------
-
-                        # Your result has been produced:
-
-                        # https://ipfs.io/ipfs/{params["hash"]}
-
-                        # ---------------------------------------------------------------------------------------
-                        # ---------------------------------------------------------------------------------------
-                        # ---------------------------------------------------------------------------------------
-                        # """))
-                        self.state = "ResultsPosted"
                         self.status = f"https://ipfs.io/ipfs/{params['hash']}"
-
-                        # self.scheduler.remove_job(job_id=str(matchID))
-
-                        # if (not str(params['status']) == 'ResultStatus.Completed' or
-                        #     self.reject[ijoid] == "True"):
-                        #     self.logger.info("M: rejectResult = %s" % ijoid)
-                        #     self.ethclient.contract.functions.rejectResult(resultId, joid).transact({
-                        #         "from": self.account,
-                        #     })
-                        #     continue
-                        # else:
-                        #     self.logger.info("Job was completed correctly")
-
-                        # #TODO FIX VERIFIER. ADD MEDIATORS RUN CODE TO helper.py SO WE CAN USE IT HERE TOO.
-                        # if False:
-                        #     pass
-                        # if random.uniform(0, 1) < self.verificationChance:
-                        #     self.logger.info(f'verifying match {matchID} results...')
-
-                        #     jobname = "%s_%s" %(tag, matchID)
-                        #     self.runJob(tag, name)
-
-                        #     _WORKPATH_ = os.environ.get('WORKPATH')
-                        #     output = "%s/%s/output" %(_WORKPATH_,tag)
-
-                        #     self.logger.info("Hash result for job = %s" %ijoid)
-                        #     output_filename = "%s/%s/output.tar" %(_WORKPATH_,tag)
-                        #     helper.tar(output_filename,output)
-                        #     resultHash = helper.hashTar(output_filename)
-                        #     self.logger.info("outputTarHash = %s" %resultHash)
-
-                        #     if int(resultHash, 16) == params['hash']:
-                        #         self.logger.info("Get result for matchID %s" % matchID)
-                        #         # exitcode = self.getResult(self.user, tag, resultId, RID, params['hash'])
-                        #         exitcode = self.getResult(user=self.user, tag=tag,name=name,ijoid=ijoid,
-                        #                                   resultID=resultId,RID=RID, hash=params['hash'])
-                        #     else:
-                        #         self.logger.info("M: Mediation requested = %s" % matchID)
-                                  # self.ethclient.contract.functions.rejectResult(resultId, joid).transact({
-                                  #     "from": self.account,
-                                  # })
-                        # else:
-                        #     _DIRIP_ = os.environ.get('DIRIP')
-                        #     _DIRPORT_ = os.environ.get('DIRPORT')
-                        #     _KEY_ = os.environ.get('pubkey')
-                        #     self.logger.info("L: Requesting Permission to get result = %s" % ijoid)
-                        #     msg = self.DC.getPermission(_DIRIP_, _DIRPORT_, self.account, tag, _KEY_)
-
-
-                        #     self.user = msg['user']
-                        #     self.groups = msg['groups']
-
-                        #     self.logger.info("L: permission granted? : %s = %s" % (msg['exitcode'] == 0, ijoid))
-                        #     self.logger.info("%s is in groups %s" % (self.user, self.groups))
-
-                        #     self.logger.info("getResult %s" % ijoid)
-
-                        #     exitcode = self.getResult(user=self.user, tag=tag,name=name,joid=joid, ijoid=ijoid,
-                        #                               resultID=resultId,RID=RID, hash=params['hash'])
-
+                        if(should_mediate()):
+                            self.logger.info("🟣🟣🟣🟣 mediation triggered !!!!!")
+                            txHash = self.ethclient.contract.functions.rejectResult(resultId).transact({
+                                "from": self.account,
+                            })
+                        else:
+                            self.logger.info("🟣🟣🟣🟣 mediation NOT triggered")
+                            txHash = self.ethclient.contract.functions.acceptResult(resultId).transact({
+                                "from": self.account,
+                            })
+                            self.state = "ResultsPosted"
 
                 elif name == "ResultReaction":
                     self.state = "ResultsReaction"
@@ -452,23 +390,6 @@ class JobCreator(PlatformClient):
                         iroid = self.resource_offers[roid].iroid
 
                         self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=joid, ijoid=ijoid)
-                
-                elif name == "JobAssignedForMediation":
-                    self.state = "JobAssignedForMediation"
-                    self.logger.info("🔴 JobAssignedForMediation: \n({}).".format(params))
-                    if params["matchId"] in self.matches:
-                        self.logger.info("M: %s = %s" %(name, params["matchId"]))
-                        matchID = params["matchId"]
-                        joid = self.matches[matchID].jobOfferId
-                        ijoid = self.job_offers[joid].ijoid
-                        roid = self.matches[matchID].resourceOfferId
-                        iroid = self.resource_offers[roid].iroid
-
-                        self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=joid, ijoid=ijoid, value=.5)
-
-                        self.logger.info("M: %s Match = %s" % (name, matchID))
-                        self.logger.info("M: %s Job = %s" %(name, ijoid))
-                        self.logger.info("M: %s Resource = %s" %(name, iroid))
 
                 elif name == "EtherTransferred":
                     # TODO: We need an explicit state machine :-(
@@ -521,13 +442,15 @@ class JobCreator(PlatformClient):
         #            msg["bandwidthLimit"]*msg["bandwidthMaxPrice"])*self.penaltyRate
 
         # send the cost of the job
-        deposit = get_bacalhau_jobprice(template)
+
+        deposit = self.ethclient.contract.functions.getModuleCost(template).call()
         self.deposit = deposit
 
         self.status = f"Sending deposit of {Web3.from_wei(self.deposit, 'ether')} ETH to contract"
 
         self.logger.info("🔵🔵🔵 post job offer")
         txHash = self.ethclient.contract.functions.postJobOfferPartOne(
+            template,
             msg['ijoid'],
             msg['cpuTime'],
             msg['bandwidthLimit'],

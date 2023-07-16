@@ -94,6 +94,15 @@ function compile-contract() {
   )
 }
 
+function unit-tests() {
+  source ${DIR}/.env
+  (
+    set -euo pipefail
+    cd src/js
+    npx hardhat test --network hardhat
+  )
+}
+
 function deploy-contract() {
   source ${DIR}/.env
   (cd src/js && npx hardhat deploy --network ${DEPLOYMENT})
@@ -254,6 +263,8 @@ function lilypad-node() {
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e DEBUG \
     -e PRIVATE_KEY \
+    -e BAD_ACTOR \
+    -e MEDIATION_CHANCE_PERCENT \
     -e MEDIATOR_ADDRESSES \
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \
