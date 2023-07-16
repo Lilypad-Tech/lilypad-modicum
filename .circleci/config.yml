@@ -1,0 +1,34 @@
+version: 2.1
+commands:
+  setup:
+    steps:
+      - checkout
+      - run:
+          name: setup Qemu
+          command: |
+            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+      - run:
+          name: Create builder
+          command: |
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+            docker context create multi-arch-build
+            docker buildx create --use multi-arch-build
+jobs:
+  build:
+    machine:
+      image: ubuntu-2004:202010-01
+    steps:
+      - setup
+      - run:
+          name: Login to image registry
+          command: |
+            docker login quay.io -u $QUAY_USER -p $QUAY_PASS
+      - run:
+          name: Build multiarch docker image and push
+          command: |
+            DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --push --platform linux/arm64,linux/amd64 -t quay.io/lilypad/lilypad-modicum:$(git rev-parse --short HEAD) .
+workflows:
+  version: 2.1
+  build-and-push-multi-arch-image:
+    jobs:
+      - build
