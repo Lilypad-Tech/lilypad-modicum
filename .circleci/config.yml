@@ -48,6 +48,7 @@ jobs:
   test-contract-smoke:
     machine:
       image: ubuntu-2204:2023.04.2
+    resource_class: xlarge
     steps:
       - checkout
       - run:
