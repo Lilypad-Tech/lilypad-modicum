@@ -272,6 +272,9 @@ function lilypad-node() {
     $LILYPAD_NODE_IMAGE \
     ${1:-""} \
     $(for arg in ${GLOBAL_ARGS[@]:1}; do echo ${arg@Q}; done)
+
+  # Workaround https://github.com/bacalhau-project/lilypad/issues/39
+  docker exec -ti $LILYPAD_NODE_NAME pip install -e .
 }
 
 function logs() {
