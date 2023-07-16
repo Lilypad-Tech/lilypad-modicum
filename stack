@@ -274,7 +274,9 @@ function lilypad-node() {
     $(for arg in ${GLOBAL_ARGS[@]:1}; do echo ${arg@Q}; done)
 
   # Workaround https://github.com/bacalhau-project/lilypad/issues/39
-  docker exec -ti $LILYPAD_NODE_NAME pip install -e .
+  if [[ "$DATA_DIRECTORY" == "$DEFAULT_DATA_DIR" ]]; then
+      docker exec -ti $LILYPAD_NODE_NAME pip install -e .
+  fi
 }
 
 function logs() {
