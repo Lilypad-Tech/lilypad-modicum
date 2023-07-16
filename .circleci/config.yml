@@ -82,7 +82,7 @@ jobs:
             DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --push --platform linux/arm64,linux/amd64 -t quay.io/lilypad/lilypad-modicum:$(git rev-parse --short HEAD) .
 workflows:
   version: 2.1
-  build-and-push-multi-arch-image:
+  build-push-test:
     jobs:
       - build
       - test-cli
