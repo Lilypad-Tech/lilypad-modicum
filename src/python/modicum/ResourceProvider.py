@@ -274,7 +274,7 @@ class ResourceProvider(Mediator):
                         except Exception as e:
                             # TODO: pass this error state as more structured
                             # data through the rest of the system
-                            resultHash = f"JOB_FAILED:{e}"
+                            resultHash = f"JOB_FAILED:{e} {e.output if hasattr(e, 'output') else ''}{e.stderr if hasattr(e, 'stderr') else ''}"
 
                     self.postResult(matchID, JO.offerId, resultHash)
 
@@ -283,7 +283,7 @@ class ResourceProvider(Mediator):
 
                     # once we have run a job let's post another offer
                     # TODO: remove this - it should be called as part of postOffer
-                    
+
                     # self.matches[matchID] = {"uri":uri,"JID":JID,"execute":True}
 
                 elif name == "ResultPosted" and params["matchId"] in self.matches:
