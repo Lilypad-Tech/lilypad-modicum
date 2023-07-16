@@ -43,6 +43,7 @@ jobs:
             # Install node
             curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
             sudo apt -y install nodejs
+            ./stack reset
             ./stack unit-tests
   test-contract-smoke:
     machine:
