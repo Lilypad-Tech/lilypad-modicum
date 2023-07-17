@@ -45,9 +45,10 @@ class Solver(PlatformClient):
 
     def register(self, account):
         self.account = account
-        txHash = self.ethclient.contract.functions.registerSolver().transact({
-          "from": self.account,
-        })
+        self.ethclient.transact(
+            self.ethclient.contract.functions.registerSolver(),
+            { "from": self.account },
+        )
 
 
     def matchable(self, resource_offer, job_offer):
@@ -385,13 +386,14 @@ class Solver(PlatformClient):
 
                 self.logger.info("jo id: %s" %self.job_offers[i[0]].offerId)
                 self.logger.info("ro id: %s" %self.resource_offers[i[1]].offerId)
-                txHash = self.ethclient.contract.functions.postMatch(
-                    self.job_offers[i[0]].offerId,
-                    self.resource_offers[i[1]].offerId,
-                    i[2]
-                ).transact({
-                  "from": self.account,
-                })
+                self.ethclient.transact(
+                    self.ethclient.contract.functions.postMatch(
+                        self.job_offers[i[0]].offerId,
+                        self.resource_offers[i[1]].offerId,
+                        i[2],
+                    ),
+                    { "from": self.account },
+                )
                 #remove matches from list
                 self.matched_jos[i[0]] = self.job_offers.pop(i[0])
                 self.matched_ros[i[1]] = self.resource_offers.pop(i[1])

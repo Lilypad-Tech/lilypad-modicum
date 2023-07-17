@@ -76,16 +76,18 @@ class JobCreator(PlatformClient):
     def register(self, account):
         self.logger.info("A: registerJobCreator")
         self.account = account
-        txHash = self.ethclient.contract.functions.registerJobCreator().transact({
-            "from": self.account,
-        })
+        self.ethclient.transact(
+            self.ethclient.contract.functions.registerJobCreator(),
+            { "from": self.account },
+        )
         return 0
 
     def addMediator(self,account,mediator):
         self.logger.info("B: jobCreatorAddTrustedMediator")
-        txHash = self.ethclient.contract.functions.jobCreatorAddTrustedMediator(mediator).transact({
-            "from": self.account,
-        })
+        self.ethclient.transact(
+            self.ethclient.contract.functions.jobCreatorAddTrustedMediator(mediator),
+            { "from": self.account },
+        )
         return 0
 
     def getResult(self,user, tag,name,joid, ijoid, resultID,RID, hash):
@@ -110,9 +112,10 @@ class JobCreator(PlatformClient):
         # TODO check hash param is the same as DC.getData's hash
 
         self.logger.info("F: acceptResult = %s: " %joid)
-        txHash = self.ethclient.contract.functions.acceptResult(resultID, joid).transact({
-            "from": self.account,
-        })
+        txHash = self.ethclient.transact(
+            self.ethclient.contract.functions.acceptResult(resultID, joid),
+            { "from": self.account },
+        )
 
         return 0
 
@@ -165,28 +168,17 @@ class JobCreator(PlatformClient):
         self.logger.info("Starting Docker for job = %s" %ijoid)
         container = DockerWrapper.runContainer(self.dockerClient, tag, jobname, xdict)
 
-    def runJob_old(self, tag, jobname):
-        _WORKPATH_ = os.environ.get('WORKPATH')
-        input = "%s/%s/input" %(_WORKPATH_,tag)
-        output = "%s/%s/output" %(_WORKPATH_,tag)
-        appinput = "/app/input"
-        appoutput = "/app/output"
-        try:
-            container = DockerWrapper.runContainer(self.dockerClient, tag, jobname, input, output,appinput,appoutput)
-        except docker.errors.DockerException as err:
-            self.logger.info("error is : %s" %err)
-
     def timeout(self, matchId):
-
-        joid = self.matches[matchID].jobOfferId
+        joid = self.matches[matchId].jobOfferId
         ijoid = self.job_offers[joid].ijoid
 
-        self.logger.info("O: timeout = %s" %(name, ijoid))   
+        self.logger.info("O: timeout = %s" % (ijoid,))
         self.logger.info(f'Match {matchId} timed out.')
 
-        txHash = self.ethclient.contract.functions.timeout(matchId, joid).transact({
-            "from": self.account,
-        })
+        self.ethclient.transact(
+            self.ethclient.contract.functions.timeout(matchId, joid),
+            { "from": self.account },
+        )
 
     def scheduleTimeout(self, matchID, deadline_ms):
         self.logger.info("now: %s" %time.time())
@@ -334,14 +326,16 @@ class JobCreator(PlatformClient):
                             self.state = "ResultsPosted"
                         if(should_mediate()):
                             self.logger.info("🟣🟣🟣🟣 mediation triggered !!!!!")
-                            txHash = self.ethclient.contract.functions.rejectResult(resultId).transact({
-                                "from": self.account,
-                            })
+                            txHash = self.ethclient.transact(
+                                self.ethclient.contract.functions.rejectResult(resultId),
+                                { "from": self.account },
+                            )
                         else:
                             self.logger.info("🟣🟣🟣🟣 mediation NOT triggered")
-                            txHash = self.ethclient.contract.functions.acceptResult(resultId).transact({
-                                "from": self.account,
-                            })
+                            txHash = self.ethclient.transact(
+                                self.ethclient.contract.functions.acceptResult(resultId),
+                                { "from": self.account },
+                            )
                             self.state = "ResultsPosted"
 
                 elif name == "ResultReaction":
@@ -455,19 +449,21 @@ class JobCreator(PlatformClient):
         self.status = f"Sending deposit of {Web3.from_wei(self.deposit, 'ether')} ETH to contract"
 
         self.logger.info("🔵🔵🔵 post job offer")
-        txHash = self.ethclient.contract.functions.postJobOfferPartOne(
-            template,
-            msg['ijoid'],
-            msg['cpuTime'],
-            msg['bandwidthLimit'],
-            msg['instructionMaxPrice'],
-            msg['bandwidthMaxPrice'],
-            msg['completionDeadline'],
-            msg['matchIncentive']
-        ).transact({
-          "from": self.account,
-          "value": deposit,
-        })
+        txHash = self.ethclient.transact(
+            self.ethclient.contract.functions.postJobOfferPartOne(
+                template,
+                msg['ijoid'],
+                msg['cpuTime'],
+                msg['bandwidthLimit'],
+                msg['instructionMaxPrice'],
+                msg['bandwidthMaxPrice'],
+                msg['completionDeadline'],
+                msg['matchIncentive']
+            ), {
+                "from": self.account,
+                "value": deposit,
+            },
+        )
 
         self.logger.info("D: postJobOfferPartOne = %s" % (txHash,))
 
@@ -488,18 +484,20 @@ class JobCreator(PlatformClient):
         0,uint8
         '{"template": "stable-diffusion", "params": ""}')string
         """
-        txHash = self.ethclient.contract.functions.postJobOfferPartTwo(
-            Web3.to_int(msg['ijoid']),
-            # Web3.to_int(msg['ramLimit']),
-            # Web3.to_int(msg['localStorageLimit']),
-            "arf",
-            Web3.to_checksum_address(msg['directory']),
-            Web3.to_int(msg['hash']),
-            Architecture.amd64.value,
-            jsonData,
-        ).transact({
-          "from": self.account,
-        })
+        txHash = self.ethclient.transact(
+            self.ethclient.contract.functions.postJobOfferPartTwo(
+                Web3.to_int(msg['ijoid']),
+                # Web3.to_int(msg['ramLimit']),
+                # Web3.to_int(msg['localStorageLimit']),
+                "arf",
+                Web3.to_checksum_address(msg['directory']),
+                Web3.to_int(msg['hash']),
+                Architecture.amd64.value,
+                jsonData,
+            ), {
+                "from": self.account,
+            },
+        )
 
 #         (1,
 #  100,

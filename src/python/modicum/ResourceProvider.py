@@ -47,17 +47,18 @@ class ResourceProvider(Mediator):
     def register(self, account, arch, timePerInstruction):
         self.logger.info("A: registerResourceProvider")
         self.account = account
-        txHash = self.ethclient.contract.functions.registerResourceProvider(arch, timePerInstruction).transact({
-            "from": self.account,
-        })
+        self.ethclient.transact(
+            self.ethclient.contract.functions.registerResourceProvider(arch, timePerInstruction),
+            { "from": self.account },
+        )
         return 0
 
     def addMediator(self,account,mediator):
         self.logger.info("B: resourceProviderAddTrustedMediator")
-        txHash = self.ethclient.contract.functions.resourceProviderAddTrustedMediator(mediator).transact({
-            "from": self.account,
-        })
-        # helper.wait4receipt(self.ethclient,txHash)
+        txHash = self.ethclient.transact(
+            self.ethclient.contract.functions.resourceProviderAddTrustedMediator(mediator),
+            { "from": self.account },
+        )
         return 0
 
     def postOffer(self,msg):
@@ -65,20 +66,20 @@ class ResourceProvider(Mediator):
             self.idle = False
             self.logger.info("C: postResOffer = %s" %msg["iroid"])
             self.logger.info("🟠 post resource offer")
-            txHash = self.ethclient.contract.functions.postResOffer(
-                msg["instructionPrice"],
-                msg["instructionCap"],
-                msg["memoryCap"],
-                msg["localStorageCap"],
-                msg["bandwidthCap"],
-                msg["bandwidthPrice"],
-                msg["matchIncentive"],
-                msg["verificationCount"],
-                msg["iroid"]
-            ).transact({
-              "from": self.account,
-              "value": msg["deposit"],
-            })
+            txHash = self.ethclient.transact(
+                self.ethclient.contract.functions.postResOffer(
+                    msg["instructionPrice"],
+                    msg["instructionCap"],
+                    msg["memoryCap"],
+                    msg["localStorageCap"],
+                    msg["bandwidthCap"],
+                    msg["bandwidthPrice"],
+                    msg["matchIncentive"],
+                    msg["verificationCount"],
+                    msg["iroid"]
+                ),
+                { "from": self.account, "value": msg["deposit"], },
+            )
             return 0
         else:
             self.offerq.insert(0,msg)
@@ -106,9 +107,10 @@ class ResourceProvider(Mediator):
 
     def acceptResult(self, resultId):
         self.logger.info('JC Missed deadline for reacting to results.')
-        txHash = self.ethclient.contract.functions.acceptResult(resultId).transact({
-            "from": self.account,
-        })
+        txHash = self.ethclient.transact(
+            self.contract.functions.acceptResult(resultId),
+            { "from": self.account },
+        )
 
     def scheduleAcceptResult(self, resultId, delay):
         to_run = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() + delay))
@@ -124,17 +126,18 @@ class ResourceProvider(Mediator):
           "contractStatus": ResultStatus.Completed.value,
           "resultHash": resultHash,
         }),))
-        txHash = self.ethclient.contract.functions.postResult(
-          matchID,
-          joid,
-          ResultStatus.Completed.value,
-          "",
-          resultHash,
-          0,
-          0
-        ).transact({
-            "from": self.account,
-        })
+        self.ethclient.transact(
+            self.ethclient.contract.functions.postResult(
+                matchID,
+                joid,
+                ResultStatus.Completed.value,
+                "",
+                resultHash,
+                0,
+                0
+            ),
+            { "from": self.account },
+        )
 
 
     def CLIListener(self):

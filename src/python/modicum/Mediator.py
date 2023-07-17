@@ -49,15 +49,17 @@ class Mediator(PlatformClient):
     def register(self, account, arch, instructionPrice, bandwidthPrice, availabilityValue, verificationCount):
         self.logger.info("A: registerMediator")
         self.account = account
-        txHash = self.ethclient.contract.functions.registerMediator(
-          arch,
-          instructionPrice,
-          bandwidthPrice,
-          availabilityValue,
-          verificationCount
-        ).transact({
-            "from": self.account,
-        })
+        txHash = self.ethclient.transact(
+            self.ethclient.contract.functions.registerMediator(
+                arch,
+                instructionPrice,
+                bandwidthPrice,
+                availabilityValue,
+                verificationCount
+            ), {
+                "from": self.account,
+            },
+        )
 
     def getJob(self, matchID, JO, execute):
         self.logger.info("🔵🔵🔵 RUN JOB NOW")
@@ -162,17 +164,19 @@ class Mediator(PlatformClient):
         else:
             reason = Verdict.WrongResults.value
             self.logger.info("🟣🟣🟣🟣 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨 mediation wrong result")
-        txHash = self.ethclient.contract.functions.postMediationResult(
-          matchID,
-          joid,
-          ResultStatus.Completed.value, 
-          "",
-          resultHash,
-          reason,
-          Party.ResourceProvider.value
-        ).transact({
-            "from": self.account,
-        })
+        self.ethclient.transact(
+            self.contract.functions.postMediationResult(
+                matchID,
+                joid,
+                ResultStatus.Completed.value, 
+                "",
+                resultHash,
+                reason,
+                Party.ResourceProvider.value
+            ), {
+                "from": self.account,
+            },
+        )
 
     def CLIListener(self):
         pass

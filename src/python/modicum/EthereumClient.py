@@ -61,6 +61,50 @@ class NonceException(Exception):
     pass
 
 class EthereumClient:
+
+    def transact(self, method, params=None, retries=5):
+        # TODO: move loop from middleware here, change all callers to transact
+        # to use this wrapper instead
+        """
+        Retry on nonce errors with linear backoff. Doesn't work as a middleware
+        because by the time you get to the middleware the nonce has already been
+        encoded in the raw transaction.
+
+        Traceback (most recent call last):
+            File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+                self.run()
+            File "/usr/lib/python3.10/threading.py", line 953, in run
+                self._target(*self._args, **self._kwargs)
+            File "/app/modicum/JobCreator.py", line 342, in platformListener
+                txHash = self.ethclient.contract.functions.acceptResult(resultId).transact({
+            File "/usr/local/lib/python3.10/dist-packages/web3/contract/contract.py", line 479, in transact
+                return transact_with_contract_function(
+            File "/usr/local/lib/python3.10/dist-packages/web3/contract/utils.py", line 172, in transact_with_contract_function
+                txn_hash = w3.eth.send_transaction(transact_transaction)
+            File "/usr/local/lib/python3.10/dist-packages/web3/eth/eth.py", line 362, in send_transaction
+                return self._send_transaction(transaction)
+            File "/usr/local/lib/python3.10/dist-packages/web3/module.py", line 68, in caller
+                result = w3.manager.request_blocking(
+            File "/usr/local/lib/python3.10/dist-packages/web3/manager.py", line 232, in request_blocking
+                return self.formatted_response(
+            File "/usr/local/lib/python3.10/dist-packages/web3/manager.py", line 205, in formatted_response
+                raise ValueError(response["error"])
+            ValueError: {'code': -32000, 'message': 'nonce too low: next nonce 686, tx nonce 685'}
+        """
+        for i in range(retries):
+            try:
+                return method.transact(params)
+            except ValueError as e:
+                if "nonce too low" not in str(e):
+                    # Different error, don't retry it
+                    raise e
+                if i < retries - 1:
+                    print(f"Retrying {method} in {i} seconds ({e})...")
+                    sleep(i)
+                    continue
+                else:
+                    raise e
+
     def __init__(self, ip, port, protocol=None):
         self.logger = logging.getLogger("EthereumClient")
         self.logger.setLevel(logging.INFO)
@@ -89,57 +133,6 @@ class EthereumClient:
         # Polygon compatibility
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
         # print(self.w3.is_connected())
-
-        # Retry on nonce errors with linear backoff
-        def retry_on_nonce_error(make_request, w3, retries=5):
-            """
-            Workaround:
-            Traceback (most recent call last):
-                File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
-                    self.run()
-                File "/usr/lib/python3.10/threading.py", line 953, in run
-                    self._target(*self._args, **self._kwargs)
-                File "/app/modicum/JobCreator.py", line 342, in platformListener
-                    txHash = self.ethclient.contract.functions.acceptResult(resultId).transact({
-                File "/usr/local/lib/python3.10/dist-packages/web3/contract/contract.py", line 479, in transact
-                    return transact_with_contract_function(
-                File "/usr/local/lib/python3.10/dist-packages/web3/contract/utils.py", line 172, in transact_with_contract_function
-                    txn_hash = w3.eth.send_transaction(transact_transaction)
-                File "/usr/local/lib/python3.10/dist-packages/web3/eth/eth.py", line 362, in send_transaction
-                    return self._send_transaction(transaction)
-                File "/usr/local/lib/python3.10/dist-packages/web3/module.py", line 68, in caller
-                    result = w3.manager.request_blocking(
-                File "/usr/local/lib/python3.10/dist-packages/web3/manager.py", line 232, in request_blocking
-                    return self.formatted_response(
-                File "/usr/local/lib/python3.10/dist-packages/web3/manager.py", line 205, in formatted_response
-                    raise ValueError(response["error"])
-                ValueError: {'code': -32000, 'message': 'nonce too low: next nonce 686, tx nonce 685'}
-            """
-            def middleware(method, params):
-                for i in range(retries):
-                    try:
-                        if i > 0:
-                            print("🙀 METHOD:")
-                            import pprint; pprint.pprint(method)
-                            print("🙀 PARAMS:")
-                            import pprint; pprint.pprint(params)
-                            params["nonce"] += i
-                        rpc_response = make_request(method, params)
-                        if "error" in rpc_response:
-                            e = rpc_response["error"]
-                            if e["code"] == -32000 and e["message"].startswith("nonce too low"):
-                                raise NonceException(e["message"])
-                        return rpc_response
-                    except NonceException as e:
-                        if i < retries - 1:
-                            print(f"Retrying {method} in {i} seconds ({e})...")
-                            sleep(i)
-                            continue
-                        else:
-                            raise
-                return None
-            return middleware
-        self.w3.middleware_onion.inject(retry_on_nonce_error, layer=0)
 
         # Retry on transient connection errors
         self.w3.middleware_onion.inject(http_retry_request_middleware, layer=0)
