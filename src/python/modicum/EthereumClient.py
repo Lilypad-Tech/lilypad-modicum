@@ -127,7 +127,7 @@ class EthereumClient:
                     except NonceException as e:
                         if i < retries - 1:
                             print(f"Retrying {method} in {i} seconds ({e})...")
-                            time.sleep(i)
+                            sleep(i)
                             continue
                         else:
                             raise
