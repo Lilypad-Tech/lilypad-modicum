@@ -99,7 +99,7 @@ class EthereumClient:
                     # Different error, don't retry it
                     raise e
                 if i < retries - 1:
-                    print(f"Retrying {method} in {i} seconds ({e})...")
+                    self.logger.info(f"Retrying {method} in {i} seconds ({e})...")
                     sleep(i)
                     continue
                 else:
