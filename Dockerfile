@@ -10,7 +10,8 @@ RUN apt-get update && \
       libssl-dev \
       libcurl4-openssl-dev \
       jq \
-      tzdata
+      tzdata \
+      docker.io
 RUN curl -sL https://get.bacalhau.org/install.sh | bash
 RUN pip3 install supervisor
 RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-amd64.tar.gz && \
@@ -24,6 +25,8 @@ RUN pip3 install -r /tmp/requirements.txt
 ADD ./src/python /app
 RUN pip3 install -e .
 ENV BACALHAU_API_HOST=localhost
+# nvidia-smi wrapper script which actually runs a container from inside a container
+ADD nvidia-smi /usr/bin/nvidia-smi
 ENTRYPOINT ["/usr/local/bin/modicum"]
 
 FROM modicum AS resource-provider

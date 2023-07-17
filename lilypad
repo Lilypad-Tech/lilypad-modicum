@@ -47,9 +47,16 @@ if [[ $# -eq 0 ]]; then
 
 elif [[ $1 == "serve" ]]; then
   shift
+  GPU_ARG=""
+  GPU_VALUE=""
+  if [ -f "/usr/bin/nvidia-smi" ]; then
+      GPU_ARG="--gpus"
+      GPU_VALUE="all"
+  fi
   docker run -d --restart always --name resource-provider \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    $GPU_ARG $GPU_VALUE \
     -e PRIVATE_KEY \
     -e CONTRACT_ADDRESS \
     -e CONTRACT_ABI_FILE=/Modicum.json \
