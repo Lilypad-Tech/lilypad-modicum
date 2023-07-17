@@ -7,12 +7,25 @@ IFS=$'\n\t'
 ### USE FUNCTIONS AND eval "$@" BECAUSE THEN PASSING VARIABLES WITH WHITESPACE
 ### IN STOPS WORKING
 
-export GIT_HASH=${GIT_HASH:="c2e0487"}
-export VERSION=${VERSION:="${GIT_HASH}"}
+LATEST_TXT="$(curl -sSL https://raw.githubusercontent.com/bacalhau-project/lilypad/main/latest.txt)"
+for X in $LATEST_TXT; do
+    if echo $X |grep -q git_hash; then
+        LATEST_GIT_HASH="$(echo $X |cut -d '|' -f 2)"
+    fi
+    if echo $X |grep -q contract_address; then
+        LATEST_CONTRACT_ADDRESS="$(echo $X |cut -d '|' -f 2)"
+    fi
+    if echo $X |grep -q mediator_addresses; then
+        LATEST_MEDIATOR_ADDRESSES="$(echo $X |cut -d '|' -f 2)"
+    fi
+done
+
+export GIT_HASH=${GIT_HASH:="$LATEST_GIT_HASH"}
+export VERSION=${VERSION:="${GIT_HASH}-$(uname -m |sed 's/arm64/aarch64/')"}
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
 export RPC_URL=${RPC_URL:="http://testnet.lilypadnetwork.org:8545"}
-export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:="0xD16D3f82f34b0DB2573D846dd35f1A78418964a5"}
-export MEDIATOR_ADDRESSES=${MEDIATOR_ADDRESSES:="0xcd9379eedcbb9a077025fbdf5ae81f1399e43f2c"}
+export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=$LATEST_CONTRACT_ADDRESS}
+export MEDIATOR_ADDRESSES=${MEDIATOR_ADDRESSES:=$LATEST_MEDIATOR_ADDRESSES}
 export IMAGE_BASE=${IMAGE_BASE:="lilypad"}
 export IMAGE_MODICUM_NAME=${IMAGE_MODICUM_NAME:="${IMAGE_BASE}-modicum"}
 export IMAGE_MODICUM="${DOCKER_REGISTRY}/${IMAGE_MODICUM_NAME}:${VERSION}"
@@ -23,10 +36,13 @@ export LILYPAD_NODE_FLAGS=""
 if [[ $# -eq 0 ]]; then
   echo "Usage: $0 <command> [args]"
   echo
+  echo "Must set PRIVATE_KEY environment variable with your Ethereum key e.g. from metamask"
+  echo
   echo "Commands:"
-  echo "  serve"
-  echo "  run"
-  echo "  serve-logs"
+  echo "  run - run a client with a job e.g. lilypad run --module cowsay:v0.0.1 --params 'hello'"
+  echo "  serve - run a server"
+  echo "  serve-logs - tail the logs of the server (useful for sharing debugging info)"
+  echo "  stop - stop the server and delete the container (useful for upgrades - run lilypad stop && lilypad serve)"
   exit 1
 
 elif [[ $1 == "serve" ]]; then
@@ -73,4 +89,7 @@ elif [[ $1 == "serve-logs" ]]; then
   docker exec -ti $service supervisorctl tail -f $service stdout &
   docker exec -ti $service supervisorctl tail -f $service stderr
   exit 0
+
+elif [[ $1 == "stop" ]]; then
+  docker rm -f resource-provider
 fi
