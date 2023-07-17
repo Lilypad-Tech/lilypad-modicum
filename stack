@@ -355,6 +355,7 @@ function reset() {
     cd src/js
     npx hardhat compile
   )
+  build
   geth
   geth-proxy
   sleep $sleepSeconds
