@@ -48,18 +48,22 @@ function upload-stack() {
 }
 
 function build-modicum() {
+  compile-contract
   docker build -t $IMAGE_MODICUM --target modicum .
 }
 
 function build-resource-provider() {
+  compile-contract
   docker build -t $IMAGE_RESOURCE_PROVIDER --target resource-provider .
 }
 
 function build-mediator() {
+  compile-contract
   docker build -t $IMAGE_MEDIATOR --target mediator .
 }
 
 function build-hardhat() {
+  compile-contract
   docker build -t $IMAGE_HARDHAT src/js
 }
 
