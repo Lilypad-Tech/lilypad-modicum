@@ -685,7 +685,8 @@ def runLilypadCLI(template, params, mediator):
     # User facing, quiet logging
     import logging
     logger = logging.getLogger("JobCreator")
-    # only log really bad events
+    logger.setLevel(logging.ERROR)
+    logger = logging.getLogger("EthereumClient")
     logger.setLevel(logging.ERROR)
 
     print(f"\n🌟 Lilypad submitting job {template}({repr(params)}) 🌟\n")
