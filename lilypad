@@ -53,6 +53,7 @@ elif [[ $1 == "serve" ]]; then
       GPU_ARG="--gpus"
       GPU_VALUE="all"
   fi
+  # /tmp is for bacalhau to be able to find its own results
   docker run -d --restart always --name resource-provider \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \

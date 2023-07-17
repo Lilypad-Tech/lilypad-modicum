@@ -136,7 +136,9 @@ function geth() {
     -v ${DATA_DIRECTORY}:/data/geth \
     ethereum/client-go \
       --datadir /data/geth \
-      --dev --http \
+      --dev \
+      --dev.period 1 \
+      --http \
       --http.api web3,eth,net \
       --http.addr 0.0.0.0 \
       --http.corsdomain '*' \
