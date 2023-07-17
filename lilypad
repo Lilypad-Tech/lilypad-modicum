@@ -9,14 +9,14 @@ IFS=$'\n\t'
 
 LATEST_TXT="$(curl -sSL https://raw.githubusercontent.com/bacalhau-project/lilypad/main/latest.txt)"
 for X in $LATEST_TXT; do
-    if echo $X |grep git_hash >/dev/null; then
-        LATEST_GIT_HASH="$(echo $X |cut -d '|' -f 2 | tr -d '\n')"
+    if echo $X |grep -q git_hash; then
+        LATEST_GIT_HASH="$(echo $X |cut -d '|' -f 2)"
     fi
-    if echo $X |grep contract_address >/dev/null; then
-        LATEST_CONTRACT_ADDRESS="$(echo $X |cut -d '|' -f 2 | tr -d '\n')"
+    if echo $X |grep -q contract_address; then
+        LATEST_CONTRACT_ADDRESS="$(echo $X |cut -d '|' -f 2)"
     fi
-    if echo $X |grep mediator_addresses >/dev/null; then
-        LATEST_MEDIATOR_ADDRESSES="$(echo $X |cut -d '|' -f 2 | tr -d '\n')"
+    if echo $X |grep -q mediator_addresses; then
+        LATEST_MEDIATOR_ADDRESSES="$(echo $X |cut -d '|' -f 2)"
     fi
 done
 
