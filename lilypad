@@ -7,8 +7,8 @@ IFS=$'\n\t'
 ### USE FUNCTIONS AND eval "$@" BECAUSE THEN PASSING VARIABLES WITH WHITESPACE
 ### IN STOPS WORKING
 
-export GIT_HASH=${GIT_HASH:="60afd57"}
-export VERSION=${VERSION:="${GIT_HASH}"}
+export GIT_HASH=${GIT_HASH:="8b6627d"}
+export VERSION=${VERSION:="${GIT_HASH}-$(uname -m |sed 's/arm64/aarch64/')"}
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
 export RPC_URL=${RPC_URL:="http://testnet.lilypadnetwork.org:8545"}
 export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:="0xD16D3f82f34b0DB2573D846dd35f1A78418964a5"}
