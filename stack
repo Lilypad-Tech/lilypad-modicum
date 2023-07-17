@@ -340,7 +340,7 @@ function submitjob() {
 
 function reset() {
   set -x
-  docker rm -f $(docker ps -aq) ||true
+  docker rm -f faucet-proxy faucet resource-provider mediator solver geth-proxy geth ||true
   sudo rm -rf $DATA_DIRECTORY
   local sleepSeconds="1"
   if [[ -z "$QUICK_RESET" ]]; then
