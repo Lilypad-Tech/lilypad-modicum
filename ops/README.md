@@ -33,6 +33,8 @@ sleep 5
 exit
 ```
 
+**You must now update the contract address in the lilypad script which is distributed to users**
+
 Now you need to update the `./lilypad` script as follows:
 
 ```python
