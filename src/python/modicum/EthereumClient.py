@@ -118,6 +118,12 @@ class EthereumClient:
             def middleware(method, params):
                 for i in range(retries):
                     try:
+                        if i > 0:
+                            print("🙀 METHOD:")
+                            import pprint; pprint.pprint(method)
+                            print("🙀 PARAMS:")
+                            import pprint; pprint.pprint(params)
+                            params["nonce"] += i
                         rpc_response = make_request(method, params)
                         if "error" in rpc_response:
                             e = rpc_response["error"]
