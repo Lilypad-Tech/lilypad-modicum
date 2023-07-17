@@ -223,6 +223,7 @@ function fund-admin() {
 
 function fund-faucet() {
   source ${DIR}/.env
+  sleep 5
   geth-script scripts/fund-faucet.js
 }
 

@@ -729,14 +729,16 @@ def runLilypadCLI(template, params, mediator):
     lastState = JC.state
 
     statemojis = {
-        "Posting": "💌",
-        "Matched": "🥰",
         "JobOfferPostedTwo": "💼",
+        "Matched": "🥰",
+        "Posting": "💌",
+        "ResultsPosted": "💌",
     }
     descriptions = {
         "JobOfferPostedTwo": "Scheduling on-chain...",
         "Matched": "Running job...",
-        "ResultsPosted": "Fetching results...",
+        "Posting": "Fetching results (part 1)...",
+        "ResultsPosted": "Fetching results (part 2)...",
     }
     while not JC.finished:
         if JC.state != lastState:

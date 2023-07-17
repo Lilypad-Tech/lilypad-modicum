@@ -285,6 +285,7 @@ class JobCreator(PlatformClient):
 
                 elif name == "Matched":
                     self.state = "Matched"
+                    self.status = ""
                     self.logger.info("🔴 Matched: \n({}).".format(params))
                     joid = params['jobOfferId']
                     if joid in self.job_offers:
@@ -327,8 +328,10 @@ class JobCreator(PlatformClient):
 
                         if params['hash'].startswith("JOB_FAILED"):
                             self.status = f"❌ {params['hash']}"
+                            self.state = "ResultsPosted"
                         else:
                             self.status = f"https://ipfs.io/ipfs/{params['hash']}"
+                            self.state = "ResultsPosted"
                         if(should_mediate()):
                             self.logger.info("🟣🟣🟣🟣 mediation triggered !!!!!")
                             txHash = self.ethclient.contract.functions.rejectResult(resultId).transact({
