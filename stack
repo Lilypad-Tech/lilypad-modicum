@@ -137,7 +137,6 @@ function geth() {
     ethereum/client-go \
       --datadir /data/geth \
       --dev \
-      --dev.period 1 \
       --http \
       --http.api web3,eth,net \
       --http.addr 0.0.0.0 \

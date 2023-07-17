@@ -137,7 +137,7 @@ def runAsMediator(index,sim):
                bandwidthPrice=1,availabilityValue=1, verificationCount=1)
 
     while not M.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     click.echo("Mediator has registered")
 
 
@@ -185,13 +185,13 @@ def startJC(playerpath,index,host,sim):
     click.echo("Job Creator Daemon is registering... ")
     JC.register(JC.account)
     while not JC.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     # click.echo("JC has registered")
 
     # mediator = '0x067d6f1ee89b6ccc4a057a19f2071dcdfb42e40c'
     exitcode = JC.addMediator(JC.account, mediator)
     while not JC.mediator:
-        time.sleep(1)
+        time.sleep(0.1)
 
     if sim =="True":  
         # postOffer /home/riaps/projects/MODiCuM/workloads/stress-ng/job stress-ng run 2 False END      
@@ -266,14 +266,14 @@ def startJCDaemon(index):
     exitcode = JC.register(JC.account)
     print("exitcode: %s" %exitcode)
     while not JC.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     print("JC has registered")
 
     # mediator = '0x067d6f1ee89b6ccc4a057a19f2071dcdfb42e40c'
     print("Job adding mediator... ")
     exitcode = JC.addMediator(JC.account, mediator)
     while not JC.mediator:
-        time.sleep(1)
+        time.sleep(0.1)
     
 
 @click.command('stopJCDaemon')
@@ -521,7 +521,7 @@ def startRP(path,index,host,sim,mediator):
     exitcode = RP.register(RP.account,Architecture.amd64.value, 1)# ratio to 1Gz processor # XXX should this be arm64???
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     print("RP has registered")
 
     if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None and os.environ.get('MEDIATOR_ADDRESSES') != "":
@@ -537,10 +537,10 @@ def startRP(path,index,host,sim,mediator):
     exitcode = RP.addMediator(RP.account, mediator)
 
     while not RP.mediator:
-        time.sleep(1)
+        time.sleep(0.1)
 
     while not RP.idle:
-        time.sleep(1)
+        time.sleep(0.1)
 
     exitcode = RP.postDefaultOffer()
 
@@ -565,7 +565,7 @@ def startRPDaemon(index):
     exitcode = RP.register(RP.account,Architecture.amd64.value, 1)# ratio to 1Gz processor
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     print("RP has registered")
 
 
@@ -573,7 +573,7 @@ def startRPDaemon(index):
     print("Resource Provider adding mediator... ")
     exitcode = RP.addMediator(RP.account, mediator)
     while not RP.mediator:
-        time.sleep(1)
+        time.sleep(0.1)
 
 
 @click.command('stopRPDaemon')
@@ -702,7 +702,7 @@ def runLilypadCLI(template, params, mediator):
     spinner.start()
     JC.register(JC.account)
     while not JC.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     spinner.stop_and_persist("🔌")
 
     if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None and os.environ.get('MEDIATOR_ADDRESSES') != "":
@@ -717,7 +717,7 @@ def runLilypadCLI(template, params, mediator):
     spinner.start()
     exitcode = JC.addMediator(JC.account, mediator)
     while not JC.mediator:
-        time.sleep(1)
+        time.sleep(0.1)
     spinner.stop_and_persist("🧘")
     
     lastSpinner = "Posting"

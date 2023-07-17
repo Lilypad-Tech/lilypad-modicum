@@ -87,6 +87,26 @@ class EthereumClient:
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
         # print(self.w3.is_connected())
 
+        # Retry on ALL errors with linear backoff
+        # Sticking plaster for https://github.com/bacalhau-project/lilypad/issues/53
+        # XXX This may be dangerous as it could re-issue transactions to do with
+        # payment. TODO: Think hard about this!
+        def always_retry(make_request, w3, retries=5):
+            def middleware(method, params):
+                for i in range(retries):
+                    try:
+                        return make_request(method, params)
+                    except Exception as e:
+                        if i < retries - 1:
+                            print(f"Retrying {method} in {i} seconds ({e})...")
+                            time.sleep(i)
+                            continue
+                        else:
+                            raise
+                return None
+            return middleware
+        self.w3.middleware_onion.inject(always_retry, layer=0)
+
         self.addresses = []
 
         if os.environ.get('DEBUG') is not None:

@@ -226,7 +226,7 @@ class JobCreator(PlatformClient):
             
             elif msg['request'] == "post":
                 while not self.penaltyRate or not self.mediator:
-                    time.sleep(1)
+                    time.sleep(0.1)
                 self.postOffer(msg)
             
             elif msg['request'] =="getResult":
