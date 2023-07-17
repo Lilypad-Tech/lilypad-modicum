@@ -11,10 +11,14 @@ def _stable_diffusion(params: str):
             },
             "Docker": {
                 "Entrypoint": [
-                    "echo",
+                    "python",
+                    "main.py",
+                    "--o",
+                    "./outputs",
+                    "--p",
                     params,
                 ],
-                "Image": "ubuntu:22.04"
+                "Image": "ghcr.io/bacalhau-project/examples/stable-diffusion-gpu:0.0.1"
             },
             "Engine": "Docker",
             "Language": {
