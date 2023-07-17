@@ -63,6 +63,8 @@ cd /data/lilypad
 source .env
 ./stack stop
 git pull
+# Deploy new contract
+(cd src/js && npx hardhat deploy --network localgeth)
 ./stack start
 exit
 ```
