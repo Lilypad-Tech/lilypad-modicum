@@ -689,7 +689,7 @@ def runLilypadCLI(template, params, mediator):
     logger = logging.getLogger("EthereumClient")
     logger.setLevel(logging.ERROR)
 
-    print(f"\n🌟 Lilypad submitting job {template}({repr(params)}) 🌟\n")
+    print(f"\n🌟 Lilypad submitting job {template}({params}) 🌟\n")
 
     spinner = Halo(text='Connecting to smart contract', spinner='pong')
     spinner.start()
