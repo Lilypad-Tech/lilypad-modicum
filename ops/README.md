@@ -42,10 +42,15 @@ gcloud compute ssh bravo-testnet-vm-0 --zone us-central1-a
 sudo su -
 cd /data/lilypad
 source .env
-./stack stop
+
+# Update code
 git pull
+
 # Deploy new contract
 (cd src/js && npx hardhat deploy --network localgeth)
+
+# Deploy new code
+./stack stop
 ./stack start
 exit
 ```
