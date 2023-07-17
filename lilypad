@@ -50,7 +50,7 @@ elif [[ $1 == "serve" ]]; then
   GPU_ARG=""
   GPU_VALUE=""
   if [ -f "/usr/bin/nvidia-smi" ]; then
-      GPU_ARG="--gpu"
+      GPU_ARG="--gpus"
       GPU_VALUE="all"
   fi
   docker run -d --restart always --name resource-provider \
