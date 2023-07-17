@@ -55,22 +55,28 @@ git pull
 exit
 ```
 
-**You must now update the contract address in the lilypad script which is distributed to users**
+**You must now update the contract address in the latest.txt file which is distributed to users**
 
-Now you need to update the `./lilypad` script as follows:
+Now you need to update the `./latest.txt` file:
 
 ```python
-export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:="..."}
-export MEDIATOR_ADDRESSES=${MEDIATOR_ADDRESSES:="..."}
+git_hash|<7 character short git hash>
+contract_address|<contract address>
+mediator_addresses|<mediator addresses, comma separated>
 ```
 
-CONTRACT_ADDRESS you get by:
+git_hash you can get by:
+```bash
+git rev-parse --short HEAD
+```
+
+contrat_address you get by:
 
 ```bash
 cat src/js/deployments/localgeth/Modicum.json | jq -r .address
 ```
 
-MEDIATOR_ADDRESSES you get by:
+mediator_addresses you get by:
 
 ```bash
 cat .env | grep ADDRESS_MEDIATOR
