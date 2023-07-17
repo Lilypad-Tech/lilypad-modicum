@@ -12,7 +12,7 @@ import os
 import importlib
 from hexbytes import HexBytes
 from web3 import HTTPProvider, Web3
-from web3.middleware import geth_poa_middleware
+from web3.middleware import geth_poa_middleware, http_retry_request_middleware
 import requests
 from hexbytes import HexBytes
 
@@ -57,6 +57,9 @@ class CustomHTTPProvider(HTTPProvider):
         if rpcToken != None:
             self._request_kwargs['headers']['Authorization'] = f'Bearer {rpcToken}'
 
+class NonceException(Exception):
+    pass
+
 class EthereumClient:
     def __init__(self, ip, port, protocol=None):
         self.logger = logging.getLogger("EthereumClient")
@@ -87,16 +90,41 @@ class EthereumClient:
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
         # print(self.w3.is_connected())
 
-        # Retry on ALL errors with linear backoff
-        # Sticking plaster for https://github.com/bacalhau-project/lilypad/issues/53
-        # XXX This may be dangerous as it could re-issue transactions to do with
-        # payment. TODO: Think hard about this!
-        def always_retry(make_request, w3, retries=5):
+        # Retry on nonce errors with linear backoff
+        def retry_on_nonce_error(make_request, w3, retries=5):
+            """
+            Workaround:
+            Traceback (most recent call last):
+                File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+                    self.run()
+                File "/usr/lib/python3.10/threading.py", line 953, in run
+                    self._target(*self._args, **self._kwargs)
+                File "/app/modicum/JobCreator.py", line 342, in platformListener
+                    txHash = self.ethclient.contract.functions.acceptResult(resultId).transact({
+                File "/usr/local/lib/python3.10/dist-packages/web3/contract/contract.py", line 479, in transact
+                    return transact_with_contract_function(
+                File "/usr/local/lib/python3.10/dist-packages/web3/contract/utils.py", line 172, in transact_with_contract_function
+                    txn_hash = w3.eth.send_transaction(transact_transaction)
+                File "/usr/local/lib/python3.10/dist-packages/web3/eth/eth.py", line 362, in send_transaction
+                    return self._send_transaction(transaction)
+                File "/usr/local/lib/python3.10/dist-packages/web3/module.py", line 68, in caller
+                    result = w3.manager.request_blocking(
+                File "/usr/local/lib/python3.10/dist-packages/web3/manager.py", line 232, in request_blocking
+                    return self.formatted_response(
+                File "/usr/local/lib/python3.10/dist-packages/web3/manager.py", line 205, in formatted_response
+                    raise ValueError(response["error"])
+                ValueError: {'code': -32000, 'message': 'nonce too low: next nonce 686, tx nonce 685'}
+            """
             def middleware(method, params):
                 for i in range(retries):
                     try:
-                        return make_request(method, params)
-                    except Exception as e:
+                        rpc_response = make_request(method, params)
+                        if "error" in rpc_response:
+                            e = rpc_response["error"]
+                            if e["code"] == -32000 and e["message"].startswith("nonce too low"):
+                                raise NonceException(e["message"])
+                        return rpc_response
+                    except NonceException as e:
                         if i < retries - 1:
                             print(f"Retrying {method} in {i} seconds ({e})...")
                             time.sleep(i)
@@ -105,7 +133,10 @@ class EthereumClient:
                             raise
                 return None
             return middleware
-        self.w3.middleware_onion.inject(always_retry, layer=0)
+        self.w3.middleware_onion.inject(retry_on_nonce_error, layer=0)
+
+        # Retry on transient connection errors
+        self.w3.middleware_onion.inject(http_retry_request_middleware, layer=0)
 
         self.addresses = []
 
