@@ -33,6 +33,23 @@ sleep 5
 exit
 ```
 
+#### deploy new code
+
+To depoy the latest version of main to the production node:
+
+```bash
+gcloud compute ssh bravo-testnet-vm-0 --zone us-central1-a
+sudo su -
+cd /data/lilypad
+source .env
+./stack stop
+git pull
+# Deploy new contract
+(cd src/js && npx hardhat deploy --network localgeth)
+./stack start
+exit
+```
+
 **You must now update the contract address in the lilypad script which is distributed to users**
 
 Now you need to update the `./lilypad` script as follows:
@@ -54,22 +71,6 @@ MEDIATOR_ADDRESSES you get by:
 cat .env | grep ADDRESS_MEDIATOR
 ```
 
-#### deploy new code
-
-To depoy the latest version of main to the production node:
-
-```bash
-gcloud compute ssh bravo-testnet-vm-0 --zone us-central1-a
-sudo su -
-cd /data/lilypad
-source .env
-./stack stop
-git pull
-# Deploy new contract
-(cd src/js && npx hardhat deploy --network localgeth)
-./stack start
-exit
-```
 
 ### deploy client scripts
 
