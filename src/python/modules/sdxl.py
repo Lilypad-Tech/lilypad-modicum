@@ -23,7 +23,8 @@ def _sdxl(params: str):
                 "EnvironmentVariables": [
                     f"PROMPT={params.get('prompt', 'question mark floating in space')}",
                     f"RANDOM_SEED={params.get('seed', 42)}",
-                    f"OUTPUT_PATH=/outputs/"
+                    f"OUTPUT_PATH=/outputs/",
+                    "HF_HUB_OFFLINE=1",
                 ]
             },
             "Engine": "Docker",
