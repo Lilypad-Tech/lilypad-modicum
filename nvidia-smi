@@ -1,4 +1,9 @@
 #!/bin/bash
 docker pull -q nvidia/cuda:11.0.3-devel-ubuntu20.04 >/dev/null
 docker run -i --gpus all nvidia/cuda:11.0.3-devel-ubuntu20.04 nvidia-smi "$@"
+if [ $? -ne 0 ]; then
+    echo
+    echo "No GPU found"
+    echo
+fi
 exit 0
