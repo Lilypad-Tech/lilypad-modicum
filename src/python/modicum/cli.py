@@ -670,10 +670,16 @@ def main(ctx):
 
 # TODO: new runLilypadCLI subcommand for 'lilypad' cli to exec into.
 @click.command('runLilypadCLI')
+@click.argument('args', nargs=-1)
 @click.option('--template', default="stable_diffusion", show_default=True)
 @click.option('--params', default="", show_default=True)
 @click.option('--mediator', default=None, show_default=True)
-def runLilypadCLI(template, params, mediator):
+def runLilypadCLI(args, template, params, mediator):
+    # Also support cleaner syntax where you just do:
+    # lilypad run sdxl:v0.9-lilypad1 '{"prompt": "an astronaut riding a unicorn"}'
+    if len(args) == 2:
+        template, params = args
+
     from modicum import JobCreator
     _CONTRACT_ADDRESS_ = os.environ.get('CONTRACT_ADDRESS')
     _GETHIP_ = os.environ.get('GETHIP')
