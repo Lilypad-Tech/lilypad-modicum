@@ -24,6 +24,7 @@ modules = {
     "sdxl:v0.9-lilypad1": _sdxl,
     "lora:v0.1.7-lilypad1": _lora,
     "cowsay:v0.0.1": _cowsay,
+    "fastchat:v0.0.1": _fastchat,
     "filecoin_data_prep:v0.0.1": _filecoin_data_prep,
     "deterministic_wasm:v0.0.1": _deterministic_wasm,
 }
