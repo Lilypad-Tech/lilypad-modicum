@@ -15,7 +15,7 @@ async function main() {
   const wallet = getWallet('admin')
   const signer = wallet.connect(hre.ethers.provider)
   const JOB_COST = ethers.utils.parseEther("0.1")
-  const price = await modicumContract.setModuleCost('fastchat:v0.9-lilypad1', JOB_COST)
+  const price = await modicumContract.setModuleCost('fastchat:v0.0.1', JOB_COST)
 }
 
 main().catch((error) => {
