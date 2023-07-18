@@ -19,6 +19,9 @@ const JOB_COST = 1
 const MODULES = [
   'stable_diffusion:v0.0.1',
   'cowsay:v0.0.1',
+  'sdxl:v0.9-lilypad1',
+  'lora_training:v0.1.7-lilypad1',
+  'lora_inference:v0.1.7-lilypad1',
   'filecoin_data_prep:v0.0.1',
   'deterministic_wasm:v0.0.1',
 ]
