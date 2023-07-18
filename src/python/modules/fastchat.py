@@ -55,4 +55,4 @@ def _fastchat(params: str):
     }
 
 if __name__ == "__main__":
-    print(_sdxl('{"template": "You are chatbot. \n question: {question} \n anwser:", "parameters": {"question":question}}'))
+    print(_fastchat('{"template": "You are chatbot. \n question: {question} \n anwser:", "parameters": {"question":question}}'))
