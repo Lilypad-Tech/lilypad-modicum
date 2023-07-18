@@ -1,7 +1,11 @@
 import json
 
 def _sdxl(params: str):
-    params = json.loads(params)
+    if params.startswith("{"):
+        params = json.loads(params)
+    else:
+        prompt = params
+        params = {"prompt": prompt, "seed": 0}
     if not isinstance(params, dict):
         raise Exception("Please set params to a dict like {'prompt': 'astronaut riding a horse', 'seed': 42}")
     return {
