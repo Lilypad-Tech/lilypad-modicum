@@ -7,7 +7,7 @@ from modules.deterministic_wasm import _deterministic_wasm
 from modules.filecoin_data_prep import _filecoin_data_prep
 from modules.stable_diffusion import _stable_diffusion
 from modules.sdxl import _sdxl
-from modules.lora import _lora
+from modules.lora import _lora_training, _lora_inference
 
 def get_bacalhau_jobspec(template_name, params):
     """
@@ -22,7 +22,8 @@ def get_bacalhau_jobspec(template_name, params):
 modules = {
     "stable_diffusion:v0.0.1": _stable_diffusion,
     "sdxl:v0.9-lilypad1": _sdxl,
-    "lora:v0.1.7-lilypad1": _lora,
+    "lora_training:v0.1.7-lilypad1": _lora_training,
+    "lora_inference:v0.1.7-lilypad1": _lora_inference,
     "cowsay:v0.0.1": _cowsay,
     "filecoin_data_prep:v0.0.1": _filecoin_data_prep,
     "deterministic_wasm:v0.0.1": _deterministic_wasm,
