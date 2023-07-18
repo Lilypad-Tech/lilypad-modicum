@@ -726,11 +726,11 @@ def runLilypadCLI(template, params, mediator):
     JC = JobCreator.JobCreator(index, False)
     
     # User facing, quiet logging
-    import logging
-    logger = logging.getLogger("JobCreator")
-    logger.setLevel(logging.ERROR)
-    logger = logging.getLogger("EthereumClient")
-    logger.setLevel(logging.ERROR)
+    # import logging
+    # logger = logging.getLogger("JobCreator")
+    # logger.setLevel(logging.ERROR)
+    # logger = logging.getLogger("EthereumClient")
+    # logger.setLevel(logging.ERROR)
 
     print(f"\n🌟 Lilypad submitting job {template}({params}) 🌟\n")
 

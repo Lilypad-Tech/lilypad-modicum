@@ -109,7 +109,8 @@ class Solver(PlatformClient):
         jobOfferArch = job_offer.arch
 
         # the only case we don't match is here the resource provider is CPU only and the job requires a CPU
-        if resourceProviderArch == Architecture.cpu and jobOfferArch == Architecture.gpu:
+        if resourceProviderArch == Architecture.cpu.value and jobOfferArch == Architecture.gpu.value:
+            self.logger.info("🟢🟢🟢🟢 ARCH 🟢🟢🟢🟢\n#JO: %d\n#RO: %d" %(jobOfferArch, resourceProviderArch))
             self.logger.info(f"Architecture mismatch (RP=CPU, JO=GPU)")
             return(False, False)
 
@@ -214,12 +215,14 @@ class Solver(PlatformClient):
         
         for i in self.resource_offers:
             resource_offer = self.resource_offers[i]
+            resourceProviderArch = self.resource_providers[resource_offer.resourceProvider].arch
             # append a dict to debugJobOffers
             debugResourceOffers.append({
               "offerId": resource_offer.offerId,
               "resourceProvider": resource_offer.resourceProvider,
               "deposit": resource_offer.deposit,
-              "iroid": resource_offer.iroid
+              "iroid": resource_offer.iroid,
+              "arch": resourceProviderArch,
             })
 
         for i in self.job_offers:
@@ -229,7 +232,8 @@ class Solver(PlatformClient):
               "offerId": job_offer.offerId,
               "ijoid": job_offer.ijoid,
               "jobCreator": job_offer.jobCreator,
-              "extras": job_offer.extras
+              "extras": job_offer.extras,
+              "arch": job_offer.arch,
             })
 
 

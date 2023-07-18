@@ -90,10 +90,16 @@ function contract-address() {
 
 function compile-contract() {
   source ${DIR}/.env
+  if [[ -z "$QUICK_RESET" ]]; then
+    (
+      set -euo pipefail
+      cd src/js
+      npm install
+    )
+  fi
   (
     set -euo pipefail
     cd src/js
-    npm install
     npx hardhat compile
   )
 }

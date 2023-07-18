@@ -23,9 +23,9 @@ def get_bacalhau_jobspec(template_name, params):
 def get_bacalhau_job_arch(template_name):
     module = modules[template_name]
     if module.requireGPU:
-        return Architecture.cpu.value
-    else:
         return Architecture.gpu.value
+    else:
+        return Architecture.cpu.value
 
 modules = {
     "stable_diffusion:v0.0.1": _stable_diffusion,

@@ -410,6 +410,15 @@ class JobCreator(PlatformClient):
 
         arch = get_bacalhau_job_arch(template)
 
+        # self.logger.info("🟢🟢🟢🟢 ARCH = %s %s" % (template, arch,))
+        # self.logger.info("🟢🟢🟢🟢 ARCH = %s %s" % (template, arch,))
+        # self.logger.info("🟢🟢🟢🟢 ARCH = %s %s" % (template, arch,))
+        # self.logger.info("🟢🟢🟢🟢 ARCH = %s %s" % (template, arch,))
+
+        
+
+        # time.sleep(60 * 60)
+
         msg = {
           "ijoid":round(time.time()*1000),
           "cpuTime":800000,
