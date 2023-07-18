@@ -1,5 +1,7 @@
 # Development
 
+**NOTE: GPU development (and deployment) works best on Ubuntu 20.04 currently**
+
 We need the following installed:
 
  * docker
