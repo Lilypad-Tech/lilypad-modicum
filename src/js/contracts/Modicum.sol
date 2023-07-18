@@ -21,8 +21,8 @@ contract Modicum {
     }
 
     enum Architecture {
-        amd64,
-        armv7
+        cpu,
+        gpu
     }
 
     struct JobCreator {
@@ -274,7 +274,6 @@ contract Modicum {
     }
 
     function check(Architecture arch) public{
-      //Architecture arch = Architecture.amd64;
       emit Debug(5);
       emit DebugArch(arch);
       emit DebugUint(1);
@@ -542,7 +541,7 @@ contract Modicum {
       return string(abi.encodePacked("{\"template\": \"", saneTemplate, "\", \"params\": \"", saneParams, "\"}"));
     }
 
-    function _runModule(string calldata moduleName, string calldata params, address[] memory _mediators) private returns (uint256) {
+    function _runModule(string calldata moduleName, string calldata params, address[] memory _mediators, Architecture arch) private returns (uint256) {
       require(_mediators.length > 0, "No mediators provided");
       // * register job creator address
       // * auto-assign jobid
@@ -568,7 +567,7 @@ contract Modicum {
         "",
         address(0),
         0,
-        Architecture.amd64,
+        arch,
         getModuleSpec(moduleName, params)
       );
 
@@ -577,12 +576,20 @@ contract Modicum {
       return jobID;
     }
 
-    function runModule(string calldata name, string calldata params, address[] calldata _mediators) external payable returns (uint256) {
-      return _runModule(name, params, _mediators);
+    function runModule(string calldata name, string calldata params, address[] calldata _mediators, bool requireGPU) external payable returns (uint256) {
+      Architecture arch = Architecture.cpu;
+      if(requireGPU) {
+        arch = Architecture.gpu;
+      }
+      return _runModule(name, params, _mediators, arch);
     }
 
-    function runModuleWithDefaultMediators(string calldata name, string calldata params) external payable returns (uint256) {
-      return _runModule(name, params, defaultMediators);
+    function runModuleWithDefaultMediators(string calldata name, string calldata params, bool requireGPU) external payable returns (uint256) {
+      Architecture arch = Architecture.cpu;
+      if(requireGPU) {
+        arch = Architecture.gpu;
+      }
+      return _runModule(name, params, defaultMediators, arch);
     }
 
     // NOTE: this is an example - so there are lots of "require" statements missing

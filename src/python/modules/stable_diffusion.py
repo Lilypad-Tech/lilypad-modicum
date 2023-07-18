@@ -47,3 +47,6 @@ def _stable_diffusion(params: str):
             ]
         }
     }
+
+
+_stable_diffusion.requireGPU = True

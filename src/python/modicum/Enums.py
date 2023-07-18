@@ -1,9 +1,8 @@
 from enum import Enum
 
-
 class Architecture(Enum):
-	amd64 = 0
-	armv7 = 1
+  cpu = 0
+  gpu = 1
 
 
 class ResultStatus(Enum):

@@ -59,3 +59,5 @@ def _sdxl(params: str):
             ]
         }
     }
+
+_sdxl.requireGPU = True

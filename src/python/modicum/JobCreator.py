@@ -14,6 +14,7 @@ from .PlatformClient import PlatformClient
 from . import helper
 from web3 import Web3
 from .Enums import Architecture
+from .Modules import get_bacalhau_job_arch
 
 import datetime
 
@@ -407,6 +408,17 @@ class JobCreator(PlatformClient):
 
         self.jobsPending += 1
 
+        arch = get_bacalhau_job_arch(template)
+
+        # self.logger.info("🟢🟢🟢🟢 ARCH = %s %s" % (template, arch,))
+        # self.logger.info("🟢🟢🟢🟢 ARCH = %s %s" % (template, arch,))
+        # self.logger.info("🟢🟢🟢🟢 ARCH = %s %s" % (template, arch,))
+        # self.logger.info("🟢🟢🟢🟢 ARCH = %s %s" % (template, arch,))
+
+        
+
+        # time.sleep(60 * 60)
+
         msg = {
           "ijoid":round(time.time()*1000),
           "cpuTime":800000,
@@ -421,7 +433,6 @@ class JobCreator(PlatformClient):
           "uri":1,
           "directory":"0xc590dd7eed9f093d88d2f3c894b769c746bc8c9b",
           "hash":66153838227408534191608590763201001504128600065912625980963590518282769258064,
-          "arch":"amd64"
         }
 
         # self.logger.info("cpuTime: %s Type: %s" %(msg["cpuTime"],type(msg["cpuTime"])))
@@ -492,7 +503,7 @@ class JobCreator(PlatformClient):
                 "arf",
                 Web3.to_checksum_address(msg['directory']),
                 Web3.to_int(msg['hash']),
-                Architecture.amd64.value,
+                arch,
                 jsonData,
             ), {
                 "from": self.account,
@@ -505,7 +516,7 @@ class JobCreator(PlatformClient):
 #  1,
 #  '0xc590dd7eed9f093d88d2f3c894b769c746bc8c9b',
 #  66153838227408534191608590763201001504128600065912625980963590518282769258064,
-#  'amd64',
+#  'cpu',
 #  '{"template": "stable-diffusion", "params": ""}')
 
 

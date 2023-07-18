@@ -44,3 +44,5 @@ def _deterministic_wasm(params: dict):
             ]
         }
     }
+
+_deterministic_wasm.requireGPU = False

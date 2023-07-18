@@ -2,7 +2,7 @@
 pragma solidity ^0.8.6;
 
 interface ModicumContract {
-  function runModuleWithDefaultMediators(string calldata name, string calldata params) external payable returns (uint256);
+  function runModuleWithDefaultMediators(string calldata name, string calldata params, bool requireGPU) external payable returns (uint256);
 }
 
 contract NaiveExamplesClient {
@@ -18,15 +18,15 @@ contract NaiveExamplesClient {
   }
 
   function runCowsay(string memory sayWhat) public payable returns (uint256) {
-    return runModule("cowsay:v0.0.1", sayWhat);
+    return runModule("cowsay:v0.0.1", sayWhat, false);
   }
 
   function runStablediffusion(string memory prompt) public payable returns (uint256) {
-    return runModule("stable_diffusion:v0.0.1", prompt);
+    return runModule("stable_diffusion:v0.0.1", prompt, true);
   }
 
-  function runModule(string memory name, string memory params) public payable returns (uint256) {
-    return remoteContractInstance.runModuleWithDefaultMediators{value: msg.value}(name, params);
+  function runModule(string memory name, string memory params, bool requireGPU) public payable returns (uint256) {
+    return remoteContractInstance.runModuleWithDefaultMediators{value: msg.value}(name, params, requireGPU);
   }
 
   function receiveJobResults(uint256 jobID, string calldata cid) public {

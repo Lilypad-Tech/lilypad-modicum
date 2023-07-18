@@ -117,3 +117,5 @@ def _lora(params: str):
         }
     else:
         raise Exception(f"unknown mode {mode}")
+
+_lora.requireGPU = True

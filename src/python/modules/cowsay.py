@@ -30,3 +30,5 @@ def _cowsay(params: str):
             "Verifier": "Noop"
         }
     }
+
+_cowsay.requireGPU = False

@@ -1,4 +1,5 @@
 from web3 import Web3
+from .Enums import Architecture
 # TODO write a guide here for how people should make modules FULLY DETERMINISTIC
 # TODO: include docker image hashes below
 
@@ -18,6 +19,13 @@ def get_bacalhau_jobspec(template_name, params):
     calling `bacalhau create <file.yaml>` on the ResourceProvider
     """
     return modules[template_name](params)
+
+def get_bacalhau_job_arch(template_name):
+    module = modules[template_name]
+    if module.requireGPU:
+        return Architecture.gpu.value
+    else:
+        return Architecture.cpu.value
 
 modules = {
     "stable_diffusion:v0.0.1": _stable_diffusion,
