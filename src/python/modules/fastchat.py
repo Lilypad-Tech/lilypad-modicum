@@ -6,6 +6,7 @@ def _fastchat(params: str):
     else:
         question = params
         params = {"template": "You are chatbot. \n question: {question} \n anwser:", "parameters": {"question":question}}
+    cmd = "python3 main.py --t " + params['template'] + "--p " + params['parameters'] + " 2>/dev/null"
     if not isinstance(params, dict):
         raise Exception('Please set params to a dict like {"template": "You are chatbot. \n question: {question} \n anwser:", "parameters": {"question":"What is an AI bot"}}')
     return {
@@ -22,9 +23,9 @@ def _fastchat(params: str):
                 "Entrypoint": [
                     "bash", "-c",
                     # stderr logging is nondeterministic (includes timing information)
-                    f"python3 main.py --t {params['template']} --p {params['parameters']} 2>/dev/null",
+                    cmd,
                 ],
-                "Image": "xqua/carpai-demo-repo:v0.1",
+                "Image": "xqua/carpai-demo-repo:v0.2",
             },
             "Engine": "Docker",
             "Language": {
