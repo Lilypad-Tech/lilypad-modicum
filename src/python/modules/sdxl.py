@@ -16,8 +16,9 @@ def _sdxl(params: str):
             },
             "Docker": {
                 "Entrypoint": [
-                    "python3",
-                    "inference.py",
+                    "bash", "-c",
+                    # stderr logging is nondeterministic (includes timing information)
+                    "python3 inference.py 2>/dev/null",
                 ],
                 "Image": "quay.io/lukemarsden/sdxl:v0.9-lilypad1",
                 "EnvironmentVariables": [
