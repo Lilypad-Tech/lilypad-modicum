@@ -8,10 +8,9 @@ import datetime
 from .PlatformClient import PlatformClient
 from . import PlatformStructs as Pstruct
 from . import helper
+from .Enums import Architecture
 
 POLLING_INTERVAL = 1 # seconds
-
-
 
 class Solver(PlatformClient):
     def __init__(self,index):
@@ -106,11 +105,13 @@ class Solver(PlatformClient):
             self.logger.info("Not Enough Time to complete: %s > %s" %(completionDeadline,job_offer.completionDeadline))
             return(False, False)
 
-        #JO.arch = RP.arch
-        if self.resource_providers[resource_offer.resourceProvider].arch != job_offer.arch:
-            self.logger.info(f"Architecture mismatch (RP={self.resource_providers[resource_offer.resourceProvider].arch}, JO={job_offer.arch})")
-            return(False, False)
+        resourceProviderArch = self.resource_providers[resource_offer.resourceProvider].arch
+        jobOfferArch = job_offer.arch
 
+        # the only case we don't match is here the resource provider is CPU only and the job requires a CPU
+        if resourceProviderArch == Architecture.cpu and jobOfferArch == Architecture.gpu:
+            self.logger.info(f"Architecture mismatch (RP=CPU, JO=GPU)")
+            return(False, False)
 
         # JO.trustedMediators intersection RP.trustedMediators != empty
         for i in self.resource_providers[resource_offer.resourceProvider].trustedMediators:

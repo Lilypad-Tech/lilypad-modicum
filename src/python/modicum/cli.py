@@ -7,8 +7,10 @@ import logging
 import json
 from web3 import Web3
 from .JobCreator import JobFinished
-
+import subprocess
+import shlex
 from .Enums import Architecture
+from .Modules import get_bacalhau_job_arch
 from halo import Halo
 
 # logFormatter = logging.Formatter('%(levelname)s - %(threadName)s - %(asctime)s - %(name)s - %(message)s')
@@ -49,6 +51,48 @@ def foo_command(count, name):
     for x in range(count):
         click.echo('Hello %s!' % name)
 
+
+def num_system_GPUs():
+    nvidia_cli = "nvidia-container-cli"
+
+    try:
+        nvidia_path = subprocess.check_output(shlex.split(f"which {nvidia_cli}")).decode().strip()
+    except subprocess.CalledProcessError:
+        # If the NVIDIA CLI is not installed, we can't know the number of GPUs, assume zero
+        return 0
+
+    args = ["info", "--csv"]
+    cmd = [nvidia_path] + args
+
+    try:
+        resp = subprocess.check_output(cmd).decode()
+    except subprocess.CalledProcessError as e:
+        print(e)
+        return 0
+
+    # Parse output of nvidia-container-cli command
+    lines = resp.split("\n")
+    device_info_flag = False
+    num_devices = 0
+    for line in lines:
+        line = line.strip()
+        if line == "":
+            continue
+        if line.startswith("Device Index"):
+            device_info_flag = True
+            continue
+        if device_info_flag:
+            num_devices += 1
+
+    print(num_devices)
+    return num_devices
+
+def get_arch():
+    numGPU = num_system_GPUs()
+    arch = Architecture.cpu.value
+    if numGPU > 0:
+        arch = Architecture.gpu.value
+    return arch
 
 ctxt = zmq.Context()
 ################################################################################
@@ -131,9 +175,8 @@ def runAsMediator(index,sim):
 
     # exitcode = M.test(1)
 
-
     click.echo("Mediator is registering... %s" % (M.account,))
-    M.register(M.account, Architecture.amd64.value, instructionPrice=1,
+    M.register(M.account, get_arch(), instructionPrice=1,
                bandwidthPrice=1,availabilityValue=1, verificationCount=1)
 
     while not M.registered:
@@ -378,7 +421,7 @@ def build(path, tag, tar, skip_build):
                             "jobHash_int" :  jobHash_int,
                             "uri" : tag,
                             "size" : job_size, #size of the docker image
-                            "arch" : "amd64",
+                            "arch" : "cpu",
                             "cpuTime" : -1, #Not set during build
                             "LocalStorageLimit" :  -1 , #Not set during build
                             "instructionMaxPrice" : 1,
@@ -430,7 +473,7 @@ def profile(path, tag, name):
                     "uri":-1,
                     "directory":-1,
                     "hash":-1,
-                    "arch":"amd64"}
+                    "arch":"cpu"}
 
 
 @click.command('getResult')
@@ -518,7 +561,7 @@ def startRP(path,index,host,sim,mediator):
     # the first (unlocked) account or the overriden account supplied by the env
     RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, 0)
     print("Resource Provider Daemon is registering... ")
-    exitcode = RP.register(RP.account,Architecture.amd64.value, 1)# ratio to 1Gz processor # XXX should this be arm64???
+    exitcode = RP.register(RP.account,get_arch(), 1)# ratio to 1Gz processor # XXX should this be arm64???
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
         time.sleep(0.1)
@@ -562,7 +605,7 @@ def startRPDaemon(index):
 
     RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_,index)
     print("Resource Provider Daemon is registering... ")
-    exitcode = RP.register(RP.account,Architecture.amd64.value, 1)# ratio to 1Gz processor
+    exitcode = RP.register(RP.account,get_arch(), 1)# ratio to 1Gz processor
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
         time.sleep(0.1)

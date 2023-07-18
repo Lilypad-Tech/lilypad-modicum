@@ -1,6 +1,6 @@
 import json
 
-def _sdxl(params: str):
+def _lora(params: str):
     params = json.loads(params)
     if not isinstance(params, dict):
         raise Exception(
@@ -59,3 +59,5 @@ def _sdxl(params: str):
             ]
         }
     }
+
+_lora.requireGPU = True

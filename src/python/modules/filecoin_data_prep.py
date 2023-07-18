@@ -66,3 +66,5 @@ def _filecoin_data_prep(params: dict):
             ]
         }
     }
+
+_filecoin_data_prep.requireGPU = False

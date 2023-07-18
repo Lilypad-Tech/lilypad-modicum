@@ -1,6 +1,7 @@
 import logging
 import logging.config
 import subprocess
+import shlex
 # from . import DirectoryClient
 from . import DockerWrapper
 from .PlatformClient import PlatformClient
