@@ -6,6 +6,7 @@ from modules.cowsay import _cowsay
 from modules.deterministic_wasm import _deterministic_wasm
 from modules.filecoin_data_prep import _filecoin_data_prep
 from modules.stable_diffusion import _stable_diffusion
+from modules.fastchat import _fastchat
 from modules.sdxl import _sdxl
 from modules.lora import _lora
 
