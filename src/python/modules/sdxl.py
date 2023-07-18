@@ -1,8 +1,8 @@
-import json
+import yaml
 
 def _sdxl(params: str):
     if params.startswith("{"):
-        params = json.loads(params)
+        params = yaml.safe_load(params)
     else:
         prompt = params
         params = {"prompt": prompt, "seed": 0}
@@ -59,3 +59,7 @@ def _sdxl(params: str):
             ]
         }
     }
+
+if __name__ == "__main__":
+    print(_sdxl("{prompt: hello, seed: 99}"))
+    print(_sdxl("{prompt: 'hello world', seed: 99}"))
