@@ -1,3 +1,3 @@
-git_hash|61fdafe
+git_hash|5b22640
 contract_address|0x422F325AA109A3038BDCb7B03Dd0331A4aC2cD1a
 mediator_addresses|0xcd9379eedcbb9a077025fbdf5ae81f1399e43f2c

@@ -1,7 +1,11 @@
 import json
 
 def _sdxl(params: str):
-    params = json.loads(params)
+    if params.startswith("{"):
+        params = json.loads(params)
+    else:
+        prompt = params
+        params = {"prompt": prompt, "seed": 0}
     if not isinstance(params, dict):
         raise Exception("Please set params to a dict like {'prompt': 'astronaut riding a horse', 'seed': 42}")
     return {
@@ -16,8 +20,9 @@ def _sdxl(params: str):
             },
             "Docker": {
                 "Entrypoint": [
-                    "python3",
-                    "inference.py",
+                    "bash", "-c",
+                    # stderr logging is nondeterministic (includes timing information)
+                    "python3 inference.py 2>/dev/null",
                 ],
                 "Image": "quay.io/lukemarsden/sdxl:v0.9-lilypad1",
                 "EnvironmentVariables": [
