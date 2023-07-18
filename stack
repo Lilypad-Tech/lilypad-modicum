@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 IFS=$'\n\t'
 
@@ -20,7 +20,7 @@ export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-hardhat"}
 export DEPLOYMENT=${DEPLOYMENT:="localgeth"}
 export RPC_URL=${RPC_URL:="http://geth:8545"}
 
-export VERSION=${VERSION:="$(cd $DIR; git rev-parse --short HEAD)-$(uname -m)"}
+export VERSION=${VERSION:="$(cd $DIR; git rev-parse --short HEAD)-$(uname -m |sed 's/arm64/aarch64/')"}
 
 export IMAGE_MODICUM_NAME=${IMAGE_MODICUM_NAME:="${IMAGE_BASE}-modicum"}
 export IMAGE_RESOURCE_PROVIDER_NAME=${IMAGE_RESOURCE_PROVIDER_NAME:="${IMAGE_BASE}-resource-provider"}
