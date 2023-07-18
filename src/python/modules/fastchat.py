@@ -1,12 +1,15 @@
-import yaml
+import json
 
 def _fastchat(params: str):
+    
     if params.startswith("{"):
-        params = yaml.safe_load(params)
+        params = json.loads(params)
     else:
         question = params
-        params = {"template": "You are chatbot. \n question: {question} \n anwser:", "parameters": {"question":question}}
+        params = {"template": "You are chatbot. \n question: {question} \n anwser:", "parameters": {"question": question}}
+    print(params)
     cmd = "python3 main.py --t " + params['template'] + "--p " + params['parameters'] + " 2>/dev/null"
+    print(cmd)
     if not isinstance(params, dict):
         raise Exception('Please set params to a dict like {"template": "You are chatbot. \n question: {question} \n anwser:", "parameters": {"question":"What is an AI bot"}}')
     return {
