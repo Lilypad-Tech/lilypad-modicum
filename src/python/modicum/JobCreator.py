@@ -377,7 +377,7 @@ class JobCreator(PlatformClient):
                         self.logger.info("Q: %s joid = %s" %(name, joid))
                         self.logger.info("Q: %s ijoid = %s" %(name, ijoid))
                         self.logger.info("Q: %s roid = %s" %(name, roid))
-                        self.status = f"Released deposit of {Web3.from_wei(self.deposit, 'ether')} ETH to compute provider"
+                        self.status = f"Released deposit of {Web3.from_wei(self.deposit, 'ether')} lilETH to compute provider"
 
                 elif name == "MediationResultPosted":
                     self.state = "MediationResultPosted"
@@ -446,7 +446,7 @@ class JobCreator(PlatformClient):
         deposit = self.ethclient.contract.functions.getModuleCost(template).call()
         self.deposit = deposit
 
-        self.status = f"Sending deposit of {Web3.from_wei(self.deposit, 'ether')} ETH to contract"
+        self.status = f"Sending deposit of {Web3.from_wei(self.deposit, 'ether')} lilETH to contract"
 
         self.logger.info("🔵🔵🔵 post job offer")
         txHash = self.ethclient.transact(
