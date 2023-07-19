@@ -1,17 +1,8 @@
+
 import json
 
 def _fastchat(params: str):
-    
-    if params.startswith("{"):
-        params = json.loads(params)
-    else:
-        question = params
-        params = {"template": "You are chatbot. \n question: {question} \n anwser:", "parameters": {"question": question}}
-    print(params)
-    cmd = "python3 main.py --t " + params['template'] + "--p " + params['parameters'] + " 2>/dev/null"
-    print(cmd)
-    if not isinstance(params, dict):
-        raise Exception('Please set params to a dict like {"template": "You are chatbot. \n question: {question} \n anwser:", "parameters": {"question":"What is an AI bot"}}')
+    cmd = ["python3", "main.py"]
     return {
         "APIVersion": "V1beta1",
         "Metadata": {
@@ -23,12 +14,8 @@ def _fastchat(params: str):
                 "Concurrency": 1
             },
             "Docker": {
-                "Entrypoint": [
-                    "bash", "-c",
-                    # stderr logging is nondeterministic (includes timing information)
-                    cmd,
-                ],
-                "Image": "xqua/carpai-demo-repo:v0.2",
+                "Entrypoint": cmd,
+                "Image": "xqua/carpai-demo-repo:v0.5",
             },
             "Engine": "Docker",
             "Language": {
@@ -48,6 +35,15 @@ def _fastchat(params: str):
             "Wasm": {
                 "EntryModule": {}
             },
+            "inputs": [
+                {
+                    "CID": params,
+                    "Name": "prompt_template_input",
+                    "StorageSource": "IPFS",
+                    "path": "/prompt_template.json",
+
+                },
+            ],
             "outputs": [
                 {
                     "Name": "output",
@@ -59,4 +55,4 @@ def _fastchat(params: str):
     }
 
 if __name__ == "__main__":
-    print(_fastchat('{"template": "You are chatbot. \n question: {question} \n anwser:", "parameters": {"question":question}}'))
+    print(_fastchat('QmcPjQwVcJiFge3yNjVL2NoZsTQ3GBpXAZe21S2Ncg16Gt'))
