@@ -1,7 +1,7 @@
 import yaml
 import textwrap
 
-IMAGE = "quay.io/lukemarsden/lora:v0.0.3"
+IMAGE = "quay.io/lukemarsden/lora:v0.0.4"
 MODEL_NAME = "runwayml/stable-diffusion-v1-5"
 
 # Don't want to make this variable since the job is fixed price
@@ -13,7 +13,7 @@ def _lora_training(params: str):
     else:
         raise Exception("Please set params to yaml like {seed: 42, 'images_cid': 'Qm...'} where images_cid contains an images.zip with training images in")
 
-    seed = params["seed"]
+    seed = params.get("seed", 42)
     images_cid = params["images_cid"]
 
     return {
@@ -53,7 +53,7 @@ def _lora_training(params: str):
             "Wasm": {
                 "EntryModule": {}
             },
-            "inputs": {
+            "inputs": [
                 {
                     "CID": images_cid,
                     "Name": "lora_input",
@@ -61,7 +61,7 @@ def _lora_training(params: str):
                     "path": "/input",
 
                 },
-            },
+            ],
             "outputs": [
                 {
                     "Name": "output",
@@ -160,7 +160,7 @@ def _lora_inference(params: str):
             "Wasm": {
                 "EntryModule": {}
             },
-            "inputs": {
+            "inputs": [
                 {
                     "CID": lora_cid,
                     "Name": "lora_input",
@@ -168,7 +168,7 @@ def _lora_inference(params: str):
                     "path": "/input",
 
                 },
-            },
+            ],
             "outputs": [
                 {
                     "Name": "output",

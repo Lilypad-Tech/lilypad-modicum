@@ -278,6 +278,10 @@ class ResourceProvider(Mediator):
                             # TODO: pass this error state as more structured
                             # data through the rest of the system
                             resultHash = f"JOB_FAILED:{e} {e.output if hasattr(e, 'output') else ''}{e.stderr if hasattr(e, 'stderr') else ''}"
+                            self.logger.info("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨")
+                            self.logger.info(f"JOB FAILED: {e} {e.output if hasattr(e, 'output') else ''}{e.stderr if hasattr(e, 'stderr') else ''}")
+                            self.logger.info(traceback.format_exc(e))
+                            self.logger.info("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨")
 
                     self.postResult(matchID, JO.offerId, resultHash)
 
