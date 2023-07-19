@@ -133,7 +133,7 @@ def _lora_inference(params: str):
                             patch_unet=True,
                         )
 
-                        coeff = float(os.getenv("FINETUNE_WEIGHTING"), 0.5)
+                        coeff = float(os.getenv("FINETUNE_WEIGHTING", 0.5))
                         tune_lora_scale(pipe.unet, coeff)
                         tune_lora_scale(pipe.text_encoder, coeff)
 
