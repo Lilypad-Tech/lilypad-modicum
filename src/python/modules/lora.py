@@ -109,6 +109,7 @@ def _lora_inference(params: str):
                     # dedent
                     textwrap.dedent(f"""
                         from diffusers import StableDiffusionPipeline, EulerAncestralDiscreteScheduler
+                        import os
                         import torch
                         from lora_diffusion import tune_lora_scale, patch_pipe
 
