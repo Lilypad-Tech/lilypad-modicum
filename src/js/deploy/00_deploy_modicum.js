@@ -24,6 +24,7 @@ const MODULES = [
   'lora_inference:v0.1.7-lilypad1',
   'filecoin_data_prep:v0.0.1',
   'deterministic_wasm:v0.0.1',
+  'fastchat:v0.0.1'
 ]
 
 module.exports = async ({getNamedAccounts, deployments}) => {
