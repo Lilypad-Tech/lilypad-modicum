@@ -15,7 +15,7 @@ def _fastchat(params: str):
             },
             "Docker": {
                 "Entrypoint": cmd,
-                "Image": "xqua/carpai-demo-repo:v0.5",
+                "Image": "xqua/carpai-demo-repo:v0.6",
             },
             "Engine": "Docker",
             "Language": {
