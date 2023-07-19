@@ -8,6 +8,7 @@ from modules.filecoin_data_prep import _filecoin_data_prep
 from modules.stable_diffusion import _stable_diffusion
 from modules.sdxl import _sdxl
 from modules.lora import _lora
+from modules.sadtalker import _sadtalker
 
 def get_bacalhau_jobspec(template_name, params):
     """
@@ -26,4 +27,5 @@ modules = {
     "cowsay:v0.0.1": _cowsay,
     "filecoin_data_prep:v0.0.1": _filecoin_data_prep,
     "deterministic_wasm:v0.0.1": _deterministic_wasm,
+    "sadtalker:v0.0.1":_sadtalker
 }
