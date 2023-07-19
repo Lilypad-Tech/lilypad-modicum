@@ -124,9 +124,10 @@ def _lora_inference(params: str):
                         seed = int(os.getenv("RANDOM_SEED"))
                         torch.manual_seed(seed)
 
+                        os.system("find /input")
                         patch_pipe(
                             pipe,
-                            "/input/outputs/final_lora.safetensors",
+                            "/input/output/final_lora.safetensors",
                             patch_text=True,
                             patch_ti=True,
                             patch_unet=True,
