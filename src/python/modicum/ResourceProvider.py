@@ -280,7 +280,7 @@ class ResourceProvider(Mediator):
                             resultHash = f"JOB_FAILED:{e} {e.output if hasattr(e, 'output') else ''}{e.stderr if hasattr(e, 'stderr') else ''}"
                             self.logger.info("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨")
                             self.logger.info(f"JOB FAILED: {e} {e.output if hasattr(e, 'output') else ''}{e.stderr if hasattr(e, 'stderr') else ''}")
-                            self.logger.info(traceback.format_exc(e))
+                            self.logger.info(traceback.format_exc())
                             self.logger.info("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨")
 
                     self.postResult(matchID, JO.offerId, resultHash)
