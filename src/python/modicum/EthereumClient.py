@@ -162,7 +162,7 @@ class EthereumClient:
         else:
             try:
                 self.logger.info(
-                    f"recreating filter from latest event block {self._latest_event_block_number}",
+                    f"recreating filter from latest event block {self._latest_event_block_number} - 1",
                 )
                 self.filter = self.w3.eth.filter({
                     "fromBlock": self._latest_event_block_number - 1,
