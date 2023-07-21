@@ -392,9 +392,9 @@ class JobCreator(PlatformClient):
                         self.helper.logEvent(self.index, name, self.ethclient, event['transactionHash'], joid=joid, ijoid=ijoid)
 
                 elif name == "EtherTransferred":
+                    self.status += f" (prev. {self.state})"
                     # TODO: We need an explicit state machine :-(
-                    if self.state == "ResourceOfferPosted" or self.state == "ResultsPosted":
-                        self.status += f" (prev. {self.state})"
+                    if self.state == "ResourceOfferPosted" or self.state == "ResultsPosted" or self.state == "MatchClosed":
                         self.state = "Finished"
                         self.finished = True
                     else:
