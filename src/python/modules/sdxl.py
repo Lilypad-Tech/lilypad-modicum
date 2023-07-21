@@ -24,7 +24,7 @@ def _sdxl(params: str):
                     # stderr logging is nondeterministic (includes timing information)
                     "python3 inference.py 2>/dev/null",
                 ],
-                "Image": "quay.io/lukemarsden/sdxl:v0.9-lilypad1",
+                "Image": "quay.io/lukemarsden/sdxl:v0.9-lilypad1-v2",
                 "EnvironmentVariables": [
                     f"PROMPT={params.get('prompt', 'question mark floating in space')}",
                     f"RANDOM_SEED={params.get('seed', 42)}",
