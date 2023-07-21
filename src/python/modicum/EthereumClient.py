@@ -127,7 +127,7 @@ class EthereumClient:
 
         self.contract_address = os.environ.get("CONTRACT_ADDRESS")
         self.contract = self.w3.eth.contract(address=self.contract_address, abi=self.abi, bytecode=self.bytecode)
-        self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
+        self.reset_filter()
         self.generate_topics(GetEvents())
         
         # Polygon compatibility
@@ -153,18 +153,11 @@ class EthereumClient:
             if os.environ.get('DEBUG') is None:
                 raise Exception("No private key found in environment variable PRIVATE_KEY")
 
-        self._filter = None
-        self.filter_id = None
-        self._i = 0
-        # Generate random string
-        self._random_string = "debug_" + os.urandom(32).hex()
-        # Create random folder
-        self._random_folder = os.path.join(os.getcwd(), self._random_string)
-        os.mkdir(self._random_folder)
+    def reset_filter(self):
+        self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
 
     def exit(self):
         return
-
 
     def keccak256(self, string):
         r = self.w3.solidity_keccak(['string'], [string])
@@ -185,27 +178,8 @@ class EthereumClient:
         return str(params)[:100]
 
     def command(self, method, params, verbose=False, try_=0):
-
-        # # Normalize strings starting with 0x, HexBytes instances and raw bytes
-        # # all down to raw bytes
-        # if len(params) == 1:
-        #     if isinstance(params[0], bytes):
-        #         params[0] = HexBytes(params[0])
-        #     # if isinstance(params[0], HexBytes):
-        #     #     params[0] = bytes(params[0])
-        #     if isinstance(params[0], str):
-        #         params[0] = HexBytes(params[0])
-
-        self._i += 1
-        # pickle args into self._random_folder + f"/{self._i}.pkl"
-        # print(f"--> transaction: {self._random_folder}/{self._i}.pkl")
-        # with open(f"{self._random_folder}/{str(self._i).zfill(6)}.pkl", "wb") as f:
-        #     import pickle
-        #     pickle.dump(("command", method, params), f)
-
         if try_ > 30:
             raise Exception(f"Too many tries calling command()")
-        # print(f"===> Web3EthereumClient command({method}, {self.summarize(params)}")
         try:
             if method == "eth_estimateGas":
                 tx = params[0]
@@ -219,12 +193,10 @@ class EthereumClient:
                 return self.w3.eth.send_transaction(tx)
             if method == "eth_getTransactionReceipt":
                 tx = params[0]
-                # print(f"!!! --> get tx receipt --> {tx}")
                 return self.w3.eth.get_transaction_receipt(tx)
             if method == "eth_blockNumber":
                 return self.w3.eth.block_number
         except Exception as e:
-            # print(f"exception calling command(): {e}, sleeping 1s and retrying, try {try_}...")
             sleep(1)
             return self.command(method, params, try_+1)
         raise Exception(f"Unexpected method {method}")
@@ -269,7 +241,16 @@ class EthereumClient:
         return self.topics
 
     def poll_events(self):
-        log = self.filter.get_new_entries()
+        try:
+            log = self.filter.get_new_entries()
+        except ValueError as e:
+            if "filter not found" in str(e):
+                self.logger.info(f"🟠🟠🟠🟠 RESET FILTER BECAUSE {e}, MAY HAVE DROPPED SOME EVENTS")
+                self.reset_filter()
+                log = self.filter.get_new_entries()
+            else:
+                raise
+
         events = []
         for item in log:
             if not isinstance(item, dict) and not isinstance(item, AttributeDict):
