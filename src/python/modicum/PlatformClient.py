@@ -51,7 +51,7 @@ class PlatformClient():
         return self.ethclient.addresses[index]
 
     def wait(self):
-        time.sleep(1)
+        time.sleep(0.1)
 
     def platformListener(self):
         self.active = True

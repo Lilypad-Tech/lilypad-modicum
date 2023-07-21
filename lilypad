@@ -2,10 +2,30 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-export VERSION=${VERSION:="4a5f0f7-$(uname -m |sed 's/arm64/aarch64/')"}
+### NOTE - THIS SCRIPT HAS TO BE COMPATIBLE WITH OLD VERSIONS OF BASH ON MACOS
+### DO NOT PUT declare -g OR {@Q} OR OTHER FANCY THINGS IN IT OR REFACTOR IT TO
+### USE FUNCTIONS AND eval "$@" BECAUSE THEN PASSING VARIABLES WITH WHITESPACE
+### IN STOPS WORKING
+
+LATEST_TXT="$(curl -sSL https://raw.githubusercontent.com/bacalhau-project/lilypad/main/latest.txt)"
+for X in $LATEST_TXT; do
+    if echo $X |grep -q git_hash; then
+        LATEST_GIT_HASH="$(echo $X |cut -d '|' -f 2)"
+    fi
+    if echo $X |grep -q contract_address; then
+        LATEST_CONTRACT_ADDRESS="$(echo $X |cut -d '|' -f 2)"
+    fi
+    if echo $X |grep -q mediator_addresses; then
+        LATEST_MEDIATOR_ADDRESSES="$(echo $X |cut -d '|' -f 2)"
+    fi
+done
+
+export GIT_HASH=${GIT_HASH:="$LATEST_GIT_HASH"}
+export VERSION=${VERSION:="${GIT_HASH}-$(uname -m |sed 's/arm64/aarch64/')"}
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
 export RPC_URL=${RPC_URL:="http://testnet.lilypadnetwork.org:8545"}
-export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:="0x219F074D9b14410868105420eEEa9Ba768a7aAE1"}
+export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=$LATEST_CONTRACT_ADDRESS}
+export MEDIATOR_ADDRESSES=${MEDIATOR_ADDRESSES:=$LATEST_MEDIATOR_ADDRESSES}
 export IMAGE_BASE=${IMAGE_BASE:="lilypad"}
 export IMAGE_MODICUM_NAME=${IMAGE_MODICUM_NAME:="${IMAGE_BASE}-modicum"}
 export IMAGE_MODICUM="${DOCKER_REGISTRY}/${IMAGE_MODICUM_NAME}:${VERSION}"
@@ -16,30 +36,43 @@ export LILYPAD_NODE_FLAGS=""
 if [[ $# -eq 0 ]]; then
   echo "Usage: $0 <command> [args]"
   echo
+  echo "Must set PRIVATE_KEY environment variable with your Ethereum key e.g. from metamask"
+  echo
   echo "Commands:"
-  echo "  serve"
-  echo "  run"
-  echo "  serve-logs"
+  echo "  run - run a client with a job e.g. lilypad run --module cowsay:v0.0.1 --params 'hello'"
+  echo "  serve - run a server"
+  echo "  serve-logs - tail the logs of the server (useful for sharing debugging info)"
+  echo "  stop - stop the server and delete the container (useful for upgrades - run lilypad stop && lilypad serve)"
   exit 1
 
 elif [[ $1 == "serve" ]]; then
   shift
+  GPU_ARG=""
+  GPU_VALUE=""
+  if [ -f "/usr/bin/nvidia-smi" ]; then
+      GPU_ARG="--gpus"
+      GPU_VALUE="all"
+  fi
+  # /tmp is for bacalhau to be able to find its own results
   docker run -d --restart always --name resource-provider \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    $GPU_ARG $GPU_VALUE \
     -e PRIVATE_KEY \
-    -e CONTRACT_ADDRESS=${CONTRACT_ADDRESS} \
+    -e CONTRACT_ADDRESS \
     -e CONTRACT_ABI_FILE=/Modicum.json \
-    -e RPC_URL=${RPC_URL} \
+    -e MEDIATOR_ADDRESSES \
+    -e RPC_URL \
     $IMAGE_RESOURCE_PROVIDER
 
 elif [[ $1 == "run" ]]; then
   shift
   docker run -ti --rm --name submitjob \
     -e PRIVATE_KEY \
-    -e CONTRACT_ADDRESS=${CONTRACT_ADDRESS} \
+    -e CONTRACT_ADDRESS \
     -e CONTRACT_ABI_FILE=/Modicum.json \
-    -e RPC_URL=${RPC_URL} \
+    -e MEDIATOR_ADDRESSES \
+    -e RPC_URL \
     $IMAGE_MODICUM \
     runLilypadCLI \
     "$@"
@@ -57,4 +90,7 @@ elif [[ $1 == "serve-logs" ]]; then
   docker exec -ti $service supervisorctl tail -f $service stdout &
   docker exec -ti $service supervisorctl tail -f $service stderr
   exit 0
+
+elif [[ $1 == "stop" ]]; then
+  docker rm -f resource-provider
 fi

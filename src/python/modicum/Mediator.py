@@ -6,7 +6,7 @@ import textwrap
 import docker.errors
 from . import DockerWrapper
 from .PlatformClient import PlatformClient
-from .Modules import get_bacalhau_jobspec, get_bacalhau_jobprice
+from .Modules import get_bacalhau_jobspec
 from . import PlatformStructs as Pstruct
 from . import helper
 import dotenv
@@ -16,8 +16,7 @@ import json
 import datetime
 import tempfile
 import yaml
-
-
+from .Enums import ResultStatus, Verdict, Party
 
 class Mediator(PlatformClient):
     def __init__(self, index,sim):
@@ -50,18 +49,20 @@ class Mediator(PlatformClient):
     def register(self, account, arch, instructionPrice, bandwidthPrice, availabilityValue, verificationCount):
         self.logger.info("A: registerMediator")
         self.account = account
-        txHash = self.ethclient.contract.functions.registerMediator(
-          arch,
-          instructionPrice,
-          bandwidthPrice,
-          availabilityValue,
-          verificationCount
-        ).transact({
-            "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
-        })
+        txHash = self.ethclient.transact(
+            self.ethclient.contract.functions.registerMediator(
+                arch,
+                instructionPrice,
+                bandwidthPrice,
+                availabilityValue,
+                verificationCount
+            ), {
+                "from": self.account,
+            },
+        )
 
     def getJob(self, matchID, JO, execute):
+        self.logger.info("🔵🔵🔵 RUN JOB NOW")
         JID = JO.jobCreator
         ijoid = JO.ijoid
         uri = JO.uri
@@ -72,15 +73,6 @@ class Mediator(PlatformClient):
             extrasData["template"],
             extrasData["params"]
         )
-
-        jobPrice = get_bacalhau_jobprice(extrasData["template"])
-
-        # we set the cpuTime to the jobPrice in wei
-        # the "price per cpu instruction" is set to 1
-        # and so the total price is dictated by the cpuTime (in wei)
-        # this is obviously completely shit and will replaced
-        # asap with a non-time constrained hack
-        cpuTime = jobPrice
 
         _DIRIP_ = os.environ.get('DIRIP')
         _DIRPORT_ = os.environ.get('DIRPORT')
@@ -105,11 +97,19 @@ class Mediator(PlatformClient):
                 f.close()
 
                 # RUN BACALHAU JOB AND GET THE ID
-                result = subprocess.run(['bacalhau', 'create', '--wait', '--id-only', tmpfile], text=True, capture_output=True)
+                result = subprocess.run(['bacalhau', 'create', '--wait', '--id-only', tmpfile], text=True, capture_output=True, check=True)
                 jobID = result.stdout.strip()
 
                 # extrac the CID of the result to report back
-                listOutput = subprocess.run(['bacalhau', 'list', '--output', 'json', '--id-filter', jobID], text=True, capture_output=True)
+                listOutput = subprocess.run(['bacalhau', 'list', '--output', 'json', '--id-filter', jobID], text=True, capture_output=True, check=True)
+
+                print(textwrap.dedent(f"""
+                ---------------------------------------------------------------------------------------
+
+                {listOutput.stdout}
+
+                ---------------------------------------------------------------------------------------
+                """))
 
                 # load the listOutput string as a JSON object
                 listOutputJSON = json.loads(listOutput.stdout)
@@ -150,40 +150,33 @@ class Mediator(PlatformClient):
                 ---------------------------------------------------------------------------------------
                 """))
 
-                self.postResult(matchID, JO.offerId, resultStatus, urix, resultHash, cpuTime, 0)
+                return resultHash
+
+        
+
+        # self.postResult(matchID, JO.offerId, resultStatus, urix, resultHash, cpuTime, 0)
                 
-    def postResult(self, matchID, joid, resultStatus, uri, resultHash, cpuTime, bandwidthUsage):
-        contractStatus = 1
-        if resultStatus!="Completed":
-            if self.account:
-                self.logger.info("N: postMediationResult: %s, JC at fault = %s" %(endStatus,uri))
-                reason = 'InvalidResultStatus'
-                faultyParty = 'JobCreator'
-        else :
-            if self.myMatches[matchID]['resHash'] == resultHash:
-                self.logger.info("N: postMediationResult: %s, JC at fault = %s" %(endStatus,uri))
-                reason = 'CorrectResults'
-                faultyParty = 'JobCreator'
-                contractStatus = 0
-            else:
-                self.logger.info("N: postMediationResult: %s, RP at fault = %s" %(endStatus,uri))
-                reason = 'WrongResults'
-                faultyParty = 'ResourceProvider'
-                
-        txHash = self.ethclient.contract.functions.postMediationResult(
-          matchID,
-          joid,
-          contractStatus, 
-          uri,
-          resultHash,
-          cpuTime,
-          0, 
-          reason,
-          faultyParty
-        ).transact({
-            "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
-        })
+    def postResult(self, matchID, joid, resultHash):
+        reason = Verdict.WrongResults.value
+        if self.myMatches[matchID]['resHash'] == resultHash:
+            reason = Verdict.CorrectResults.value
+            self.logger.info("🟣🟣🟣🟣 ✅✅✅✅✅✅✅✅✅✅✅ mediation correct result")
+        else:
+            reason = Verdict.WrongResults.value
+            self.logger.info("🟣🟣🟣🟣 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨 mediation wrong result")
+        self.ethclient.transact(
+            self.contract.functions.postMediationResult(
+                matchID,
+                joid,
+                ResultStatus.Completed.value, 
+                "",
+                resultHash,
+                reason,
+                Party.ResourceProvider.value
+            ), {
+                "from": self.account,
+            },
+        )
 
     def CLIListener(self):
         pass
@@ -269,7 +262,10 @@ class Mediator(PlatformClient):
 
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "M" + str(self.index)},
                                           seriesname="state", value=2)
-                    self.getJob(matchID, JO, True)
+                    resultHash = self.getJob(matchID, JO, True)
+
+                    self.postResult(matchID, JO.offerId, resultHash)
+
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "M" + str(self.index)},
                                           seriesname="state", value=1)
 

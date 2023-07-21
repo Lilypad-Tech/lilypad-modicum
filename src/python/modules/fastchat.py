@@ -1,4 +1,8 @@
-def _stable_diffusion(params: str):
+
+import json
+
+def _fastchat(params: str):
+    cmd = ["python3", "main.py"]
     return {
         "APIVersion": "V1beta1",
         "Metadata": {
@@ -10,15 +14,8 @@ def _stable_diffusion(params: str):
                 "Concurrency": 1
             },
             "Docker": {
-                "Entrypoint": [
-                    "python",
-                    "main.py",
-                    "--o",
-                    "./outputs",
-                    "--p",
-                    params,
-                ],
-                "Image": "ghcr.io/bacalhau-project/examples/stable-diffusion-gpu:0.0.1"
+                "Entrypoint": cmd,
+                "Image": "xqua/carpai-demo-repo:v0.6",
             },
             "Engine": "Docker",
             "Language": {
@@ -38,12 +35,24 @@ def _stable_diffusion(params: str):
             "Wasm": {
                 "EntryModule": {}
             },
+            "inputs": [
+                {
+                    "CID": params,
+                    "Name": "prompt_template_input",
+                    "StorageSource": "IPFS",
+                    "path": "/prompt_template.json",
+
+                },
+            ],
             "outputs": [
                 {
-                    "Name": "outputs",
+                    "Name": "output",
                     "StorageSource": "IPFS",
-                    "path": "/outputs"
+                    "path": "/output"
                 }
             ]
         }
     }
+
+if __name__ == "__main__":
+    print(_fastchat('QmcPjQwVcJiFge3yNjVL2NoZsTQ3GBpXAZe21S2Ncg16Gt'))

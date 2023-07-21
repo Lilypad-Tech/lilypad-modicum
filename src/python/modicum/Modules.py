@@ -6,6 +6,9 @@ from modules.cowsay import _cowsay
 from modules.deterministic_wasm import _deterministic_wasm
 from modules.filecoin_data_prep import _filecoin_data_prep
 from modules.stable_diffusion import _stable_diffusion
+from modules.fastchat import _fastchat
+from modules.sdxl import _sdxl
+from modules.lora import _lora_training, _lora_inference
 
 def get_bacalhau_jobspec(template_name, params):
     """
@@ -17,12 +20,13 @@ def get_bacalhau_jobspec(template_name, params):
     """
     return modules[template_name](params)
 
-def get_bacalhau_jobprice(template_name):
-    return Web3.to_wei(modules[template_name].price, 'ether')
-
 modules = {
     "stable_diffusion:v0.0.1": _stable_diffusion,
+    "sdxl:v0.9-lilypad1": _sdxl,
+    "lora_training:v0.1.7-lilypad1": _lora_training,
+    "lora_inference:v0.1.7-lilypad1": _lora_inference,
     "cowsay:v0.0.1": _cowsay,
+    "fastchat:v0.0.1": _fastchat,
     "filecoin_data_prep:v0.0.1": _filecoin_data_prep,
     "deterministic_wasm:v0.0.1": _deterministic_wasm,
 }

@@ -1,4 +1,13 @@
-def _stable_diffusion(params: str):
+import yaml
+
+def _sdxl(params: str):
+    if params.startswith("{"):
+        params = yaml.safe_load(params)
+    else:
+        prompt = params
+        params = {"prompt": prompt, "seed": 0}
+    if not isinstance(params, dict):
+        raise Exception("Please set params to a dict like {'prompt': 'astronaut riding a horse', 'seed': 42}")
     return {
         "APIVersion": "V1beta1",
         "Metadata": {
@@ -11,14 +20,17 @@ def _stable_diffusion(params: str):
             },
             "Docker": {
                 "Entrypoint": [
-                    "python",
-                    "main.py",
-                    "--o",
-                    "./outputs",
-                    "--p",
-                    params,
+                    "bash", "-c",
+                    # stderr logging is nondeterministic (includes timing information)
+                    "python3 inference.py 2>/dev/null",
                 ],
-                "Image": "ghcr.io/bacalhau-project/examples/stable-diffusion-gpu:0.0.1"
+                "Image": "quay.io/lukemarsden/sdxl:v0.9-lilypad1",
+                "EnvironmentVariables": [
+                    f"PROMPT={params.get('prompt', 'question mark floating in space')}",
+                    f"RANDOM_SEED={params.get('seed', 42)}",
+                    f"OUTPUT_DIR=/outputs/",
+                    "HF_HUB_OFFLINE=1",
+                ]
             },
             "Engine": "Docker",
             "Language": {
@@ -47,3 +59,7 @@ def _stable_diffusion(params: str):
             ]
         }
     }
+
+if __name__ == "__main__":
+    print(_sdxl("{prompt: hello, seed: 99}"))
+    print(_sdxl("{prompt: 'hello world', seed: 99}"))

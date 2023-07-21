@@ -14,6 +14,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from . import helper
 import datetime
 from .Enums import ResultStatus
+import os
 
 class ResourceProvider(Mediator):
     def __init__(self, index=0, sim=False):
@@ -46,41 +47,39 @@ class ResourceProvider(Mediator):
     def register(self, account, arch, timePerInstruction):
         self.logger.info("A: registerResourceProvider")
         self.account = account
-        txHash = self.ethclient.contract.functions.registerResourceProvider(arch, timePerInstruction).transact({
-            "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
-        })
+        self.ethclient.transact(
+            self.ethclient.contract.functions.registerResourceProvider(arch, timePerInstruction),
+            { "from": self.account },
+        )
         return 0
 
     def addMediator(self,account,mediator):
         self.logger.info("B: resourceProviderAddTrustedMediator")
-        txHash = self.ethclient.contract.functions.resourceProviderAddTrustedMediator(mediator).transact({
-            "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
-        })
-        # helper.wait4receipt(self.ethclient,txHash)
+        txHash = self.ethclient.transact(
+            self.ethclient.contract.functions.resourceProviderAddTrustedMediator(mediator),
+            { "from": self.account },
+        )
         return 0
 
     def postOffer(self,msg):
         if self.idle:
             self.idle = False
             self.logger.info("C: postResOffer = %s" %msg["iroid"])
-            self.logger.info("🔵🔵🔵 post resource offer")
-            txHash = self.ethclient.contract.functions.postResOffer(
-                msg["instructionPrice"],
-                msg["instructionCap"],
-                msg["memoryCap"],
-                msg["localStorageCap"],
-                msg["bandwidthCap"],
-                msg["bandwidthPrice"],
-                msg["matchIncentive"],
-                msg["verificationCount"],
-                msg["iroid"]
-            ).transact({
-              "from": self.account,
-              "value": msg["deposit"],
-              "gasPrice": self.ethclient.w3.eth.gas_price
-            })
+            self.logger.info("🟠 post resource offer")
+            txHash = self.ethclient.transact(
+                self.ethclient.contract.functions.postResOffer(
+                    msg["instructionPrice"],
+                    msg["instructionCap"],
+                    msg["memoryCap"],
+                    msg["localStorageCap"],
+                    msg["bandwidthCap"],
+                    msg["bandwidthPrice"],
+                    msg["matchIncentive"],
+                    msg["verificationCount"],
+                    msg["iroid"]
+                ),
+                { "from": self.account, "value": msg["deposit"], },
+            )
             return 0
         else:
             self.offerq.insert(0,msg)
@@ -88,13 +87,10 @@ class ResourceProvider(Mediator):
             return 1
 
     def postDefaultOffer(self):
+        deposit = self.ethclient.contract.functions.getRequiredResourceProviderDeposit().call()
         self.postOffer({"request": "post",
-                        "deposit" : 1,
-                        # it's important this is 1 because it gives us control over the price
-                        # from the number of units used once the job has run by setting the
-                        # cpuTime parameter when we call postResult
-                        "instructionPrice" : 1,
-                        # it's important this is 0 so bandwidth does not affect the price
+                        "deposit" : deposit,
+                        "instructionPrice" : 0,
                         "bandwidthPrice" : 0,
                         "instructionCap" : 15*60*1000, #ms on 1Ghz processor
                         "memoryCap": 100000000,
@@ -111,10 +107,10 @@ class ResourceProvider(Mediator):
 
     def acceptResult(self, resultId):
         self.logger.info('JC Missed deadline for reacting to results.')
-        txHash = self.ethclient.contract.functions.acceptResult(resultId).transact({
-            "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
-        })
+        txHash = self.ethclient.transact(
+            self.contract.functions.acceptResult(resultId),
+            { "from": self.account },
+        )
 
     def scheduleAcceptResult(self, resultId, delay):
         to_run = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() + delay))
@@ -123,20 +119,25 @@ class ResourceProvider(Mediator):
     # we are using cpuTime as the way to actually price the job
     # the resource offer will have given us a cpu cost per instruction of 1
     # so we set the price by controlling the number of units
-    def postResult(self, matchID, joid, resultStatus, uri, resultHash, cpuTime, bandwidthUsage):
-        contractStatus = ResultStatus.Declined.value
-        if resultStatus == "Completed":
-            contractStatus = ResultStatus.Completed.value
+    def postResult(self, matchID, joid, resultHash):
         self.logger.info("🟢🟢🟢 Posting result: \n%s" % (json.dumps({
           "matchID": matchID,
           "joid": joid,
-          "contractStatus": contractStatus,
+          "contractStatus": ResultStatus.Completed.value,
           "resultHash": resultHash,
         }),))
-        txHash = self.ethclient.contract.functions.postResult(matchID, joid, contractStatus, uri, resultHash, cpuTime, bandwidthUsage).transact({
-            "from": self.account,
-            "gasPrice": self.ethclient.w3.eth.gas_price
-        })
+        self.ethclient.transact(
+            self.ethclient.contract.functions.postResult(
+                matchID,
+                joid,
+                ResultStatus.Completed.value,
+                "",
+                resultHash,
+                0,
+                0
+            ),
+            { "from": self.account },
+        )
 
 
     def CLIListener(self):
@@ -246,7 +247,7 @@ class ResourceProvider(Mediator):
                     self.logger.info("%s offerId= %s" % (name, matchID))
                     self.logger.info("Job offer %s = %s" % (name, self.job_offers[joid].ijoid))
                     self.logger.info("Resource offer %s = %s" % (name, self.resource_offers[roid].iroid))
-                    self.logger.info("🔵🔵🔵 RUN JOB NOW")
+
                     match = Pstruct.Match(
                         joid, roid, params["mediator"]
                     )
@@ -266,13 +267,30 @@ class ResourceProvider(Mediator):
 
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "RP" + str(self.index)},
                                           seriesname="state", value=2)
-                    ResultStatus = self.getJob(matchID, JO, True)
+
+                    if os.environ.get('BAD_ACTOR') is not None:
+                        self.logger.info("🔵🔵🔵 BAD ACTOR JOB")
+                        resultHash = "muaahaaha"
+                    else:
+                        try:
+                            resultHash = self.getJob(matchID, JO, True)
+                        except Exception as e:
+                            # TODO: pass this error state as more structured
+                            # data through the rest of the system
+                            resultHash = f"JOB_FAILED:{e} {e.output if hasattr(e, 'output') else ''}{e.stderr if hasattr(e, 'stderr') else ''}"
+                            self.logger.info("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨")
+                            self.logger.info(f"JOB FAILED: {e} {e.output if hasattr(e, 'output') else ''}{e.stderr if hasattr(e, 'stderr') else ''}")
+                            self.logger.info(traceback.format_exc(e))
+                            self.logger.info("🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨")
+
+                    self.postResult(matchID, JO.offerId, resultHash)
+
                     self.helper.logInflux(now=datetime.datetime.now(), tag_dict={"object": "RP" + str(self.index)},
                                           seriesname="state", value=1)
 
                     # once we have run a job let's post another offer
                     # TODO: remove this - it should be called as part of postOffer
-                    
+
                     # self.matches[matchID] = {"uri":uri,"JID":JID,"execute":True}
 
                 elif name == "ResultPosted" and params["matchId"] in self.matches:

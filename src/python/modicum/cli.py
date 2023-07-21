@@ -5,6 +5,7 @@ import time
 import zmq
 import logging
 import json
+from web3 import Web3
 from .JobCreator import JobFinished
 
 from .Enums import Architecture
@@ -132,11 +133,11 @@ def runAsMediator(index,sim):
 
 
     click.echo("Mediator is registering... %s" % (M.account,))
-    M.register(M.account, Architecture.armv7.value, instructionPrice=1,
+    M.register(M.account, Architecture.amd64.value, instructionPrice=1,
                bandwidthPrice=1,availabilityValue=1, verificationCount=1)
 
     while not M.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     click.echo("Mediator has registered")
 
 
@@ -184,13 +185,13 @@ def startJC(playerpath,index,host,sim):
     click.echo("Job Creator Daemon is registering... ")
     JC.register(JC.account)
     while not JC.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     # click.echo("JC has registered")
 
     # mediator = '0x067d6f1ee89b6ccc4a057a19f2071dcdfb42e40c'
     exitcode = JC.addMediator(JC.account, mediator)
     while not JC.mediator:
-        time.sleep(1)
+        time.sleep(0.1)
 
     if sim =="True":  
         # postOffer /home/riaps/projects/MODiCuM/workloads/stress-ng/job stress-ng run 2 False END      
@@ -265,14 +266,14 @@ def startJCDaemon(index):
     exitcode = JC.register(JC.account)
     print("exitcode: %s" %exitcode)
     while not JC.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     print("JC has registered")
 
     # mediator = '0x067d6f1ee89b6ccc4a057a19f2071dcdfb42e40c'
     print("Job adding mediator... ")
     exitcode = JC.addMediator(JC.account, mediator)
     while not JC.mediator:
-        time.sleep(1)
+        time.sleep(0.1)
     
 
 @click.command('stopJCDaemon')
@@ -377,7 +378,7 @@ def build(path, tag, tar, skip_build):
                             "jobHash_int" :  jobHash_int,
                             "uri" : tag,
                             "size" : job_size, #size of the docker image
-                            "arch" : "armv7",
+                            "arch" : "amd64",
                             "cpuTime" : -1, #Not set during build
                             "LocalStorageLimit" :  -1 , #Not set during build
                             "instructionMaxPrice" : 1,
@@ -429,7 +430,7 @@ def profile(path, tag, name):
                     "uri":-1,
                     "directory":-1,
                     "hash":-1,
-                    "arch":"armv7"}
+                    "arch":"amd64"}
 
 
 @click.command('getResult')
@@ -517,26 +518,29 @@ def startRP(path,index,host,sim,mediator):
     # the first (unlocked) account or the overriden account supplied by the env
     RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, 0)
     print("Resource Provider Daemon is registering... ")
-    exitcode = RP.register(RP.account,Architecture.armv7.value, 1)# ratio to 1Gz processor # XXX should this be arm64???
+    exitcode = RP.register(RP.account,Architecture.amd64.value, 1)# ratio to 1Gz processor # XXX should this be arm64???
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     print("RP has registered")
 
-    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None:
+    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None and os.environ.get('MEDIATOR_ADDRESSES') != "":
         mediator = os.environ.get('MEDIATOR_ADDRESSES').split(',')[0]
 
-    if mediator is None:
-        mediator = RP.getEthAccount(0)
+    if mediator is None or mediator == "":
+        raise Exception("No mediator specified in comma seperated MEDIATOR_ADDRESSES environment variable")
+
+
+    mediator = Web3.to_checksum_address(mediator)
 
     print("Resource Provider adding mediator... ")
     exitcode = RP.addMediator(RP.account, mediator)
 
     while not RP.mediator:
-        time.sleep(1)
+        time.sleep(0.1)
 
     while not RP.idle:
-        time.sleep(1)
+        time.sleep(0.1)
 
     exitcode = RP.postDefaultOffer()
 
@@ -558,10 +562,10 @@ def startRPDaemon(index):
 
     RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_,index)
     print("Resource Provider Daemon is registering... ")
-    exitcode = RP.register(RP.account,Architecture.armv7.value, 1)# ratio to 1Gz processor
+    exitcode = RP.register(RP.account,Architecture.amd64.value, 1)# ratio to 1Gz processor
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     print("RP has registered")
 
 
@@ -569,7 +573,7 @@ def startRPDaemon(index):
     print("Resource Provider adding mediator... ")
     exitcode = RP.addMediator(RP.account, mediator)
     while not RP.mediator:
-        time.sleep(1)
+        time.sleep(0.1)
 
 
 @click.command('stopRPDaemon')
@@ -666,10 +670,16 @@ def main(ctx):
 
 # TODO: new runLilypadCLI subcommand for 'lilypad' cli to exec into.
 @click.command('runLilypadCLI')
+@click.argument('args', nargs=-1)
 @click.option('--template', default="stable_diffusion", show_default=True)
 @click.option('--params', default="", show_default=True)
 @click.option('--mediator', default=None, show_default=True)
-def runLilypadCLI(template, params, mediator):
+def runLilypadCLI(args, template, params, mediator):
+    # Also support cleaner syntax where you just do:
+    # lilypad run sdxl:v0.9-lilypad1 '{"prompt": "an astronaut riding a unicorn"}'
+    if len(args) == 2:
+        template, params = args
+
     from modicum import JobCreator
     _CONTRACT_ADDRESS_ = os.environ.get('CONTRACT_ADDRESS')
     _GETHIP_ = os.environ.get('GETHIP')
@@ -681,34 +691,40 @@ def runLilypadCLI(template, params, mediator):
     # User facing, quiet logging
     import logging
     logger = logging.getLogger("JobCreator")
-    # only log really bad events
+    logger.setLevel(logging.ERROR)
+    logger = logging.getLogger("EthereumClient")
     logger.setLevel(logging.ERROR)
 
-    print(f"\n🌟 Lilypad submitting job {template}({repr(params)}) 🌟\n")
+    print(f"\n🌟 Lilypad submitting job {template}({params}) 🌟\n")
 
     spinner = Halo(text='Connecting to smart contract', spinner='pong')
     spinner.start()
     JC.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, index)
     spinner.stop_and_persist("🔗")
+
+    if os.environ.get('PRIVATE_KEY') is not None:
+        print(f"🔑 Loaded private key for {JC.account}")
     
     spinner = Halo(text='Registering job creator', spinner='pong')
     spinner.start()
     JC.register(JC.account)
     while not JC.registered:
-        time.sleep(1)
+        time.sleep(0.1)
     spinner.stop_and_persist("🔌")
 
-    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None:
+    if mediator is None and os.environ.get('MEDIATOR_ADDRESSES') is not None and os.environ.get('MEDIATOR_ADDRESSES') != "":
         mediator = os.environ.get('MEDIATOR_ADDRESSES').split(',')[0]
 
-    if mediator is None:
-        mediator = JC.getEthAccount(0)
+    if mediator is None or mediator == "":
+        raise Exception("No mediator specified in comma seperated MEDIATOR_ADDRESSES environment variable")
+
+    mediator = Web3.to_checksum_address(mediator)
 
     spinner = Halo(text=f'Adding mediator {mediator}', spinner='pong')
     spinner.start()
     exitcode = JC.addMediator(JC.account, mediator)
     while not JC.mediator:
-        time.sleep(1)
+        time.sleep(0.1)
     spinner.stop_and_persist("🧘")
     
     lastSpinner = "Posting"
@@ -720,19 +736,22 @@ def runLilypadCLI(template, params, mediator):
     lastState = JC.state
 
     statemojis = {
-        "Posting": "💌",
-        "Matched": "🥰",
         "JobOfferPostedTwo": "💼",
+        "Matched": "🥰",
+        "Posting": "💌",
+        "ResultsPosted": "💌",
     }
     descriptions = {
+        "JobOfferPostedTwo": "Scheduling on-chain...",
         "Matched": "Running job...",
+        "Posting": "Fetching results (posting)...",
         "ResultsPosted": "Fetching results...",
     }
     while not JC.finished:
         if JC.state != lastState:
             spinner.stop_and_persist(statemojis.get(lastSpinner, lastSpinner))
             lastSpinner = JC.state
-            spinner = Halo(text=f'{descriptions.get(JC.state, JC.state)}', spinner='pong')
+            spinner = Halo(text=f'{descriptions.get(JC.state, JC.state)} {JC.status}', spinner='pong')
             spinner.start()
             lastState = JC.state
         
@@ -741,7 +760,7 @@ def runLilypadCLI(template, params, mediator):
 
     spinner.stop_and_persist("🍃")
 
-    print(f"\n🍂 Lilypad job completed, results 👉 {JC.status}\n")
+    print(f"\n🍂 Lilypad job completed 👉 {JC.status}\n")
 
     os._exit(0)
 

@@ -1,41 +1,39 @@
 require('hardhat-deploy');
 require('@nomicfoundation/hardhat-toolbox');
-const dotenv = require('dotenv')
-dotenv.config({ path: process.env.DOTENV_CONFIG_PATH || './.env' })
+const {
+  getAccounts
+} = require('./accounts')
 
-if(!process.env.ADMIN_PRIVATE_KEY) {
-  console.error(`ADMIN_PRIVATE_KEY is not set in .env file`)
-  process.exit(1)
-}
+const dotenv = require('dotenv')
+const ENV_FILE = process.env.DOTENV_CONFIG_PATH || '../../.env'
+dotenv.config({ path: ENV_FILE })
+
+const {
+  namedAccounts,
+  allAccounts,
+} = getAccounts()
 
 const config = {
-  solidity: '0.4.25',
-  defaultNetwork: 'hardhat',
-  namedAccounts: {
-    deployer: {
-      default: 0,
-    }
-  },
+  solidity: '0.8.6',
+  defaultNetwork: 'localgeth',
+  namedAccounts,
   networks: {
     hardhat: {
-      blockGasLimit: 68719476736000,
+      blockGasLimit: 68719476,
+      baseFeePerGas: 1000,
+      maxPriorityFeePerGas: 2000,
+      maxFeePerGas: 10000,
     },
     localhost: {},
     localgeth: {
       url: 'http://localhost:8545',
       chainId: 1337,
-      accounts: [
-        process.env.ADMIN_PRIVATE_KEY,
-      ],
-      blockGasLimit: 68719476736000,
+      accounts: allAccounts,
     },
     production: {
       url: 'http://testnet.lilypadnetwork.org:8545',
       chainId: 1337,
-      accounts: [
-        process.env.ADMIN_PRIVATE_KEY,
-      ],
-      blockGasLimit: 68719476736000,
+      accounts: allAccounts,
     }
   },
 };

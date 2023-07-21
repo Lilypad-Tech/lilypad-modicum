@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 IFS=$'\n\t'
 
@@ -9,15 +9,12 @@ export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
 export GCP_ZONE=${GCP_ZONE:="us-central1-a"}
 export GCP_NODE_NAME=${GCP_NODE_NAME:="bravo-testnet-vm-0"}
-export TRIM=${TRIM:="development"}
 # this means -d or -ti --rm
 # bash sucks sometimes because we can't just pass these as a single string
 # server or cli
+export DEFAULT_DATA_DIR="/tmp/geth"
 export CONTAINER_MODE=${CONTAINER_MODE:="server"}
-# we expect the contract address to be set in the environment
-# if we are production trim this will be handled by the deployment
-export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=""}
-export DATA_DIRECTORY=${DATA_DIRECTORY:="/tmp/geth"}
+export DATA_DIRECTORY=${DATA_DIRECTORY:="$DEFAULT_DATA_DIR"}
 export IMAGE_BASE=${IMAGE_BASE:="lilypad"}
 export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-hardhat"}
 export DEPLOYMENT=${DEPLOYMENT:="localgeth"}
@@ -32,6 +29,9 @@ export IMAGE_MEDIATOR_NAME=${IMAGE_MEDIATOR_NAME:="${IMAGE_BASE}-mediator"}
 export IMAGE_MODICUM="${DOCKER_REGISTRY}/${IMAGE_MODICUM_NAME}:${VERSION}"
 export IMAGE_RESOURCE_PROVIDER="${DOCKER_REGISTRY}/${IMAGE_RESOURCE_PROVIDER_NAME}:${VERSION}"
 export IMAGE_MEDIATOR="${DOCKER_REGISTRY}/${IMAGE_MEDIATOR_NAME}:${VERSION}"
+
+export ADDRESS_ADMIN=${ADDRESS_ADMIN:=""}
+export QUICK_RESET=${QUICK_RESET:=""}
 
 export LILYPAD_NODE_FLAGS=""
 
@@ -48,18 +48,22 @@ function upload-stack() {
 }
 
 function build-modicum() {
+  compile-contract
   docker build -t $IMAGE_MODICUM --target modicum .
 }
 
 function build-resource-provider() {
+  compile-contract
   docker build -t $IMAGE_RESOURCE_PROVIDER --target resource-provider .
 }
 
 function build-mediator() {
+  compile-contract
   docker build -t $IMAGE_MEDIATOR --target mediator .
 }
 
 function build-hardhat() {
+  compile-contract
   docker build -t $IMAGE_HARDHAT src/js
 }
 
@@ -81,17 +85,99 @@ function push-images() {
 }
 
 function contract-address() {
-  if [[ "$TRIM" == "development" ]]; then
-    cat "src/js/deployments/${DEPLOYMENT}/Modicum.json" | jq -r .address
-  elif [[ "$TRIM" == "production" ]]; then
-    echo $CONTRACT_ADDRESS
-  elif [[ "$TRIM" == "production-client" ]]; then
-    echo $CONTRACT_ADDRESS
-  fi  
+  cat "src/js/deployments/${DEPLOYMENT}/Modicum.json" | jq -r .address
+}
+
+function compile-contract() {
+  source ${DIR}/.env
+  (
+    set -euo pipefail
+    cd src/js
+    npm install
+    npx hardhat compile
+  )
+}
+
+function unit-tests() {
+  source ${DIR}/.env
+  (
+    set -euo pipefail
+    cd src/js
+    npx hardhat test --network hardhat
+  )
+}
+
+function deploy-contract() {
+  source ${DIR}/.env
+  (cd src/js && npx hardhat deploy --network ${DEPLOYMENT})
+}
+
+function geth-proxy() {
+  source ${DIR}/.env
+  docker run -d --restart always \
+    --name geth-proxy \
+    --net host \
+    -e "NOXY_PORT=8545" \
+    -e "NOXY_GETH_FRONT=/" \
+    -e "NOXY_GETH_HOST=localhost " \
+    -e "NOXY_GETH_PORT=8546" \
+    -e "NOXY_GETH_BACK=/" \
+    -e "NOXY_GETH_WS=1" \
+    quay.io/lilypad/noxy:v0.0.1
+}
+
+function geth() {
+  source ${DIR}/.env
+  docker network ls | grep modicum || docker network create modicum
+  docker run -d --restart always \
+    --name geth \
+    --network modicum \
+    -p 8546:8545 \
+    -v ${DATA_DIRECTORY}:/data/geth \
+    ethereum/client-go \
+      --datadir /data/geth \
+      --dev \
+      --http \
+      --http.api web3,eth,net \
+      --http.addr 0.0.0.0 \
+      --http.corsdomain '*' \
+      --http.port 8545 \
+      --http.vhosts '*'
+}
+
+function faucet-proxy() {
+  source ${DIR}/.env
+  docker run -d --restart always \
+    --name faucet-proxy \
+    --net host \
+    -e "NOXY_PORT=80" \
+    -e "NOXY_FAUCET_FRONT=/" \
+    -e "NOXY_FAUCET_HOST=localhost " \
+    -e "NOXY_FAUCET_PORT=81" \
+    -e "NOXY_FAUCET_BACK=/" \
+    -e "NOXY_FAUCET_WS=1" \
+    quay.io/lilypad/noxy:v0.0.1
+}
+
+
+function faucet() {
+  source ${DIR}/.env
+  local privateKey=$(echo -n "$PRIVATE_KEY_FAUCET" | sed 's/^0x//')
+  docker run -d \
+    --name faucet \
+    -p 81:8080 \
+    --network modicum \
+    -e WEB3_PROVIDER=http://geth:8545 \
+    -e PRIVATE_KEY=$privateKey \
+    chainflag/eth-faucet:1.1.0 \
+      --faucet.amount=100 \
+      --faucet.minutes=1
 }
 
 function hardhat() {
-  docker run -ti --rm \
+  source ${DIR}/.env
+  docker network ls | grep modicum || docker network create modicum
+  docker run -d --restart always \
     --name geth \
     --network modicum \
     -p 8545:8545 \
@@ -101,96 +187,113 @@ function hardhat() {
     $IMAGE_HARDHAT npx hardhat node --hostname 0.0.0.0 --port 8545
 }
 
-function hardhat-balances() {
-  docker exec geth node scripts/show-balances.js
-}
-
-function geth() {
-  docker network ls | grep modicum || docker network create modicum
-  docker run -d --restart always \
-    --name geth \
-    --network modicum \
-    -p 8545:8545 \
-    -v ${DATA_DIRECTORY}:/data/geth \
-    ethereum/client-go \
-      --datadir /data/geth \
-      --dev --http \
-      --http.api web3,eth,net \
-      --http.addr 0.0.0.0 \
-      --http.corsdomain '*' \
-      --http.port 8545 \
-      --http.vhosts '*'
-}
 
 function geth-command() {
   docker exec -ti geth geth --exec "$@" attach /data/geth/geth.ipc
 }
 
-function geth-balance() {
-  address="$1"
-  # check if address is defined
-  if [[ -z "$address" ]]; then
-    echo >&2 "address must be set"
-    exit 1
-  fi
-  geth-command "eth.getBalance(\"${address}\")/1e18"
+function geth-cli() {
+  docker exec -ti geth geth attach /data/geth/geth.ipc
 }
 
-function geth-fund() {
-  address="$1"
-  # check if address is defined
-  if [[ -z "$address" ]]; then
-    echo >&2 "address must be set"
-    exit 1
-  fi
-  geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${address}\", value: web3.toWei(10000000000000, \"ether\")})"
+function geth-script() {
+  source ${DIR}/.env
+  (
+    set -euo pipefail
+    cd src/js
+    npx hardhat --network $DEPLOYMENT run "$@"
+  )
 }
 
-function coinbase() {
-  geth-command "eth.coinbase"
+function balances() {
+  source ${DIR}/.env
+  geth-script scripts/show-balances.js
+}
+
+# move ALL the money apart from 1 eth to the given account
+function fund-admin() {
+  source ${DIR}/.env
+  if [[ -z "$ADDRESS_ADMIN" ]]; then
+    echo >&2 "ADDRESS_ADMIN must be set (source ${DIR}/.env)"
+    exit 1
+  fi
+  geth-command "eth.sendTransaction({from: eth.coinbase, to: \"${ADDRESS_ADMIN}\", value: new web3.BigNumber(eth.getBalance(eth.coinbase)).minus(web3.toWei(1, \"ether\"))  })"
+}
+
+function fund-faucet() {
+  source ${DIR}/.env
+  sleep 5
+  geth-script scripts/fund-faucet.js
+}
+
+function fund-services() {
+  source ${DIR}/.env
+  geth-script scripts/fund-services.js
+}
+
+function fund-throwaway() {
+  source ${DIR}/.env
+  geth-script scripts/fund-throwaway.js
 }
 
 # this means run ipfs, bacalhau and the modicum resource provider
 # in the same service - it is what nodes will run on their hardware
-#
-# NB: Bind-mounting the code is debug trim, take this out for prod
 function lilypad-node() {
+  source ${DIR}/.env
   if [[ -z "$LILYPAD_NODE_IMAGE" ]]; then
     echo >&2 "LILYPAD_NODE_IMAGE must be set"
+    exit 1
   fi
   if [[ -z "$LILYPAD_NODE_NAME" ]]; then
     echo >&2 "LILYPAD_NODE_NAME must be set"
+    exit 1
   fi
   if [[ -z "$RPC_URL" ]]; then
     echo >&2 "RPC_URL must be set"
+    exit 1
   fi
-  if [[ "$TRIM" == "development" ]]; then
-    local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app --network modicum"
-  elif [[ "$TRIM" == "production" ]]; then
-    local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS --network modicum"
-  elif [[ "$TRIM" == "production-client" ]]; then
-    local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS"
+  local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS --network modicum"
+  # this is for dev trim
+  if [[ "$DATA_DIRECTORY" == "$DEFAULT_DATA_DIR" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app"
+
+    # Workaround https://github.com/bacalhau-project/lilypad/issues/39
+    docker run -ti --entrypoint /bin/bash -v $DIR/src/python:/app \
+        $LILYPAD_NODE_IMAGE -c "pip install -e ."
+  else
+    echo >&2 "running in production mode..."
   fi
   if [[ "$CONTAINER_MODE" == "server" ]]; then
-    local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -d --restart always"
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -d --restart always"
   elif [[ "$CONTAINER_MODE" == "cli" ]]; then
-    local LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -ti --rm"
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -ti --rm"
+  fi
+  GPU_ARG=""
+  GPU_VALUE=""
+  if [ -f "/usr/bin/nvidia-smi" ]; then
+      GPU_ARG="--gpus"
+      GPU_VALUE="all"
   fi
   eval docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    $GPU_ARG $GPU_VALUE \
     -e DEBUG \
     -e PRIVATE_KEY \
+    -e BAD_ACTOR \
+    -e MEDIATION_CHANCE_PERCENT \
+    -e MEDIATOR_ADDRESSES \
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \
     -e RPC_URL=$RPC_URL \
     $LILYPAD_NODE_IMAGE \
     ${1:-""} \
     $(for arg in ${GLOBAL_ARGS[@]:1}; do echo ${arg@Q}; done)
+
 }
 
 function logs() {
-  trap "sleep 1; reset" EXIT
+  # trap "sleep 1; reset" EXIT
   service="$1"
   if [[ "$service" == "geth" ]]; then
     docker logs -f geth
@@ -198,76 +301,107 @@ function logs() {
   if [[ "$service" == "solver" ]]; then
     docker logs -f solver
   fi
-  docker exec -ti $service supervisorctl tail -f bacalhau-serve stdout &
-  docker exec -ti $service supervisorctl tail -f bacalhau-serve stderr &
-  docker exec -ti $service supervisorctl tail -f ipfs stdout &
-  docker exec -ti $service supervisorctl tail -f ipfs stderr &
+  # docker exec -ti $service supervisorctl tail -f bacalhau-serve stdout &
+  # docker exec -ti $service supervisorctl tail -f bacalhau-serve stderr &
+  # docker exec -ti $service supervisorctl tail -f ipfs stdout &
+  # docker exec -ti $service supervisorctl tail -f ipfs stderr &
   docker exec -ti $service supervisorctl tail -f $service stdout &
   docker exec -ti $service supervisorctl tail -f $service stderr
 }
 
 function resource-provider() {
+  source ${DIR}/.env
   LILYPAD_NODE_IMAGE=$IMAGE_RESOURCE_PROVIDER \
   LILYPAD_NODE_NAME=resource-provider \
   CONTAINER_MODE=server \
+  MEDIATOR_ADDRESSES=$ADDRESS_MEDIATOR \
+  PRIVATE_KEY=$PRIVATE_KEY_RESOURCE_PROVIDER \
   lilypad-node "$@"
 }
 
 function mediator() {
+  source ${DIR}/.env
   LILYPAD_NODE_IMAGE=$IMAGE_MEDIATOR \
   LILYPAD_NODE_NAME=mediator \
   CONTAINER_MODE=server \
+  PRIVATE_KEY=$PRIVATE_KEY_MEDIATOR \
   lilypad-node "$@"
 }
 
 function solver() {
+  source ${DIR}/.env
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=solver \
   CONTAINER_MODE=server \
+  PRIVATE_KEY=$PRIVATE_KEY_SOLVER \
   lilypad-node "runAsSolver"
 }
 
 function submitjob() {
+  source ${DIR}/.env
   LILYPAD_NODE_IMAGE=$IMAGE_MODICUM \
   LILYPAD_NODE_NAME=submitjob \
   CONTAINER_MODE=cli \
+  MEDIATOR_ADDRESSES=$ADDRESS_MEDIATOR \
+  PRIVATE_KEY=$PRIVATE_KEY_JOB_CREATOR \
   lilypad-node "runLilypadCLI"
 }
 
 function reset() {
   set -x
-  docker rm -f $(docker ps -aq) ||true
-  sudo rm -rf /tmp/geth
+  docker rm -f faucet-proxy faucet resource-provider mediator solver geth-proxy geth ||true
+  sudo rm -rf $DATA_DIRECTORY
+  local sleepSeconds="1"
+  if [[ -z "$QUICK_RESET" ]]; then
+    (cd src/js && npm install)
+    sleepSeconds="5"
+  fi
+  node src/js/scripts/create-new-accounts.js > .env
+  source ${DIR}/.env
   rm -rf src/js/deployments/localgeth
-  (cd src/js
-   npm install
-   node scripts/create-new-account.js \
-    |sed 's/privateKey: /ADMIN_PRIVATE_KEY=/' \
-    |sed 's/address: /ADMIN_ADDRESS=/' \
-    > .env
-   npx hardhat compile
+  (
+    set -euo pipefail
+    cd src/js
+    npx hardhat compile
   )
+  build
   geth
-  sleep 5
-  (source src/js/.env && \
-   ./stack geth-fund $ADMIN_ADDRESS && \
-   ./stack geth-balance $ADMIN_ADDRESS)
+  geth-proxy
+  sleep $sleepSeconds
+  fund-admin
+  fund-faucet
+  fund-services
+  balances
   (cd src/js && npx hardhat deploy --network localgeth)
 }
 
+# it's IMPORTANT to stop geth gracefully so it commit's it's state to disk
+# https://github.com/ethereum/go-ethereum/issues/20383
 function stop() {
-  docker rm -f $(docker ps -aq)
+  docker stop geth || true
+  sleep 5
+  # Don't kill other containers that someone else started in production, e.g.
+  # datadog logging agent
+  docker rm -f faucet-proxy faucet resource-provider mediator solver geth-proxy geth
 }
 
 function start() {
-  build
-  geth ||true
+  source ${DIR}/.env
+  local sleepSeconds="1"
+  if [[ -z "$QUICK_RESET" ]]; then
+    build
+    sleepSeconds="5"
+  fi
+  geth || true
+  geth-proxy ||true
   echo "Waiting for geth to start"
-  sleep 5
+  sleep $sleepSeconds
   solver
-  sleep 5
+  sleep $sleepSeconds
   mediator
   resource-provider
+  faucet
+  faucet-proxy
   echo "Now run (in separate terminals):"
   echo "./stack logs geth"
   echo "./stack logs solver"

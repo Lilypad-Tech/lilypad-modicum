@@ -12,7 +12,7 @@ import os
 import importlib
 from hexbytes import HexBytes
 from web3 import HTTPProvider, Web3
-from web3.middleware import geth_poa_middleware
+from web3.middleware import geth_poa_middleware, http_retry_request_middleware
 import requests
 from hexbytes import HexBytes
 
@@ -57,7 +57,54 @@ class CustomHTTPProvider(HTTPProvider):
         if rpcToken != None:
             self._request_kwargs['headers']['Authorization'] = f'Bearer {rpcToken}'
 
+class NonceException(Exception):
+    pass
+
 class EthereumClient:
+
+    def transact(self, method, params=None, retries=5):
+        # TODO: move loop from middleware here, change all callers to transact
+        # to use this wrapper instead
+        """
+        Retry on nonce errors with linear backoff. Doesn't work as a middleware
+        because by the time you get to the middleware the nonce has already been
+        encoded in the raw transaction.
+
+        Traceback (most recent call last):
+            File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+                self.run()
+            File "/usr/lib/python3.10/threading.py", line 953, in run
+                self._target(*self._args, **self._kwargs)
+            File "/app/modicum/JobCreator.py", line 342, in platformListener
+                txHash = self.ethclient.contract.functions.acceptResult(resultId).transact({
+            File "/usr/local/lib/python3.10/dist-packages/web3/contract/contract.py", line 479, in transact
+                return transact_with_contract_function(
+            File "/usr/local/lib/python3.10/dist-packages/web3/contract/utils.py", line 172, in transact_with_contract_function
+                txn_hash = w3.eth.send_transaction(transact_transaction)
+            File "/usr/local/lib/python3.10/dist-packages/web3/eth/eth.py", line 362, in send_transaction
+                return self._send_transaction(transaction)
+            File "/usr/local/lib/python3.10/dist-packages/web3/module.py", line 68, in caller
+                result = w3.manager.request_blocking(
+            File "/usr/local/lib/python3.10/dist-packages/web3/manager.py", line 232, in request_blocking
+                return self.formatted_response(
+            File "/usr/local/lib/python3.10/dist-packages/web3/manager.py", line 205, in formatted_response
+                raise ValueError(response["error"])
+            ValueError: {'code': -32000, 'message': 'nonce too low: next nonce 686, tx nonce 685'}
+        """
+        for i in range(retries):
+            try:
+                return method.transact(params)
+            except ValueError as e:
+                if "nonce too low" not in str(e):
+                    # Different error, don't retry it
+                    raise e
+                if i < retries - 1:
+                    # self.logger.info(f"Retrying {method} in {i} seconds ({e})...")
+                    sleep(i)
+                    continue
+                else:
+                    raise e
+
     def __init__(self, ip, port, protocol=None):
         self.logger = logging.getLogger("EthereumClient")
         self.logger.setLevel(logging.INFO)
@@ -87,21 +134,25 @@ class EthereumClient:
         self.w3.middleware_onion.inject(geth_poa_middleware, layer=0)
         # print(self.w3.is_connected())
 
-        self.addresses = self.w3.eth.accounts
-        for i in range(5):
-            pk = os.environ.get(f'PRIVATE_KEY_{i}')
-            if i == 0 and pk is None:
-                pk = os.environ.get('PRIVATE_KEY')
-            if pk is not None:
-                acct = self.w3.eth.account.from_key(pk)
-                self.addresses[i] = acct.address
+        # Retry on transient connection errors
+        self.w3.middleware_onion.inject(http_retry_request_middleware, layer=0)
 
-                print(f"🔑 Loaded private key for {acct.address}")
-                # Add acct as auto-signer:
-                self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
-                # Transactions from `acct` will then be signed, under the hood, in
-                # the middleware.
-        
+        self.addresses = []
+
+        if os.environ.get('DEBUG') is not None:
+            self.addresses = self.w3.eth.accounts
+
+        pk = os.environ.get('PRIVATE_KEY')
+        if pk is not None:
+            acct = self.w3.eth.account.from_key(pk)
+            self.addresses.append(acct.address)
+
+            # Add acct as auto-signer:
+            self.w3.middleware_onion.add(construct_sign_and_send_raw_middleware(acct))
+        else:
+            if os.environ.get('DEBUG') is None:
+                raise Exception("No private key found in environment variable PRIVATE_KEY")
+
         self._filter = None
         self.filter_id = None
         self._i = 0

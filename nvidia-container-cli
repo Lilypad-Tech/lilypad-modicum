@@ -1,0 +1,10 @@
+#!/bin/bash
+docker pull -q nvidia/cuda:11.0.3-devel-ubuntu20.04 >/dev/null
+docker run -i --privileged --gpus all \
+    -v /usr/bin/nvidia-container-cli:/usr/bin/nvidia-container-cli \
+    -v /usr/lib/x86_64-linux-gnu/libnvidia-container.so.1:/usr/lib/x86_64-linux-gnu/libnvidia-container.so.1 \
+    -v /usr/lib/x86_64-linux-gnu/libnvidia-container.so.1.10.0:/usr/lib/x86_64-linux-gnu/libnvidia-container.so.1.10.0 \
+    -v /usr/lib/x86_64-linux-gnu/libcap.so.2:/usr/lib/x86_64-linux-gnu/libcap.so.2 \
+    -v /lib/x86_64-linux-gnu/libelf.so.1:/lib/x86_64-linux-gnu/libelf.so.1 \
+    nvidia/cuda:11.0.3-devel-ubuntu20.04 nvidia-container-cli "$@"
+exit 0

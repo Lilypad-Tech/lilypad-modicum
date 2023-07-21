@@ -39,13 +39,16 @@ class Solver(PlatformClient):
 
         self.index = index
 
+        self._jobOfferDebugString = ""
+        self._resourceOfferDebugString = ""
+
 
     def register(self, account):
         self.account = account
-        txHash = self.ethclient.contract.functions.registerSolver().transact({
-          "from": self.account,
-          "gasPrice": self.ethclient.w3.eth.gas_price
-        })
+        self.ethclient.transact(
+            self.ethclient.contract.functions.registerSolver(),
+            { "from": self.account },
+        )
 
 
     def matchable(self, resource_offer, job_offer):
@@ -105,7 +108,7 @@ class Solver(PlatformClient):
 
         #JO.arch = RP.arch
         if self.resource_providers[resource_offer.resourceProvider].arch != job_offer.arch:
-            self.logger.info("Architecture mismatch")
+            self.logger.info(f"Architecture mismatch (RP={self.resource_providers[resource_offer.resourceProvider].arch}, JO={job_offer.arch})")
             return(False, False)
 
 
@@ -229,7 +232,13 @@ class Solver(PlatformClient):
             })
 
 
-        self.logger.info("🟢\n#JOs: %s\n#ROs: %s" %(json.dumps(debugJobOffers), json.dumps(debugResourceOffers)))
+        newJobOfferDebugString = json.dumps(debugJobOffers)
+        newResourceOfferDebugString = json.dumps(debugResourceOffers)
+
+        if(newJobOfferDebugString != self._jobOfferDebugString or newResourceOfferDebugString != self._resourceOfferDebugString):
+            self._jobOfferDebugString = newJobOfferDebugString
+            self._resourceOfferDebugString = newResourceOfferDebugString
+            self.logger.info("🟢🟢🟢🟢🟢🟢🟢🟢🟢🟢\n#JOs: %s\n#ROs: %s" %(newJobOfferDebugString, newResourceOfferDebugString))
 
         #create edges for each node
         for i in self.job_offers:
@@ -279,6 +288,7 @@ class Solver(PlatformClient):
                 self.getReceipt(name, transactionHash)
 
                 self.logger.info("{}({}).".format(name, params))
+                self.logger.info("🔴🔴🔴 {}: \n({}).".format(name, params))
                 if name == "MediatorRegistered":
                     self.logger.info("🔴 MediatorRegistered: \n({}).".format(params))
                     self.logger.info("%s" %name)
@@ -376,14 +386,14 @@ class Solver(PlatformClient):
 
                 self.logger.info("jo id: %s" %self.job_offers[i[0]].offerId)
                 self.logger.info("ro id: %s" %self.resource_offers[i[1]].offerId)
-                txHash = self.ethclient.contract.functions.postMatch(
-                    self.job_offers[i[0]].offerId,
-                    self.resource_offers[i[1]].offerId,
-                    i[2]
-                ).transact({
-                  "from": self.account,
-                  "gasPrice": self.ethclient.w3.eth.gas_price
-                })
+                self.ethclient.transact(
+                    self.ethclient.contract.functions.postMatch(
+                        self.job_offers[i[0]].offerId,
+                        self.resource_offers[i[1]].offerId,
+                        i[2],
+                    ),
+                    { "from": self.account },
+                )
                 #remove matches from list
                 self.matched_jos[i[0]] = self.job_offers.pop(i[0])
                 self.matched_ros[i[1]] = self.resource_offers.pop(i[1])

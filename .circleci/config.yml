@@ -1,0 +1,97 @@
+version: 2.1
+commands:
+  setup:
+    steps:
+      - checkout
+      - run:
+          name: setup Qemu
+          command: |
+            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+      - run:
+          name: Create builder
+          command: |
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+            docker context create multi-arch-build
+            docker buildx create --use multi-arch-build
+
+jobs:
+  test-cli:
+    machine:
+      image: ubuntu-2204:2023.04.2
+    steps:
+      - checkout
+      - run:
+          name: Test CLI
+          command: |
+            set -x
+            # Install node
+            curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+            sudo apt -y install nodejs
+            # Build contract
+            ./stack reset
+            ./stack start
+            ./stack submitjob --template cowsay:v0.0.1 --params "ohai from CI"
+  test-contract-unit:
+    machine:
+      image: ubuntu-2204:2023.04.2
+    steps:
+      - checkout
+      - run:
+          name: Test smart contract
+          command: |
+            set -x
+            # Install node
+            curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+            sudo apt -y install nodejs
+            ./stack reset
+            ./stack unit-tests
+  test-contract-smoke:
+    machine:
+      image: ubuntu-2204:2023.04.2
+    resource_class: xlarge
+    steps:
+      - checkout
+      - run:
+          name: Test smart contract
+          command: |
+            set -x
+            # Install node
+            curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+            sudo apt -y install nodejs
+            # Build contract
+            ./stack reset
+            ./stack start
+            ./stack geth-script scripts/smoke-test.js
+  build:
+    machine:
+      image: ubuntu-2204:2023.04.2
+    steps:
+      - setup
+      - run:
+          name: Login to image registry
+          command: |
+            docker login quay.io -u $QUAY_USER -p $QUAY_PASS
+      - run:
+          name: Build multiarch docker image and push
+          command: |
+            set -x
+            # Install node
+            curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+            sudo apt -y install nodejs
+            # Build contract
+            ./stack reset
+            # Build and push docker images
+            export DOCKER_CLI_EXPERIMENTAL=enabled
+            for X in modicum resource-provider mediator; do
+              docker buildx build --target $X --push \
+                --platform linux/arm64,linux/amd64 \
+                -t quay.io/lilypad/lilypad-$X:$(git rev-parse --short HEAD) .
+            done
+workflows:
+  version: 2.1
+  build-push-test:
+    jobs:
+      - build
+      - test-cli
+      - test-contract-unit
+      - test-contract-smoke
