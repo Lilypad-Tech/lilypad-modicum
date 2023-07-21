@@ -168,7 +168,7 @@ class EthereumClient:
                     "fromBlock": self._latest_event_block_number, # + 1?
                 })
             except Exception as e:
-                self.logger.info(traceback.format_exc()
+                self.logger.info(traceback.format_exc())
                 self.logger.info(f"recreating filter from latest event block failed with {e}, "+
                                   "resetting to latest, probably dropping some events :(")
                 self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
