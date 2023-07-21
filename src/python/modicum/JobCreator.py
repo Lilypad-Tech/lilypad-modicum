@@ -393,7 +393,8 @@ class JobCreator(PlatformClient):
 
                 elif name == "EtherTransferred":
                     # TODO: We need an explicit state machine :-(
-                    if self.state == "ResourceOfferPosted":
+                    if self.state == "ResourceOfferPosted" or self.state == "ResultsPosted":
+                        self.status += f" (prev. {self.state})"
                         self.state = "Finished"
                         self.finished = True
                     else:
