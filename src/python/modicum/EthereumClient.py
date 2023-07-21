@@ -127,6 +127,8 @@ class EthereumClient:
 
         self.contract_address = os.environ.get("CONTRACT_ADDRESS")
         self.contract = self.w3.eth.contract(address=self.contract_address, abi=self.abi, bytecode=self.bytecode)
+        self._latest_event_block_number = None
+
         self.reset_filter()
         self.generate_topics(GetEvents())
         
@@ -154,7 +156,22 @@ class EthereumClient:
                 raise Exception("No private key found in environment variable PRIVATE_KEY")
 
     def reset_filter(self):
-        self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
+        if self._latest_event_block_number is None:
+            self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
+        else:
+            try:
+                self.logger.log(
+                    "recreating filter from latest event block {self._latest_event_block_number}",
+                )
+                self.filter = self.w3.eth.filter({
+                    "fromBlock": min(
+                        self._latest_event_block_number, # + 1?
+                    ),
+                })
+            except Exception as e:
+                self.logger.log("recreating filter from latest event block failed with {e}, "+
+                                "resetting to latest, probably dropping some events :(")
+                self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
 
     def exit(self):
         return
@@ -269,6 +286,8 @@ class EthereumClient:
                     raw_event["params"] = raw_event["args"]
                     raw_event["name"] = event_name
                     del raw_event["args"]
+                    self._latest_event_block_number = item.blockNumber
+                    # self.logger.info(f"🟠🟠🟠🟠🟠🟠🟠🟠🟠🟠🟠 processed blockNumber --> {item.blockNumber}")
                     events.append(raw_event)
                 else:
                   self.logger.info(f"🟠🟠🟠🟠[poll_events] Skipping processing {item} since the topic is not known {maybe_hex(item['topics'][0])}")
