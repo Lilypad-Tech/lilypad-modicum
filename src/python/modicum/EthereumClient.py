@@ -160,7 +160,7 @@ class EthereumClient:
             self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
         else:
             try:
-                self.logger.log(
+                self.logger.info(
                     "recreating filter from latest event block {self._latest_event_block_number}",
                 )
                 self.filter = self.w3.eth.filter({
@@ -169,8 +169,8 @@ class EthereumClient:
                     ),
                 })
             except Exception as e:
-                self.logger.log("recreating filter from latest event block failed with {e}, "+
-                                "resetting to latest, probably dropping some events :(")
+                self.logger.info("recreating filter from latest event block failed with {e}, "+
+                                 "resetting to latest, probably dropping some events :(")
                 self.filter = self.w3.eth.filter({"fromBlock": self.w3.eth.block_number})
 
     def exit(self):
