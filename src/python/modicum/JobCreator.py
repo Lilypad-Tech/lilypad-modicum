@@ -18,7 +18,7 @@ from .Enums import Architecture
 import datetime
 
 def should_mediate():
-    mediation_chance = os.getenv('MEDIATION_CHANCE_PERCENT', "20")
+    mediation_chance = os.getenv('MEDIATION_CHANCE_PERCENT', "0")
     #  parse the string into an int
     mediation_chance = int(mediation_chance)
     if(mediation_chance > 100):
