@@ -42,6 +42,7 @@ func TestCowsay(t *testing.T) {
 		[]string{"submitjob", "cowsay:v0.0.1", "hello, testing"}, 
 		false, 
 		"hello, testing",
+		"/stdout",
 	)
 }
 
@@ -57,11 +58,12 @@ func TestSDXL(t *testing.T) {
 		[]string{"submitjob", "sdxl:v0.9-lilypad1", "an astronaut riding on an orange horse"}, 
 		true, 
 		"",
+		"/outputs/image-0.png",
 	)
 }
 
 
-func testJob(t *testing.T, args []string, isImage bool, expectedText string) {
+func testJob(t *testing.T, args []string, isImage bool, expectedText string, relPath string) {
 	maybeReset(t)
 
 	if err := os.Remove(filepath.Join(PATH, "out.txt")); err != nil && !os.IsNotExist(err) {
@@ -80,7 +82,7 @@ func testJob(t *testing.T, args []string, isImage bool, expectedText string) {
 		t.Fatal(err)
 	}
 	// download ipfs url with http lib
-	resp, err := http.Get(ipfsURL+"/stdout")
+	resp, err := http.Get(ipfsURL+relPath)
 	if err != nil {
 		t.Fatal(err)
 	}
