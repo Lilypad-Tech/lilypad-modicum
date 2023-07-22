@@ -26,6 +26,9 @@ func maybeReset(t *testing.T) {
 		PATH = path
 	}
 	if _, ok := os.LookupEnv("SKIP_RESET"); !ok {
+		if err := runCommand("./stack", []string{"build"}); err != nil {
+			t.Fatal(err)
+		}
 		if err := runCommand("./stack", []string{"reset"}); err != nil {
 			t.Fatal(err)
 		}
@@ -72,7 +75,7 @@ func testJob(t *testing.T, args []string, isImage bool, expectedText string, rel
 
 	out, err := exec.Command("./stack", args...).CombinedOutput()
 	if err != nil {
-		t.Fatal(err)
+		t.Fatal(err, string(out))
 	}
 	writeOutput(out, "out.txt")
 
