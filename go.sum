@@ -1,0 +1,6 @@
+github.com/ichinaski/pxl v0.0.0-20170812084744-4206eb59e8eb h1:TXpEkAMms5/LrIxK7/oWpIL7nTnQkTZ/PgTd8+gDRKE=
+github.com/ichinaski/pxl v0.0.0-20170812084744-4206eb59e8eb/go.mod h1:VnaNfBzNu71FX4FTeceuF/fOjvdJqh/cH1daHU8CTNw=
+github.com/mattn/go-runewidth v0.0.9 h1:Lm995f3rfxdpd6TSmuVCHVb/QhupuXlYr8sCI/QdE+0=
+github.com/mattn/go-runewidth v0.0.9/go.mod h1:H031xJmbD/WCDINGzjvQ9THkh0rPKHF+m2gUSrubnMI=
+github.com/nsf/termbox-go v1.1.1 h1:nksUPLCb73Q++DwbYUBEglYBRPZyoXJdrj5L+TkjyZY=
+github.com/nsf/termbox-go v1.1.1/go.mod h1:T0cTdVuOwf7pHQNtfhnEbzHbcNyCEcVU4YPpouCbVxo=

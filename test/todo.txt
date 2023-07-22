@@ -1,0 +1,8 @@
+# TODO
+
+* rewrite shell scripts as go tests
+* cowsay
+* sdxl
+* lora
+* LLM
+* determinism test for each of above
