@@ -65,6 +65,24 @@ func TestSDXL(t *testing.T) {
 	)
 }
 
+func TestSDXLColours(t *testing.T) {
+	// only run if gpu on system
+	_, err := exec.LookPath("nvidia-smi")
+	if err != nil {
+		t.Skip("no nvidia-smi on system, skipping test")
+	}
+	colours := []string{"red", "orange", "yellow", "green", "blue", "orange", "purple"}
+	for _, c := range colours {
+		testJob(
+			t,
+			[]string{"submitjob", "sdxl:v0.9-lilypad1", fmt.Sprintf("an astronaut riding on an %s horse", c)}, 
+			true,
+			"",
+			"/outputs/image-0.png",
+		)
+	}
+}
+
 
 func testJob(t *testing.T, args []string, isImage bool, expectedText string, relPath string) {
 	maybeReset(t)
