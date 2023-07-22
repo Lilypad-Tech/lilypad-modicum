@@ -71,11 +71,11 @@ func TestSDXLColours(t *testing.T) {
 	if err != nil {
 		t.Skip("no nvidia-smi on system, skipping test")
 	}
-	colours := []string{"red", "orange", "yellow", "green", "blue", "orange", "purple"}
+	colours := []string{"gold", "silver", "red", "orange", "yellow", "green", "blue", "orange", "purple"}
 	for _, c := range colours {
 		testJob(
 			t,
-			[]string{"submitjob", "sdxl:v0.9-lilypad1", fmt.Sprintf("an astronaut riding on an %s horse", c)}, 
+			[]string{"submitjob", "sdxl:v0.9-lilypad1", fmt.Sprintf("an astronaut riding on an %s unicorn doing a fart", c)},
 			true,
 			"",
 			"/outputs/image-0.png",
