@@ -13,18 +13,23 @@ import (
 	"time"
 )
 
+var PATH string
+
 func maybeReset(t *testing.T) {
-	path, err := os.Getwd()
-	if err != nil {
-		t.Fatal(err)
-	}
-	path = filepath.Dir(path)
-	os.Chdir(path)
-	if _, ok := os.LookupEnv("SKIP_RESET"); !ok {
-		if err := runCommand("./stack", []string{"reset"}, path); err != nil {
+	if PATH == "" {
+		path, err := os.Getwd()
+		if err != nil {
 			t.Fatal(err)
 		}
-		if err := runCommand("./stack", []string{"start"}, path); err != nil {
+		path = filepath.Dir(path)
+		os.Chdir(path)
+		PATH = path
+	}
+	if _, ok := os.LookupEnv("SKIP_RESET"); !ok {
+		if err := runCommand("./stack", []string{"reset"}); err != nil {
+			t.Fatal(err)
+		}
+		if err := runCommand("./stack", []string{"start"}); err != nil {
 			t.Fatal(err)
 		}
 		time.Sleep(5 * time.Second)
@@ -57,13 +62,9 @@ func TestSDXL(t *testing.T) {
 
 
 func testJob(t *testing.T, args []string, isImage bool, expectedText string) {
-	path, err := os.Getwd()
-	if err != nil {
-		t.Fatal(err)
-	}
 	maybeReset(t)
 
-	if err := os.Remove(filepath.Join(path, "out.txt")); err != nil && !os.IsNotExist(err) {
+	if err := os.Remove(filepath.Join(PATH, "out.txt")); err != nil && !os.IsNotExist(err) {
 		t.Fatal(err)
 	}
 
@@ -88,6 +89,20 @@ func testJob(t *testing.T, args []string, isImage bool, expectedText string) {
 		t.Fatalf("expected 200, got %d", resp.StatusCode)
 	}
 	if isImage {
+		// write response body to temporary image file
+		f, err := os.Create("out.png")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer f.Close()
+		if _, err := f.ReadFrom(resp.Body); err != nil {
+			t.Fatal(err)
+		}
+		// run kitty +kitten icat path/to/some/image.png
+		if err := runCommand("kitty", []string{"+kitten", "icat", "out.png"}); err != nil {
+			log.Printf("Error running kitty, probably not in image-capable terminal: %s", err)
+		}
+	} else {
 		// read response body
 		scanner := bufio.NewScanner(resp.Body)
 		found := false
@@ -105,27 +120,13 @@ func testJob(t *testing.T, args []string, isImage bool, expectedText string) {
 			t.Fatal(err)
 		}
 		fmt.Println(ipfsURL)
-	} else {
-		// write response body to temporary image file
-		f, err := os.Create("out.png")
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer f.Close()
-		if _, err := f.ReadFrom(resp.Body); err != nil {
-			t.Fatal(err)
-		}
-		// run kitty +kitten icat path/to/some/image.png
-		if err := runCommand("kitty", []string{"+kitten", "icat", "out.png"}, path); err != nil {
-			log.Printf("Error running kitty, probably not in image-capable terminal: %s", err)
-		}
 	}
 }
 
-func runCommand(name string, args []string, path string) error {
+func runCommand(name string, args []string) error {
 	log.Printf("Running %s %s", name, args)
 	cmd := exec.Command(name, args...)
-	cmd.Dir = path
+	cmd.Dir = PATH
 	o, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("Error from cmd %s %s: %s %s", name, args, err, o)
