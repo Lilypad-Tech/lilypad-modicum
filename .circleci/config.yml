@@ -62,6 +62,23 @@ jobs:
             ./stack reset
             ./stack start
             ./stack geth-script scripts/smoke-test.js
+  test-integration:
+    machine:
+      image: ubuntu-2004-cuda-11.4:202110-01
+    resource_class: gpu.nvidia.medium
+    steps:
+      - checkout
+      - run:
+          name: Integration tests for modules
+          command: |
+            set -x
+            # Install node
+            curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+            sudo apt -y install nodejs
+            # Build contract
+            ./stack reset
+            ./stack start
+            ./stack integration-tests
   build:
     machine:
       image: ubuntu-2204:2023.04.2
