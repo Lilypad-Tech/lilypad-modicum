@@ -75,7 +75,7 @@ func TestSDXLColours(t *testing.T) {
 	for _, c := range colours {
 		testJob(
 			t,
-			[]string{"submitjob", "sdxl:v0.9-lilypad1", fmt.Sprintf("an astronaut riding on an %s unicorn doing a fart", c)},
+			[]string{"submitjob", "sdxl:v0.9-lilypad1", fmt.Sprintf("an astronaut riding on an %s unicorn", c)},
 			true,
 			"",
 			"/outputs/image-0.png",
