@@ -43,7 +43,7 @@ func TestCowsay(t *testing.T) {
 	testJob(
 		t,
 		[]string{"submitjob", "cowsay:v0.0.1", "hello, testing"}, 
-		false, 
+		"text",
 		"hello, testing",
 		"/stdout",
 	)
@@ -59,9 +59,27 @@ func TestSDXL(t *testing.T) {
 	testJob(
 		t,
 		[]string{"submitjob", "sdxl:v0.9-lilypad1", "an astronaut riding on an orange horse"}, 
-		true, 
+		"image",
 		"",
 		"/outputs/image-0.png",
+	)
+}
+
+func TestLoRA(t *testing.T) {
+	// only run if gpu on system
+	_, err := exec.LookPath("nvidia-smi")
+	if err != nil {
+		t.Skip("no nvidia-smi on system, skipping test")
+	}
+	cid := testJob(
+		t,
+		[]string{"submitjob", "lora_training:v0.1.7-lilypad1", `{images_cid: "bafybeiah7ib5mhzlckolwlkwquzf772wl6jdbhtbuvnbuo5arq7pcs4ubm", seed: 3}`},
+		"", "", "",
+	)
+	testJob(
+		t,
+		[]string{"submitjob", "lora_inference:v0.1.7-lilypad1", fmt.Sprintf(`{lora_cid: "%s", seed: 3, prompt: "a tshirt in the style of <s1><s2>, male, hard rim photography"}`, cid)},
+		"image", "", "/outputs/image-3.jpg",
 	)
 }
 
@@ -76,7 +94,7 @@ func TestSDXLColours(t *testing.T) {
 		testJob(
 			t,
 			[]string{"submitjob", "sdxl:v0.9-lilypad1", fmt.Sprintf("an astronaut riding on an %s unicorn", c)},
-			true,
+			"image",
 			"",
 			"/outputs/image-0.png",
 		)
@@ -84,7 +102,7 @@ func TestSDXLColours(t *testing.T) {
 }
 
 
-func testJob(t *testing.T, args []string, isImage bool, expectedText string, relPath string) {
+func testJob(t *testing.T, args []string, kind string, expectedText string, relPath string) string {
 	maybeReset(t)
 
 	if err := os.Remove(filepath.Join(PATH, "out.txt")); err != nil && !os.IsNotExist(err) {
@@ -102,6 +120,10 @@ func testJob(t *testing.T, args []string, isImage bool, expectedText string, rel
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	xs := strings.Split(ipfsURL, "/")
+	cid := xs[len(xs)-1]
+
 	// download ipfs url with http lib
 	resp, err := http.Get(ipfsURL+relPath)
 	if err != nil {
@@ -111,7 +133,7 @@ func testJob(t *testing.T, args []string, isImage bool, expectedText string, rel
 	if resp.StatusCode != 200 {
 		t.Fatalf("expected 200, got %d", resp.StatusCode)
 	}
-	if isImage {
+	if kind == "image" {
 		// write response body to temporary image file
 		f, err := os.Create("out.png")
 		if err != nil {
@@ -125,7 +147,7 @@ func testJob(t *testing.T, args []string, isImage bool, expectedText string, rel
 		if err := runCommand("kitty", []string{"+kitten", "icat", "out.png"}); err != nil {
 			log.Printf("Error running kitty, probably not in image-capable terminal: %s", err)
 		}
-	} else {
+	} else if kind == "text" {
 		// read response body
 		scanner := bufio.NewScanner(resp.Body)
 		found := false
@@ -144,6 +166,7 @@ func testJob(t *testing.T, args []string, isImage bool, expectedText string, rel
 		}
 		fmt.Println(ipfsURL)
 	}
+	return cid
 }
 
 func runCommand(name string, args []string) error {
