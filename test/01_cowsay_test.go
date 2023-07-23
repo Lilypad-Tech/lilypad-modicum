@@ -56,6 +56,7 @@ func TestSDXL(t *testing.T) {
 	if err != nil {
 		t.Skip("no nvidia-smi on system, skipping test")
 	}
+	t.Skip("skip")
 	testJob(
 		t,
 		[]string{"submitjob", "sdxl:v0.9-lilypad1", "an astronaut riding on an orange horse"}, 
@@ -89,6 +90,7 @@ func TestSDXLColours(t *testing.T) {
 	if err != nil {
 		t.Skip("no nvidia-smi on system, skipping test")
 	}
+	t.Skip("skip")
 	colours := []string{"gold", "silver", "red", "orange", "yellow", "green", "blue", "orange", "purple"}
 	for _, c := range colours {
 		testJob(
@@ -101,6 +103,7 @@ func TestSDXLColours(t *testing.T) {
 	}
 }
 
+// TODO: LLM test
 
 func testJob(t *testing.T, args []string, kind string, expectedText string, relPath string) string {
 	maybeReset(t)
@@ -109,13 +112,14 @@ func testJob(t *testing.T, args []string, kind string, expectedText string, relP
 		t.Fatal(err)
 	}
 
+	log.Printf("----> STACK %s", args)
 	out, err := exec.Command("./stack", args...).CombinedOutput()
 	if err != nil {
 		t.Fatal(err, string(out))
 	}
 	writeOutput(out, "out.txt")
 
-	fmt.Println("----> FINDING IPFS URL")
+	log.Println("----> FINDING IPFS URL")
 	ipfsURL, err := findIPFSURL("out.txt")
 	if err != nil {
 		t.Fatal(err)

@@ -98,6 +98,7 @@ function compile-contract() {
   )
 }
 
+# TODO: should be called contract-tests?
 function unit-tests() {
   source ${DIR}/.env
   (
@@ -105,6 +106,11 @@ function unit-tests() {
     cd src/js
     npx hardhat test --network hardhat
   )
+}
+
+function integration-tests() {
+  source ${DIR}/.env
+  ( cd test ; go test -timeout 120m )
 }
 
 function deploy-contract() {
