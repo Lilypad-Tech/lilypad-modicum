@@ -112,3 +112,4 @@ workflows:
       - test-cli
       - test-contract-unit
       - test-contract-smoke
+      - test-integration
