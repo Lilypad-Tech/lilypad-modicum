@@ -16,6 +16,7 @@ import (
 var PATH string
 
 func maybeReset(t *testing.T) {
+	// run me from test directory, e.g. `(cd test; go test)` from top level lilypad repo
 	if PATH == "" {
 		path, err := os.Getwd()
 		if err != nil {
