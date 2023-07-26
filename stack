@@ -43,6 +43,16 @@ function gSCP() {
   gcloud compute scp --quiet --zone=$GCP_ZONE $1 $GCP_NODE_NAME:$2
 }
 
+function install() {
+  (
+    set -euo pipefail
+    cd src/js
+    if [[ ! -d node_modules ]]; then
+      npm install
+    fi
+  )
+}
+
 function upload-stack() {
   gSCP ./stack ./stack
 }
@@ -90,10 +100,10 @@ function contract-address() {
 
 function compile-contract() {
   source ${DIR}/.env
+  install
   (
     set -euo pipefail
     cd src/js
-    npm install
     npx hardhat compile
   )
 }
@@ -262,10 +272,11 @@ function lilypad-node() {
   # this is for dev trim
   if [[ "$DATA_DIRECTORY" == "$DEFAULT_DATA_DIR" ]]; then
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app"
-
-    # Workaround https://github.com/bacalhau-project/lilypad/issues/39
-    docker run -i --entrypoint /bin/bash -v $DIR/src/python:/app \
+    if [[ ! -d "$DIR/src/python/Modicum.egg-info" ]]; then
+      # Workaround https://github.com/bacalhau-project/lilypad/issues/39
+      docker run -i --rm --entrypoint /bin/bash -v $DIR/src/python:/app \
         $LILYPAD_NODE_IMAGE -c "pip install -e ."
+    fi
   else
     echo >&2 "running in production mode..."
   fi
@@ -357,11 +368,7 @@ function reset() {
   set -x
   docker rm -f faucet-proxy faucet resource-provider mediator solver geth-proxy geth ||true
   sudo rm -rf $DATA_DIRECTORY
-  local sleepSeconds="1"
-  if [[ -z "$QUICK_RESET" ]]; then
-    (cd src/js && npm install)
-    sleepSeconds="5"
-  fi
+  install
   node src/js/scripts/create-new-accounts.js > .env
   source ${DIR}/.env
   rm -rf src/js/deployments/localgeth
@@ -373,7 +380,7 @@ function reset() {
   build
   geth
   geth-proxy
-  sleep $sleepSeconds
+  sleep 1
   fund-admin
   fund-faucet
   fund-services
