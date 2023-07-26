@@ -205,8 +205,12 @@ func findIPFSURL(filename string) (string, error) {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
+	buf := make([]byte, 0, 64*1024)
+	scanner.Buffer(buf, 1024*1024)
+
 	for scanner.Scan() {
 		line := scanner.Text()
+		log.Print(line)
 		if strings.Contains(line, "ipfs.io") {
 			xs := strings.Split(line, " ")
 			return xs[len(xs)-1], nil
