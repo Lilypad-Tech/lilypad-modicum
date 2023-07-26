@@ -11,7 +11,8 @@ RUN apt-get update && \
       libcurl4-openssl-dev \
       jq \
       tzdata \
-      docker.io
+      docker.io \
+      nginx
 RUN curl -sL https://get.bacalhau.org/install.sh | bash
 RUN pip3 install supervisor
 RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-amd64.tar.gz && \
@@ -32,6 +33,7 @@ ENTRYPOINT ["/usr/local/bin/modicum"]
 
 FROM modicum AS resource-provider
 ADD ./src/python/supervisord.resourceProvider.conf /etc/supervisord.conf
+ADD ./src/python/nginx.conf /etc/nginx.conf
 ENTRYPOINT ["/usr/local/bin/supervisord"]
 
 FROM modicum AS mediator
