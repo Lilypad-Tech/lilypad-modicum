@@ -48,7 +48,7 @@ class ResourceProvider(Mediator):
         self.logger.info("A: registerResourceProvider")
         self.account = account
         self.ethclient.transact(
-            self.ethclient.contract.functions.registerResourceProvider(arch, timePerInstruction),
+            self.ethclient.contract.functions.registerResourceProvider(arch, timePerInstruction, "http://1.2.3.4"),
             { "from": self.account },
         )
         return 0

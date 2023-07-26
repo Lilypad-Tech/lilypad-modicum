@@ -542,6 +542,7 @@ def startRP(path,index,host,sim,mediator):
     while not RP.idle:
         time.sleep(0.1)
 
+    print("Mediator added - now posting resource offer... ")
     exitcode = RP.postDefaultOffer()
 
 @click.command('startRPDaemon')
@@ -689,11 +690,12 @@ def runLilypadCLI(args, template, params, mediator):
     JC = JobCreator.JobCreator(index, False)
     
     # User facing, quiet logging
-    import logging
-    logger = logging.getLogger("JobCreator")
-    logger.setLevel(logging.ERROR)
-    logger = logging.getLogger("EthereumClient")
-    logger.setLevel(logging.ERROR)
+    if os.environ.get('DEBUG') is None:
+        import logging
+        logger = logging.getLogger("JobCreator")
+        logger.setLevel(logging.ERROR)
+        logger = logging.getLogger("EthereumClient")
+        logger.setLevel(logging.ERROR)
 
     print(f"\n🌟 Lilypad submitting job {template}({params}) 🌟\n")
 
