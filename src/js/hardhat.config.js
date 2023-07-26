@@ -34,6 +34,11 @@ const config = {
       url: 'http://testnet.lilypadnetwork.org:8545',
       chainId: 1337,
       accounts: allAccounts,
+    },
+    ipc: {
+      url: 'http://bravo.subnet.ipc.space:2346/rpc/v1',
+      chainId: 1742508895726513,
+      accounts: allAccounts,
     }
   },
 };
