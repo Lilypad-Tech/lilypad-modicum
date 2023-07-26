@@ -5,6 +5,7 @@ import time
 import zmq
 import logging
 import json
+import requests
 from web3 import Web3
 from .JobCreator import JobFinished
 
@@ -484,7 +485,6 @@ def getSize(tag):
     size = DC.getSize(_DIRIP_, _SSHPORT_, username, tag, _SSHKEY_)
     print(size)
 
-
 ################################################################################
 # RP CLI
 ################################################################################
@@ -517,8 +517,15 @@ def startRP(path,index,host,sim,mediator):
     # NOTE: we force index index here so we are only ever using either
     # the first (unlocked) account or the overriden account supplied by the env
     RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, 0)
-    print("Resource Provider Daemon is registering... ")
-    exitcode = RP.register(RP.account,Architecture.amd64.value, 1)# ratio to 1Gz processor # XXX should this be arm64???
+
+    resultsURL = os.environ.get('RESULTS_URL')
+    if resultsURL is None:
+        response = requests.get('https://api.ipify.org')
+        publicIP = response.text
+        resultsURL = "http://%s:8085" %publicIP
+
+    print("Resource Provider Daemon is registering with resultsURL: %s" %resultsURL)
+    exitcode = RP.register(RP.account,Architecture.amd64.value, 1, resultsURL)# ratio to 1Gz processor # XXX should this be arm64???
     print("exitcode:  %s" %exitcode)
     while not RP.registered:
         time.sleep(0.1)

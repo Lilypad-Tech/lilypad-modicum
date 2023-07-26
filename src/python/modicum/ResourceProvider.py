@@ -44,11 +44,11 @@ class ResourceProvider(Mediator):
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
 
-    def register(self, account, arch, timePerInstruction):
+    def register(self, account, arch, timePerInstruction, resultsURL):
         self.logger.info("A: registerResourceProvider")
         self.account = account
         self.ethclient.transact(
-            self.ethclient.contract.functions.registerResourceProvider(arch, timePerInstruction, "http://1.2.3.4"),
+            self.ethclient.contract.functions.registerResourceProvider(arch, timePerInstruction, resultsURL),
             { "from": self.account },
         )
         return 0
