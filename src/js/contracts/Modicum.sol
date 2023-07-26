@@ -36,6 +36,7 @@ contract Modicum {
         uint256[] supportedFirstLayers;
         Architecture arch;
         uint256 timePerInstruction;
+        string resultsURL;
     }
 
     struct Mediator {
@@ -210,7 +211,7 @@ contract Modicum {
 
     event MediatorAddedSupportedFirstLayer(address addr, uint256 firstLayerHash);
 
-    event ResourceProviderRegistered(address addr, Architecture arch, uint256 timePerInstruction, uint256 penaltyRate);
+    event ResourceProviderRegistered(address addr, Architecture arch, uint256 timePerInstruction, uint256 penaltyRate, string resultsURL);
     event ResourceProviderAddedTrustedMediator(address addr, address mediator);
     event JobCreatorRegistered(address addr, uint256 penaltyRate);
     event JobCreatorAddedTrustedMediator(address addr, address mediator);
@@ -373,7 +374,8 @@ contract Modicum {
 
     function registerResourceProvider(
         Architecture arch,
-        uint256 timePerInstruction
+        uint256 timePerInstruction,
+        string memory resultsURL
     ) public {
         // console.log("-----------------------------> RUNNING: ResourceProviderRegistered CHANGE1");
         address[] memory trustedMediators;
@@ -384,13 +386,15 @@ contract Modicum {
             supportedFirstLayers: supportedFirstLayers,
             arch: arch,
             timePerInstruction: timePerInstruction,
-            trustedDirectories: trustedDirectories
+            trustedDirectories: trustedDirectories,
+            resultsURL: resultsURL
         });
         // console.log("🟢🟢🟢 EMIT ResourceProviderRegistered");
         emit ResourceProviderRegistered(msg.sender,
             arch,
             timePerInstruction,
-            penaltyRate
+            penaltyRate,
+            resultsURL
         );
         // console.log("-----------------------------> EVENT EMITTED: ResourceProviderRegistered");
     }
