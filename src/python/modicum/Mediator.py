@@ -152,8 +152,7 @@ class Mediator(PlatformClient):
 
                 # before we return the hash - let's copy the results out from IPFS so we can serve them
                 # from out embedded nginx container
-                subprocess.run(['mkdir', '-p', '/tmp/lilypad-results'], text=True, capture_output=True, check=True)
-                subprocess.run(['ipfs', '--repo-dir', '/root/.ipfs', 'get', resultHash], text=True, capture_output=True, check=True, cwd="/tmp/lilypad-results")
+                subprocess.run(['ipfs', '--repo-dir', '/root/.ipfs', 'get', resultHash], text=True, capture_output=True, check=True, cwd="/lilypad-results")
 
                 return resultHash
 

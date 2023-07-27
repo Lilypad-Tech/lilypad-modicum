@@ -29,11 +29,12 @@ ENV BACALHAU_API_HOST=localhost
 # nvidia-smi wrapper script which actually runs a container from inside a container
 ADD nvidia-smi /usr/bin/nvidia-smi
 ADD nvidia-container-cli /usr/bin/nvidia-container-cli
+RUN mkdir -p /lilypad-results
 ENTRYPOINT ["/usr/local/bin/modicum"]
 
 FROM modicum AS resource-provider
 ADD ./src/python/supervisord.resourceProvider.conf /etc/supervisord.conf
-ADD ./src/python/nginx.conf /etc/nginx.conf
+ADD ./src/python/nginx.conf /etc/nginx/sites-available/default
 ENTRYPOINT ["/usr/local/bin/supervisord"]
 
 FROM modicum AS mediator

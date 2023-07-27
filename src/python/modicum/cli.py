@@ -519,10 +519,11 @@ def startRP(path,index,host,sim,mediator):
     RP.platformConnect(_CONTRACT_ADDRESS_, _GETHIP_, _GETHPORT_, 0)
 
     resultsURL = os.environ.get('RESULTS_URL')
+    resultsPort = os.environ.get('RESULTS_PORT')
     if resultsURL is None:
         response = requests.get('https://api.ipify.org')
         publicIP = response.text
-        resultsURL = "http://%s:8085" %publicIP
+        resultsURL = "http://%s:%s" % (publicIP, resultsPort,)
 
     print("Resource Provider Daemon is registering with resultsURL: %s" %resultsURL)
     exitcode = RP.register(RP.account,Architecture.amd64.value, 1, resultsURL)# ratio to 1Gz processor # XXX should this be arm64???
