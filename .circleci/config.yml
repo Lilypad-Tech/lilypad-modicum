@@ -72,6 +72,28 @@ jobs:
           name: Integration tests for modules
           command: |
             set -x
+            # The gpu node that circle gives us has an ancient version of docker
+            # that mysteriously fails with the following error inside the docker
+            # build (./stack build etc):
+            #
+            #   E: Problem executing scripts APT::Update::Post-Invoke 'rm -f /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/*.deb /var/cache/apt/*.bin || true'
+            #   E: Sub-process returned an error code
+            #   The command '/bin/sh -c apt-get update &&     apt-get install -y       curl       python3-pip       python3-virtualenv       python3-dev       libssl-dev       libcurl4-openssl-dev       jq       tzdata       docker.io' returned a non-zero code: 100
+            #
+            # We workaround this by upgrading docker.
+
+            sudo apt-get update
+            sudo apt-get install ca-certificates curl gnupg
+            sudo install -m 0755 -d /etc/apt/keyrings
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+            sudo chmod a+r /etc/apt/keyrings/docker.gpg
+            echo \
+              "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+              "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+              sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+            sudo apt-get update
+            sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
             # Install node
             curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
             sudo apt -y install nodejs
