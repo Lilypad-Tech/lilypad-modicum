@@ -32,6 +32,14 @@ export IMAGE_MODICUM="${DOCKER_REGISTRY}/${IMAGE_MODICUM_NAME}:${VERSION}"
 export IMAGE_RESOURCE_PROVIDER_NAME=${IMAGE_RESOURCE_PROVIDER_NAME:="${IMAGE_BASE}-resource-provider"}
 export IMAGE_RESOURCE_PROVIDER="${DOCKER_REGISTRY}/${IMAGE_RESOURCE_PROVIDER_NAME}:${VERSION}"
 export LILYPAD_NODE_FLAGS=""
+# what URL will the resource provider report to download results from?
+# if left blank - the resource provider will use https://api.ipify.org to know it's public
+# ip address and will use the RESULTS_PORT below
+# if RESULTS_URL is provided then it must line up with the RESULTS_PORT below
+export RESULTS_URL=${RESULTS_URL:=""}
+# what port do we expose the results on?
+# this needs to line up with the 
+export RESULTS_PORT=${RESULTS_PORT:="80"}
 
 if [[ $# -eq 0 ]]; then
   echo "Usage: $0 <command> [args]"
@@ -55,10 +63,13 @@ elif [[ $1 == "serve" ]]; then
   fi
   # /tmp is for bacalhau to be able to find its own results
   docker run -d --restart always --name resource-provider \
+    -p $RESULTS_PORT:80 \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
     $GPU_ARG $GPU_VALUE \
     -e PRIVATE_KEY \
+    -e RESULTS_URL \
+    -e RESULTS_PORT \
     -e CONTRACT_ADDRESS \
     -e CONTRACT_ABI_FILE=/Modicum.json \
     -e MEDIATOR_ADDRESSES \
@@ -68,6 +79,7 @@ elif [[ $1 == "serve" ]]; then
 elif [[ $1 == "run" ]]; then
   shift
   docker run -ti --rm --name submitjob \
+    -e DEBUG \
     -e PRIVATE_KEY \
     -e CONTRACT_ADDRESS \
     -e CONTRACT_ABI_FILE=/Modicum.json \

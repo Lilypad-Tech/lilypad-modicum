@@ -415,6 +415,10 @@ contract Modicum {
         emit ResourceProviderAddedSupportedFirstLayer(msg.sender, firstLayerHash);
     }
 
+    function getResourceProviderResultsURL(address id) public view returns (string memory) {
+        return resourceProviders[id].resultsURL;
+    }
+
     // function getResourceProviderTrustedMediators(address rp) public view returns (address[] memory) {
     //     return resourceProviders[rp].trustedMediators;
     // }

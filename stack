@@ -27,7 +27,7 @@ export RPC_URL=${RPC_URL:="http://geth:8545"}
 export RESULTS_URL=${RESULTS_URL:=""}
 # what port do we expose the results on?
 # this needs to line up with the 
-export RESULTS_PORT=${RESULTS_PORT:="8085"}
+export RESULTS_PORT=${RESULTS_PORT:="8080"}
 
 export VERSION=${VERSION:="$(cd $DIR; git rev-parse --short HEAD)-$(uname -m |sed 's/arm64/aarch64/')"}
 
@@ -162,6 +162,7 @@ function geth() {
     ethereum/client-go \
       --datadir /data/geth \
       --dev \
+      --miner.gasprice 1 \
       --http \
       --http.api web3,eth,net \
       --http.addr 0.0.0.0 \
@@ -321,6 +322,7 @@ function lilypad-node() {
     -e PRIVATE_KEY \
     -e BAD_ACTOR \
     -e RESULTS_URL \
+    -e RESULTS_PORT \
     -e MEDIATION_CHANCE_PERCENT \
     -e MEDIATOR_ADDRESSES \
     -e CONTRACT_ADDRESS=$(contract-address) \
