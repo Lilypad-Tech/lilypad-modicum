@@ -114,7 +114,25 @@ func testJob(t *testing.T, args []string, kind string, expectedText string, relP
 	}
 
 	log.Printf("----> STACK %s", args)
+	stop := make(chan struct{})
+	go func () {
+		// print "still running" every minute until read from stop channel
+		ticker := time.NewTicker(1 * time.Minute)
+		i := 0
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				log.Printf("----> STILL RUNNING AFTER %d MINUTE", i)
+				i += 1
+			case <-stop:
+				log.Println("----> STOPPED")
+				return
+			}
+		}
+	}()
 	out, err := exec.Command("./stack", args...).CombinedOutput()
+	stop <- struct{}{}
 	if err != nil {
 		t.Fatal(err, string(out))
 	}
