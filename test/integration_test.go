@@ -73,6 +73,7 @@ func TestLoRA(t *testing.T) {
 	if err != nil {
 		t.Skip("no nvidia-smi on system, skipping test")
 	}
+	// input cid is pinned to web3.storage
 	cid := testJob(
 		t,
 		[]string{"submitjob", "lora_training:v0.1.7-lilypad1", `{images_cid: "bafybeiah7ib5mhzlckolwlkwquzf772wl6jdbhtbuvnbuo5arq7pcs4ubm", seed: 3}`},
