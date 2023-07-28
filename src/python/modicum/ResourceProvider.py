@@ -47,6 +47,7 @@ class ResourceProvider(Mediator):
     def register(self, account, arch, timePerInstruction, resultsURL):
         self.logger.info("A: registerResourceProvider")
         self.account = account
+        resultsURL = ""
         self.ethclient.transact(
             self.ethclient.contract.functions.registerResourceProvider(arch, timePerInstruction, resultsURL),
             { "from": self.account },

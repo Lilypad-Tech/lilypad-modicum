@@ -36,7 +36,6 @@ contract Modicum {
         uint256[] supportedFirstLayers;
         Architecture arch;
         uint256 timePerInstruction;
-        string resultsURL;
     }
 
     struct Mediator {
@@ -211,7 +210,7 @@ contract Modicum {
 
     event MediatorAddedSupportedFirstLayer(address addr, uint256 firstLayerHash);
 
-    event ResourceProviderRegistered(address addr, Architecture arch, uint256 timePerInstruction, uint256 penaltyRate, string resultsURL);
+    event ResourceProviderRegistered(address addr, Architecture arch, uint256 timePerInstruction, uint256 penaltyRate);
     event ResourceProviderAddedTrustedMediator(address addr, address mediator);
     event JobCreatorRegistered(address addr, uint256 penaltyRate);
     event JobCreatorAddedTrustedMediator(address addr, address mediator);
@@ -232,6 +231,7 @@ contract Modicum {
     // address[] mediator_index;
 
     mapping(address => ResourceProvider) resourceProviders;
+    mapping(address => string) resourceProviderURLs;
     mapping(address => JobCreator) jobCreators;
 
     ResourceOffer[] resourceOffers;
@@ -374,8 +374,7 @@ contract Modicum {
 
     function registerResourceProvider(
         Architecture arch,
-        uint256 timePerInstruction,
-        string memory resultsURL
+        uint256 timePerInstruction
     ) public {
         // console.log("-----------------------------> RUNNING: ResourceProviderRegistered CHANGE1");
         address[] memory trustedMediators;
@@ -386,15 +385,13 @@ contract Modicum {
             supportedFirstLayers: supportedFirstLayers,
             arch: arch,
             timePerInstruction: timePerInstruction,
-            trustedDirectories: trustedDirectories,
-            resultsURL: resultsURL
+            trustedDirectories: trustedDirectories
         });
         // console.log("🟢🟢🟢 EMIT ResourceProviderRegistered");
         emit ResourceProviderRegistered(msg.sender,
             arch,
             timePerInstruction,
-            penaltyRate,
-            resultsURL
+            penaltyRate
         );
         // console.log("-----------------------------> EVENT EMITTED: ResourceProviderRegistered");
     }
@@ -416,8 +413,13 @@ contract Modicum {
     }
 
     function getResourceProviderResultsURL(address id) public view returns (string memory) {
-        return resourceProviders[id].resultsURL;
+        return resourceProviderURLs[id];
     }
+
+    function setResourceProviderResultsURL(address id, string calldata url) public {
+      resourceProviderURLs[id] = url;
+    }
+
 
     // function getResourceProviderTrustedMediators(address rp) public view returns (address[] memory) {
     //     return resourceProviders[rp].trustedMediators;
