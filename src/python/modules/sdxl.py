@@ -27,7 +27,7 @@ def _sdxl(params: str):
                 "Image": "quay.io/lukemarsden/sdxl:v0.9-lilypad1-v2",
                 "EnvironmentVariables": [
                     f"PROMPT={params.get('prompt', 'question mark floating in space')}",
-                    f"RANDOM_SEED={params.get('seed', 42)}",
+                    f"RANDOM_SEED={params.get('seed', 0)}",
                     f"OUTPUT_DIR=/outputs/",
                     "HF_HUB_OFFLINE=1",
                 ]

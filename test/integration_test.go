@@ -16,7 +16,9 @@ import (
 var PATH string
 
 func maybeReset(t *testing.T) {
+	// run me from test directory, e.g. `(cd test; go test)` from top level lilypad repo
 	if PATH == "" {
+		// run exactly once per test process
 		path, err := os.Getwd()
 		if err != nil {
 			t.Fatal(err)
@@ -24,18 +26,18 @@ func maybeReset(t *testing.T) {
 		path = filepath.Dir(path)
 		os.Chdir(path)
 		PATH = path
-	}
-	if _, ok := os.LookupEnv("SKIP_RESET"); !ok {
-		if err := runCommand("./stack", []string{"build"}); err != nil {
-			t.Fatal(err)
+		if _, ok := os.LookupEnv("SKIP_RESET"); !ok {
+			if err := runCommand("./stack", []string{"build"}); err != nil {
+				t.Fatal(err)
+			}
+			if err := runCommand("./stack", []string{"reset"}); err != nil {
+				t.Fatal(err)
+			}
+			if err := runCommand("./stack", []string{"start"}); err != nil {
+				t.Fatal(err)
+			}
+			time.Sleep(5 * time.Second)
 		}
-		if err := runCommand("./stack", []string{"reset"}); err != nil {
-			t.Fatal(err)
-		}
-		if err := runCommand("./stack", []string{"start"}); err != nil {
-			t.Fatal(err)
-		}
-		time.Sleep(5 * time.Second)
 	}
 }
 
@@ -71,6 +73,7 @@ func TestLoRA(t *testing.T) {
 	if err != nil {
 		t.Skip("no nvidia-smi on system, skipping test")
 	}
+	// input cid is pinned to web3.storage
 	cid := testJob(
 		t,
 		[]string{"submitjob", "lora_training:v0.1.7-lilypad1", `{images_cid: "bafybeiah7ib5mhzlckolwlkwquzf772wl6jdbhtbuvnbuo5arq7pcs4ubm", seed: 3}`},
@@ -111,7 +114,28 @@ func testJob(t *testing.T, args []string, kind string, expectedText string, relP
 	}
 
 	log.Printf("----> STACK %s", args)
-	stdout, _, err := runCommandWithOutput("./stack", args)
+	stop := make(chan struct{})
+	go func() {
+		// print "still running" every minute until read from stop channel
+		ticker := time.NewTicker(1 * time.Minute)
+		i := 0
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				log.Printf("----> STILL RUNNING AFTER %d MINUTE", i)
+				i += 1
+			case <-stop:
+				log.Println("----> STOPPED")
+				return
+			}
+		}
+	}()
+	stdout, stderr, err := runCommandWithOutput("./stack", args)
+	stop <- struct{}{}
+	if stderr != "" {
+		log.Printf("stderr: %s", stderr)
+	}
 	if err != nil {
 		t.Fatal(err, stdout)
 	}
