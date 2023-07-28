@@ -18,6 +18,7 @@ var PATH string
 func maybeReset(t *testing.T) {
 	// run me from test directory, e.g. `(cd test; go test)` from top level lilypad repo
 	if PATH == "" {
+		// run exactly once per test process
 		path, err := os.Getwd()
 		if err != nil {
 			t.Fatal(err)
@@ -25,31 +26,30 @@ func maybeReset(t *testing.T) {
 		path = filepath.Dir(path)
 		os.Chdir(path)
 		PATH = path
-	}
-	if _, ok := os.LookupEnv("SKIP_RESET"); !ok {
-		if err := runCommand("./stack", []string{"build"}); err != nil {
-			t.Fatal(err)
+		if _, ok := os.LookupEnv("SKIP_RESET"); !ok {
+			if err := runCommand("./stack", []string{"build"}); err != nil {
+				t.Fatal(err)
+			}
+			if err := runCommand("./stack", []string{"reset"}); err != nil {
+				t.Fatal(err)
+			}
+			if err := runCommand("./stack", []string{"start"}); err != nil {
+				t.Fatal(err)
+			}
+			time.Sleep(5 * time.Second)
 		}
-		if err := runCommand("./stack", []string{"reset"}); err != nil {
-			t.Fatal(err)
-		}
-		if err := runCommand("./stack", []string{"start"}); err != nil {
-			t.Fatal(err)
-		}
-		time.Sleep(5 * time.Second)
 	}
 }
 
 func TestCowsay(t *testing.T) {
 	testJob(
 		t,
-		[]string{"submitjob", "cowsay:v0.0.1", "hello, testing"}, 
+		[]string{"submitjob", "cowsay:v0.0.1", "hello, testing"},
 		"text",
 		"hello, testing",
 		"/stdout",
 	)
 }
-
 
 func TestSDXL(t *testing.T) {
 	// only run if gpu on system
@@ -60,7 +60,7 @@ func TestSDXL(t *testing.T) {
 	t.Skip("skip")
 	testJob(
 		t,
-		[]string{"submitjob", "sdxl:v0.9-lilypad1", "an astronaut riding on an orange horse"}, 
+		[]string{"submitjob", "sdxl:v0.9-lilypad1", "an astronaut riding on an orange horse"},
 		"image",
 		"",
 		"/outputs/image-0.png",
@@ -115,7 +115,7 @@ func testJob(t *testing.T, args []string, kind string, expectedText string, relP
 
 	log.Printf("----> STACK %s", args)
 	stop := make(chan struct{})
-	go func () {
+	go func() {
 		// print "still running" every minute until read from stop channel
 		ticker := time.NewTicker(1 * time.Minute)
 		i := 0
@@ -148,7 +148,7 @@ func testJob(t *testing.T, args []string, kind string, expectedText string, relP
 	cid := xs[len(xs)-1]
 
 	// download ipfs url with http lib
-	resp, err := http.Get(ipfsURL+relPath)
+	resp, err := http.Get(ipfsURL + relPath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -182,7 +182,7 @@ func testJob(t *testing.T, args []string, kind string, expectedText string, relP
 			}
 		}
 		if !found {
-				t.Fatalf("expected line to contain '%s'", expectedText)
+			t.Fatalf("expected line to contain '%s'", expectedText)
 		}
 		if err := scanner.Err(); err != nil {
 			t.Fatal(err)
