@@ -75,7 +75,7 @@ def _filecoin_data_prep(params: str):
             },
             "Timeout": 1800,
             "Verifier": "Noop",
-            "output": [
+            "outputs": [
                 {
                     "Name": "output",
                     "StorageSource": "IPFS",
