@@ -96,11 +96,12 @@ class EthereumClient:
             try:
                 return method.transact(params)
             except ValueError as e:
-                if "nonce too low" not in str(e):
+                in_allowlist = "nonce too low" in str(e) or "'GasFeeCap' less than 'GasPremium'" in str(e)
+                if not in_allowlist:
                     # Different error, don't retry it
                     raise e
                 if i < retries - 1:
-                    # self.logger.info(f"Retrying {method} in {i} seconds ({e})...")
+                    self.logger.info(f"Retrying {method} in {i} seconds ({e})...")
                     sleep(i)
                     continue
                 else:
