@@ -1,10 +1,6 @@
 # lilypad design doc
 
-Decentralized, two sided market place for compute jobs.
-
-## services
-
-Services in the system:
+Services:
 
  * smart contract
  * resource provider
@@ -13,19 +9,9 @@ Services in the system:
  * mediator
  * directory
 
-### smart contract
+## smart contract
 
-Written in solidity, we will primaily use IPC to reduce latency and gas costs but any other blockchain that is EVM compatible will work.
-
-The aim is to reduce the number of transactions without compromising the game theory of our anti-cheating mechanism.
-
-Aspects handled by the smart contract:
-
- * deal confirmation and timeouts
- * dispute resolution
- * payouts
-
-#### api
+#### types
 
  * `type CID` - bytes32
 
@@ -35,20 +21,81 @@ Aspects handled by the smart contract:
     * mediator
     * directory
 
- * `registerServiceProvider`
-    * serviceType ServiceType
-    * metadata CID
+#### service provider discovery
+
+ * `registerServiceProvider(serviceType, url, metadata)`
+    * serviceType `ServiceType`
+    * ID = msg._sender
+    * url `string`
+      * this is the advertised network URL, used by directory and solver
+    * metadata `CID`
+
+ * `unregisterServiceProvider(serviceType)`
+    * serviceType `ServiceType`
+    * ID = msg._sender
+
+ * `listServiceProviders(serviceType) returns []address`
+    * serviceType `ServiceType`
+    * returns an array of IDs for the given service type
    
- * `agreeToDeal`
-   * dealID CID
-   * jobOfferID CID
-   * resourceOfferID CID
-   * timeout uint (the upper bounds of time this job can take)
-   * 
+ * `getServiceProvider(serviceType, ID) returns (url, metadata)`
+    * serviceType `ServiceType`
+    * ID `address`
+    * url `string`
+    * metadata `CID`
+    * return the URL and metadata CID for the given service provider
+
+#### deals
+
+ * `agreeDeal(party, dealID, jobOfferID, resourceOfferID, timeout, timeoutDeposit)`
+   * party ServiceType
+     * this should be resourceProvider that owns the resourceOfferID or jobCreator that owns the jobOfferID
+   * dealID `CID`
+   * jobOfferID `CID`
+   * resourceOfferID `CID`
+   * timeout `uint`
+     * the upper bounds of time this job can take - TODO: is this in seconds or blocks?
+   * timeoutDeposit `uint`
+     * the amount of deposit that will be lost if the job takes longer than timeout
+     * this must equal msg._value
    
  * `submitResults`
+  
 
  * `cancelDeal`
+
+## solver
+
+The solver will eventually be removed in favour of point to point communication.
+
+For that reason - the solver has 2 distinct sides to it's api, the resource provider side and job creator side.
+
+#### resource provider
+
+ * `broadcastResourceOffer(resourceOfferID)`
+   * resourceOfferID `CID`
+   * tell everyone connected to this solver about the resource offer
+
+ * `communicateResourceOffer(resourceOfferID, jobCreatorID)`
+   * resourceOfferID `CID`
+   * jobCreatorID `address`
+   * tell one specific job creator about the resource offer
+
+ * `cancelResourceOffer(resourceOfferID)`
+   * resourceOfferID `CID`
+   * cancel the resource offer
+
+
+#### job creator
+
+ * `broadcastJobOffer(jobOfferID)`
+   * resourceOfferID `CID`
+
+ * `communicateJobOffer(resourceOfferID, jobCreatorID)`
+   * resourceOfferID `CID`
+   * jobCreatorID `address`
+
+
 
 
 ### resource provider
