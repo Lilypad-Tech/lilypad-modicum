@@ -12,7 +12,7 @@ from web3.middleware import construct_sign_and_send_raw_middleware
 import os
 import importlib
 from hexbytes import HexBytes
-from web3 import HTTPProvider, Web3
+from web3 import HTTPProvider, Web3, WebsocketProvider
 from web3.middleware import geth_poa_middleware, http_retry_request_middleware
 import requests
 from hexbytes import HexBytes
@@ -119,7 +119,11 @@ class EthereumClient:
                 protocol = "http"
 
         if os.getenv("RPC_URL") is not None:
-            self.w3 = Web3(CustomHTTPProvider(os.getenv("RPC_URL")))
+            rpc_url = os.getenv("RPC_URL")
+            if rpc_url.startswith("ws"):
+                self.w3 = Web3(WebsocketProvider(rpc_url))
+            else:
+                self.w3 = Web3(CustomHTTPProvider(rpc_url))
         else:
             self.w3 = Web3(CustomHTTPProvider(f'{protocol}://{self.ip}:{self.port}'))
 
