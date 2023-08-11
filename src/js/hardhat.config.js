@@ -34,6 +34,16 @@ const config = {
       url: 'http://testnet.lilypadnetwork.org:8545',
       chainId: 1337,
       accounts: allAccounts,
+    },
+    ipc: {
+      url: 'http://alpha.subnet.ipc.space:2346/rpc/v1',
+      chainId: 2734332491184961,
+      accounts: allAccounts,
+    },
+    calibration: {
+      url: 'https://api.calibration.node.glif.io',
+      chainId: 314159,
+      accounts: allAccounts,
     }
   },
 };
