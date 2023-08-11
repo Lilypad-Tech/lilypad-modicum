@@ -289,9 +289,10 @@ function lilypad-node() {
     -e BAD_ACTOR \
     -e MEDIATION_CHANCE_PERCENT \
     -e MEDIATOR_ADDRESSES \
+    -e RPC_URL \
+    -e RPC_TOKEN \
     -e CONTRACT_ADDRESS=$(contract-address) \
     -e CONTRACT_ABI_FILE=/Modicum.json \
-    -e RPC_URL=$RPC_URL \
     $LILYPAD_NODE_IMAGE \
     ${1:-""} \
     $(for arg in ${GLOBAL_ARGS[@]:1}; do echo ${arg@Q}; done)

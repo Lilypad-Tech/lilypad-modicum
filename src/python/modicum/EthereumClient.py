@@ -58,6 +58,13 @@ class CustomHTTPProvider(HTTPProvider):
         if rpcToken != None:
             self._request_kwargs['headers']['Authorization'] = f'Bearer {rpcToken}'
 
+class CustomWebsocketProvider(WebsocketProvider):
+    def __init__(self, endpoint_uri, websocket_kwargs={}):
+        rpcToken = os.getenv("RPC_TOKEN")
+        if rpcToken != None:
+            websocket_kwargs["extra_headers"] = {'Authorization': f'Bearer {rpcToken}'}
+        super().__init__(endpoint_uri, websocket_kwargs)
+
 class NonceException(Exception):
     pass
 
@@ -121,7 +128,7 @@ class EthereumClient:
         if os.getenv("RPC_URL") is not None:
             rpc_url = os.getenv("RPC_URL")
             if rpc_url.startswith("ws"):
-                self.w3 = Web3(WebsocketProvider(rpc_url))
+                self.w3 = Web3(CustomWebsocketProvider(rpc_url))
             else:
                 self.w3 = Web3(CustomHTTPProvider(rpc_url))
         else:
