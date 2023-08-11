@@ -114,9 +114,9 @@ class EthereumClient:
         if protocol is None:
             # do some guessing
             if port == "443":
-                protocol = "https"
+                protocol = "wss"
             else:
-                protocol = "http"
+                protocol = "ws"
 
         if os.getenv("RPC_URL") is not None:
             rpc_url = os.getenv("RPC_URL")
