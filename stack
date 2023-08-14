@@ -428,4 +428,34 @@ function stop-modicum() {
   docker rm -f submitjob || true
 }
 
+function generate-golang-bindings() {
+  local package="$1"
+  local outputDir="$2"
+  # check if package is set and exit if not
+  if [[ -z "$package" ]]; then
+    echo "package is not set"
+    exit 1
+  fi
+  # check if outputDir exists and exit if not
+  if [[ ! -d "$outputDir" ]]; then
+    echo "outputDir $outputDir does not exist"
+    exit 1
+  fi
+  # check if the jq command exists and exit if not
+  if ! command -v jq &> /dev/null; then
+    echo "jq command could not be found"
+    exit 1
+  fi
+  (
+    set -euo pipefail
+    cd src/js
+    # a quick workaround for not actually needing the env
+    # because all we are doing is re-compiling
+    export ADDRESS_ADMIN=xxx
+    npx hardhat compile
+    cat ./artifacts/contracts/Modicum.sol/Modicum.json | jq -r '.abi' > /tmp/Modicum.abi
+    abigen --abi /tmp/Modicum.abi --pkg "$package" --type Modicum --out "$outputDir/Modicum.go"
+  )
+}
+
 eval "$@"
