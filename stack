@@ -276,11 +276,8 @@ function lilypad-node() {
   fi
   GPU_ARG=""
   GPU_VALUE=""
-  if [ -f "/usr/bin/nvidia-smi" ]; then
-      GPU_ARG="--gpus"
-      GPU_VALUE="all"
-  fi
   eval docker run $LILYPAD_NODE_FLAGS --name $LILYPAD_NODE_NAME \
+    --add-host host.docker.internal:host-gateway \
     -v /tmp:/tmp \
     -v /var/run/docker.sock:/var/run/docker.sock \
     $GPU_ARG $GPU_VALUE \

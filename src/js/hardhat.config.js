@@ -30,14 +30,19 @@ const config = {
       chainId: 1337,
       accounts: allAccounts,
     },
+    fendermint: {
+      url: 'http://127.0.0.1:8545',
+      chainId: 0x6e6ef197d637d,
+      accounts: allAccounts,
+    },
     production: {
       url: 'http://testnet.lilypadnetwork.org:8545',
       chainId: 1337,
       accounts: allAccounts,
     },
     ipc: {
-      url: 'http://alpha.subnet.ipc.space:2346/rpc/v1',
-      chainId: 2734332491184961,
+      url: 'http://127.0.0.1:8545',
+      chainId: 0x6e6ef197d637d,
       accounts: allAccounts,
     },
     calibration: {
@@ -45,6 +50,7 @@ const config = {
       chainId: 314159,
       accounts: allAccounts,
     }
+
   },
 };
 
