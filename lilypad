@@ -7,7 +7,7 @@ IFS=$'\n\t'
 ### USE FUNCTIONS AND eval "$@" BECAUSE THEN PASSING VARIABLES WITH WHITESPACE
 ### IN STOPS WORKING
 
-LATEST_TXT="$(curl -sSL https://raw.githubusercontent.com/bacalhau-project/lilypad/main/latest.txt)"
+LATEST_TXT="$(curl -sSL https://raw.githubusercontent.com/bacalhau-project/lilypad-modicum/main/latest.txt)"
 for X in $LATEST_TXT; do
     if echo $X |grep -q git_hash; then
         LATEST_GIT_HASH="$(echo $X |cut -d '|' -f 2)"
