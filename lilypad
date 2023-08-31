@@ -22,7 +22,7 @@ done
 
 export GIT_HASH=${GIT_HASH:="$LATEST_GIT_HASH"}
 ### export VERSION=${VERSION:="${GIT_HASH}-$(uname -m |sed 's/arm64/aarch64/')"}
-export VERSION=${VERSION:="${GIT_HASH"}
+export VERSION=${VERSION:="${GIT_HASH}"}
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:="quay.io/lilypad"}
 export RPC_URL=${RPC_URL:="http://testnet.lilypadnetwork.org:8545"}
 export CONTRACT_ADDRESS=${CONTRACT_ADDRESS:=$LATEST_CONTRACT_ADDRESS}
