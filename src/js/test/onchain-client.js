@@ -209,6 +209,7 @@ describe("Modicum", async () => {
           .registerResourceProvider(
             1, //Architecture arch,
             0, //timePerInstruction
+            'http://1.2.3.4' // resultsURL
           )
         await expect(
           modicumContract
@@ -265,6 +266,7 @@ describe("Modicum", async () => {
           .registerResourceProvider(
             1, //Architecture arch,
             0, //timePerInstruction
+            'http://1.2.3.4' // resultsURL
           )
 
         const postResourceOfferTrx = await modicumContract
@@ -403,6 +405,7 @@ describe("Modicum", async () => {
             .registerResourceProvider(
               1, //Architecture arch,
               0, //timePerInstruction
+              'http://1.2.3.4' // resultsURL
             )
 
           const postResourceOfferTrx = await modicumContract

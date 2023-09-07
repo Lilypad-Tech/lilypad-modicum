@@ -20,6 +20,15 @@ export IMAGE_HARDHAT=${IMAGE_HARDHAT:="${IMAGE_BASE}-hardhat"}
 export DEPLOYMENT=${DEPLOYMENT:="localgeth"}
 export RPC_URL=${RPC_URL:="http://geth:8545"}
 
+# what URL will the resource provider report to download results from?
+# if left blank - the resource provider will use https://api.ipify.org to know it's public
+# ip address and will use the RESULTS_PORT below
+# if RESULTS_URL is provided then it must line up with the RESULTS_PORT below
+export RESULTS_URL=${RESULTS_URL:=""}
+# what port do we expose the results on?
+# this needs to line up with the 
+export RESULTS_PORT=${RESULTS_PORT:="8080"}
+
 export VERSION=${VERSION:="$(cd $DIR; git rev-parse --short HEAD)-$(uname -m |sed 's/arm64/aarch64/')"}
 
 export IMAGE_MODICUM_NAME=${IMAGE_MODICUM_NAME:="${IMAGE_BASE}-modicum"}
@@ -41,6 +50,16 @@ function gSSH() {
 
 function gSCP() {
   gcloud compute scp --quiet --zone=$GCP_ZONE $1 $GCP_NODE_NAME:$2
+}
+
+function install() {
+  (
+    set -euo pipefail
+    cd src/js
+    if [[ ! -d node_modules ]]; then
+      npm install
+    fi
+  )
 }
 
 function upload-stack() {
@@ -90,10 +109,10 @@ function contract-address() {
 
 function compile-contract() {
   source ${DIR}/.env
+  install
   (
     set -euo pipefail
     cd src/js
-    npm install
     npx hardhat compile
   )
 }
@@ -143,6 +162,7 @@ function geth() {
     ethereum/client-go \
       --datadir /data/geth \
       --dev \
+      --miner.gasprice 1 \
       --http \
       --http.api web3,eth,net \
       --http.addr 0.0.0.0 \
@@ -262,10 +282,11 @@ function lilypad-node() {
   # this is for dev trim
   if [[ "$DATA_DIRECTORY" == "$DEFAULT_DATA_DIR" ]]; then
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -v $DIR/src/python:/app"
-
-    # Workaround https://github.com/bacalhau-project/lilypad/issues/39
-    docker run -i --entrypoint /bin/bash -v $DIR/src/python:/app \
+    if [[ ! -d "$DIR/src/python/Modicum.egg-info" ]]; then
+      # Workaround https://github.com/bacalhau-project/lilypad/issues/39
+      docker run -i --rm --entrypoint /bin/bash -v $DIR/src/python:/app \
         $LILYPAD_NODE_IMAGE -c "pip install -e ."
+    fi
   else
     echo >&2 "running in production mode..."
   fi
@@ -273,6 +294,19 @@ function lilypad-node() {
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -d --restart always"
   elif [[ "$CONTAINER_MODE" == "cli" ]]; then
     LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -i --rm"
+  fi
+  if [[ "$CONTAINER_MODE" == "server" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -d --restart always"
+  elif [[ "$CONTAINER_MODE" == "cli" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -i --rm"
+  fi
+  # expose port 5050 for the results nginx
+  if [[ "$LILYPAD_NODE_NAME" == "resource-provider" ]]; then
+    LILYPAD_NODE_FLAGS="$LILYPAD_NODE_FLAGS -p $RESULTS_PORT:80"
+    # this is for dev trim
+    if [[ "$DATA_DIRECTORY" == "$DEFAULT_DATA_DIR" ]]; then
+      export RESULTS_URL="http://localhost:$RESULTS_PORT"
+    fi
   fi
   GPU_ARG=""
   GPU_VALUE=""
@@ -287,6 +321,8 @@ function lilypad-node() {
     -e DEBUG \
     -e PRIVATE_KEY \
     -e BAD_ACTOR \
+    -e RESULTS_URL \
+    -e RESULTS_PORT \
     -e MEDIATION_CHANCE_PERCENT \
     -e MEDIATOR_ADDRESSES \
     -e RPC_URL \
@@ -358,11 +394,7 @@ function reset() {
   set -x
   docker rm -f faucet-proxy faucet resource-provider mediator solver geth-proxy geth ||true
   sudo rm -rf $DATA_DIRECTORY
-  local sleepSeconds="1"
-  if [[ -z "$QUICK_RESET" ]]; then
-    (cd src/js && npm install)
-    sleepSeconds="5"
-  fi
+  install
   node src/js/scripts/create-new-accounts.js > .env
   source ${DIR}/.env
   rm -rf src/js/deployments/localgeth
@@ -374,7 +406,7 @@ function reset() {
   build
   geth
   geth-proxy
-  sleep $sleepSeconds
+  sleep 1
   fund-admin
   fund-faucet
   fund-services

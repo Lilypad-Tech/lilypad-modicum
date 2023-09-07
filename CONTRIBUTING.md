@@ -7,6 +7,8 @@ We need the following installed:
  * docker
  * jq
 
+## start stack manually
+
 #### compile contract
 
 The first thing we need to do is compile the smart contract so we have the ABI and can build that into the container:
@@ -82,4 +84,31 @@ NOTE: if you want a fresh installation - then:
 
 ```bash
 ./stack clean
+```
+
+## run integration tests locally
+
+In one terminal:
+
+```bash
+./stack reset
+./stack start
+```
+
+In another terminal:
+
+```bash
+export DEBUG=1
+export SKIP_RESET=1
+./stack integration-tests
+```
+
+To run a single test:
+
+```bash
+export DEBUG=1
+export SKIP_RESET=1
+source .env
+cd test
+go test -v -run TestCowsay .
 ```

@@ -106,7 +106,6 @@ func TestSDXLColours(t *testing.T) {
 }
 
 // TODO: LLM test
-
 func testJob(t *testing.T, args []string, kind string, expectedText string, relPath string) string {
 	maybeReset(t)
 
@@ -132,12 +131,15 @@ func testJob(t *testing.T, args []string, kind string, expectedText string, relP
 			}
 		}
 	}()
-	out, err := exec.Command("./stack", args...).CombinedOutput()
+	stdout, stderr, err := runCommandWithOutput("./stack", args)
 	stop <- struct{}{}
-	if err != nil {
-		t.Fatal(err, string(out))
+	if stderr != "" {
+		log.Printf("stderr: %s", stderr)
 	}
-	writeOutput(out, "out.txt")
+	if err != nil {
+		t.Fatal(err, stdout)
+	}
+	writeOutput([]byte(stdout), "out.txt")
 
 	log.Println("----> FINDING IPFS URL")
 	ipfsURL, err := findIPFSURL("out.txt")
@@ -191,54 +193,4 @@ func testJob(t *testing.T, args []string, kind string, expectedText string, relP
 		fmt.Println(ipfsURL)
 	}
 	return cid
-}
-
-func runCommand(name string, args []string) error {
-	log.Printf("Running %s %s", name, args)
-	cmd := exec.Command(name, args...)
-	cmd.Dir = PATH
-	o, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Printf("Error from cmd %s %s: %s %s", name, args, err, o)
-	}
-	return err
-}
-
-func writeOutput(out []byte, filename string) {
-	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer file.Close()
-	if _, err := file.Write(out); err != nil {
-		fmt.Println(err)
-	}
-}
-
-func findIPFSURL(filename string) (string, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	buf := make([]byte, 0, 64*1024)
-	scanner.Buffer(buf, 1024*1024)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-		log.Print(line)
-		if strings.Contains(line, "ipfs.io") {
-			xs := strings.Split(line, " ")
-			return xs[len(xs)-1], nil
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return "", err
-	}
-
-	return "", fmt.Errorf("no IPFS URL found in %s", filename)
 }

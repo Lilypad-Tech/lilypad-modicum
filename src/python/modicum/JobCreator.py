@@ -322,6 +322,10 @@ class JobCreator(PlatformClient):
                             self.status = f"❌ {params['hash']}"
                             self.state = "ResultsPosted"
                         else:
+                            # resultsURL = self.ethclient.contract.functions.postJobOfferPartTwo
+                            self.logger.info("🟣🟣🟣🟣🟣🟣🟣🟣🟣🟣🟣🟣🟣🟣🟣🟣 WE ARE HERE 2")
+                            import pprint; pprint.pprint(self.matches[matchID])
+                            import pprint; pprint.pprint(self.job_offers[joid])
                             self.status = f"https://ipfs.io/ipfs/{params['hash']}"
                             self.state = "ResultsPosted"
                         if(should_mediate()):
@@ -448,7 +452,7 @@ class JobCreator(PlatformClient):
         self.deposit = deposit
 
         self.status = f"Sending deposit of {Web3.from_wei(self.deposit, 'ether')} lilETH to contract"
-
+        self.logger.info(f"Sending deposit of {Web3.from_wei(self.deposit, 'ether')} lilETH to contract")
         self.logger.info("🔵🔵🔵 post job offer")
         txHash = self.ethclient.transact(
             self.ethclient.contract.functions.postJobOfferPartOne(

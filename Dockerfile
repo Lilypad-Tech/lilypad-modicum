@@ -11,7 +11,8 @@ RUN apt-get update && \
       libcurl4-openssl-dev \
       jq \
       tzdata \
-      docker.io
+      docker.io \
+      nginx
 RUN curl -sL https://get.bacalhau.org/install.sh | bash
 RUN pip3 install supervisor
 RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-amd64.tar.gz && \
@@ -28,10 +29,12 @@ ENV BACALHAU_API_HOST=localhost
 # nvidia-smi wrapper script which actually runs a container from inside a container
 ADD nvidia-smi /usr/bin/nvidia-smi
 ADD nvidia-container-cli /usr/bin/nvidia-container-cli
+RUN mkdir -p /lilypad-results
 ENTRYPOINT ["/usr/local/bin/modicum"]
 
 FROM modicum AS resource-provider
 ADD ./src/python/supervisord.resourceProvider.conf /etc/supervisord.conf
+ADD ./src/python/nginx.conf /etc/nginx/sites-available/default
 ENTRYPOINT ["/usr/local/bin/supervisord"]
 
 FROM modicum AS mediator

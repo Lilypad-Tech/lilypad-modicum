@@ -231,6 +231,7 @@ contract Modicum {
     // address[] mediator_index;
 
     mapping(address => ResourceProvider) resourceProviders;
+    mapping(address => string) resourceProviderURLs;
     mapping(address => JobCreator) jobCreators;
 
     ResourceOffer[] resourceOffers;
@@ -410,6 +411,15 @@ contract Modicum {
         resourceProviders[msg.sender].supportedFirstLayers.push(firstLayerHash);
         emit ResourceProviderAddedSupportedFirstLayer(msg.sender, firstLayerHash);
     }
+
+    function getResourceProviderResultsURL(address id) public view returns (string memory) {
+        return resourceProviderURLs[id];
+    }
+
+    function setResourceProviderResultsURL(address id, string calldata url) public {
+      resourceProviderURLs[id] = url;
+    }
+
 
     // function getResourceProviderTrustedMediators(address rp) public view returns (address[] memory) {
     //     return resourceProviders[rp].trustedMediators;
