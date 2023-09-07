@@ -82,6 +82,33 @@ mediator_addresses you get by:
 cat .env | grep ADDRESS_MEDIATOR
 ```
 
+Now you need to upgrade the GPU node which lives at https://lambdalabs.com/ -> `node02-a10-ai-art-cluster-requester-lilypad`
+
+ * Click the `Launch` button
+ * Find the tab running lilypad (it has colored circles)
+ * Ctrl+c
+ * `reset`
+ * press up Enter to run the following command
+
+```bash
+sudo lilypad stop ; sudo -E lilypad serve ; sudo lilypad serve-logs
+```
+
+### adding a new module
+
+If a new module is added to the codebase then we need to:
+
+ * deploy code to production and the GPU node (as above)
+ * make sure that the `.env` file is correct (i.e. it has production values)
+ * update the module definition in `src/js/scripts/ensure-module-costs.js`
+ * run the `ensure-module-costs.js` script to update the costs
+
+```
+source .env
+export HARDHAT_NETWORK=production
+cd src/js
+node scripts/ensure-module-costs.js
+```
 
 ### deploy client scripts
 

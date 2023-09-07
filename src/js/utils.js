@@ -5,6 +5,7 @@ const {
 } = require('./accounts')
 
 const {
+  ethers,
   deployments,
 } = hre
 

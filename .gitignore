@@ -7,7 +7,8 @@ src/python/contract.json
 src/python/debug_*
 src/js/artifacts
 src/js/cache
-src/js/deployments
+src/js/deployments/hardhat
+src/js/deployments/localgeth
 __pycache__
 supervisord.log
 supervisord.pid
