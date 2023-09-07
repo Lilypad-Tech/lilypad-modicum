@@ -61,7 +61,7 @@ Works on Linux, macOS and WSL2 (x86_64 and arm64)
 
 Install `lilypad` CLI:
 ```
-curl -sSL -O https://bit.ly/get-lilypad && sudo install get-lilypad /usr/local/bin/lilypad
+curl -sSL -O https://raw.githubusercontent.com/bacalhau-project/lilypad-modicum/main/lilypad && sudo install lilypad /usr/local/bin/lilypad
 ```
 
 ### run a job (x86_64 or arm64)
