@@ -55,6 +55,8 @@ git pull
 exit
 ```
 
+**IMPORTANT** - make sure the resource_provider service is not running on this node because there is a single GPU resource provider running on Lambda Labs
+
 **You must now update the contract address in the latest.txt file which is distributed to users**
 
 Now you need to update the `./latest.txt` file:
@@ -70,7 +72,7 @@ git_hash you can get by:
 git rev-parse --short HEAD
 ```
 
-contrat_address you get by:
+contract_address you get by:
 
 ```bash
 cat src/js/deployments/localgeth/Modicum.json | jq -r .address
