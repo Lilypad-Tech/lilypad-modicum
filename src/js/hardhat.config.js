@@ -35,6 +35,11 @@ const config = {
       chainId: 1337,
       accounts: allAccounts,
     },
+    basegoerli: {
+      url: 'https://goerli.base.org',
+      chainId: 84531,
+      accounts: allAccounts,
+    },
     ipc: {
       url: 'http://alpha.subnet.ipc.space:2346/rpc/v1',
       chainId: 2734332491184961,
