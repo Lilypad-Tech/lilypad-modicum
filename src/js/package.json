@@ -17,6 +17,7 @@
     "ethereumjs-wallet": "^1.0.2",
     "hardhat-deploy": "^0.11.34",
     "keythereum": "^2.0.0",
-    "minimist": "^1.2.8"
+    "minimist": "^1.2.8",
+    "papaparse": "^5.4.1"
   }
 }
