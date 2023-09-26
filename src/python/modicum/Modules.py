@@ -32,5 +32,5 @@ modules = {
     "filecoin_data_prep:v0.0.1": _filecoin_data_prep,
     "deterministic_wasm:v0.0.1": _deterministic_wasm,
     "duckdb:v0.0.1": _duckdb,
-    "decenter:v0.1.0": _decenter,
+    "decenter:main": _decenter,
 }
