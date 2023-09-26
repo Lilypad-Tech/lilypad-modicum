@@ -10,6 +10,7 @@ from modules.fastchat import _fastchat
 from modules.sdxl import _sdxl
 from modules.lora import _lora_training, _lora_inference
 from modules.duckdb import _duckdb
+from modules.decenter import _decenter
 
 def get_bacalhau_jobspec(template_name, params):
     """
@@ -18,7 +19,7 @@ def get_bacalhau_jobspec(template_name, params):
 
     Caller of this method is responsible for writing it to a yaml file and then
     calling `bacalhau create <file.yaml>` on the ResourceProvider
-    """
+    """ 
     return modules[template_name](params)
 
 modules = {
@@ -31,4 +32,5 @@ modules = {
     "filecoin_data_prep:v0.0.1": _filecoin_data_prep,
     "deterministic_wasm:v0.0.1": _deterministic_wasm,
     "duckdb:v0.0.1": _duckdb,
+    "decenter:v0.1.0": _decenter,
 }
