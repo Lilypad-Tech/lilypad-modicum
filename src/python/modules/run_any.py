@@ -115,3 +115,5 @@ if __name__ == "__main__":
     }
 
     cowsay = App.loads(json.dumps(cowsay_json))
+
+    print(_run_any(cowsay.json))
