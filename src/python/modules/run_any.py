@@ -16,7 +16,7 @@ class App:
     image: str
     params: str
     entrypoint: str
-    envVars: List[str]
+    envVars: List[str] = None
     concurrency: int = 1
     engine: str = "Docker"
 
@@ -36,21 +36,17 @@ class App:
     outputs: List[dict] = None
 
     def __post_init__(self):
-        self.jobContext = {}
-
-        self.publisherSpec = {
-            "Type": "Estuary"
-        }
-        self.outputs = [
+        self.envVars = self.envVars or []
+        self.jobContext = self.jobContext or {}
+        self.publisherSpec = self.publisherSpec or {"Type": "Estuary"}
+        self.outputs = self.outputs or [
             {
                 "Name": "outputs",
                 "StorageSource": "IPFS",
                 "path": "/outputs"
             }
         ]
-        self.wasm = {
-            "EntryModule": {}
-        }
+        self.wasm = self.wasm or {"EntryModule": {}}
 
     @property
     def json(self) -> str:
