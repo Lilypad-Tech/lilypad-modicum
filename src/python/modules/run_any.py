@@ -34,6 +34,10 @@ class App:
 
     verifier: str = "Noop"
 
+    wasm: dict = {
+        "EntryModule": {}
+    }
+
     outputs: List[dict] = [
         {
             "Name": "outputs",
@@ -102,9 +106,7 @@ def _run_any(params: str):
             "Resources": app.resources,
             "Timeout": app.timeout,
             "Verifier": app.verifier,
-            "Wasm": {
-                "EntryModule": {}
-            },
+            "Wasm": app.wasm,
             "outputs": app.outputs,
         }
     }
