@@ -105,10 +105,6 @@ def _run_any(params: str):
 
 
 if __name__ == "__main__":
-    # a = App()
-    # print(a.json)
-    # print(_run_any(a.json))
-
     cowsay_json = {
         "image": "grycap/cowsay:latest",
         "entrypoint": ["/usr/games/cowsay", "Your Cowsay Message"]
