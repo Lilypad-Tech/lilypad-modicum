@@ -6,9 +6,9 @@ runAny: module enables you to run and test any module prior to PR approval
 import dataclasses
 import json
 from dataclasses import dataclass
+from typing import List
 
 import yaml
-from typing import List
 
 
 @dataclass
@@ -20,30 +20,37 @@ class App:
     concurrency: int = 1
     engine: str = "Docker"
 
-    jobContext: dict = {}
+    jobContext: dict = None
 
     network: str = "None"
 
-    publisherSpec: dict = {
-        "Type": "Estuary"
-    }
+    publisherSpec: dict = None
     resources: dict = {}  # {"GPU": "1"}
 
     timeout: int = 1800
 
     verifier: str = "Noop"
 
-    wasm: dict = {
-        "EntryModule": {}
-    }
+    wasm: dict = None
 
-    outputs: List[dict] = [
-        {
-            "Name": "outputs",
-            "StorageSource": "IPFS",
-            "path": "/outputs"
+    outputs: List[dict] = None
+
+    def __post_init__(self):
+        self.jobContext = {}
+
+        self.publisherSpec = {
+            "Type": "Estuary"
         }
-    ]
+        self.outputs = [
+            {
+                "Name": "outputs",
+                "StorageSource": "IPFS",
+                "path": "/outputs"
+            }
+        ]
+        self.wasm = {
+            "EntryModule": {}
+        }
 
     @property
     def json(self) -> str:
