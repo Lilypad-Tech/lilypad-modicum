@@ -14,7 +14,6 @@ import yaml
 @dataclass
 class App:
     image: str
-    params: str
     entrypoint: List[str]
     envVars: List[str] = None
     concurrency: int = 1
@@ -22,7 +21,7 @@ class App:
 
     jobContext: dict = None
 
-    network: str = "None"
+    network: dict = None
 
     publisherSpec: dict = None
     resources: dict = None  # {"GPU": "1"}
@@ -48,6 +47,9 @@ class App:
         ]
         self.wasm = self.wasm or {"EntryModule": {}}
         self.resources = self.resources or {}
+        self.network = {
+            "Type": "None",
+        }
 
     @property
     def json(self) -> str:
@@ -67,13 +69,9 @@ def _run_any(params: str):
     if params.startswith("{"):
         params = yaml.safe_load(params)
         # app = App.loads(params)
-        # FIXME: no need of yaml safe load, but going with the sample provided
         app = App(**params)
-    # else:
-    #     raise Exception(f"Please set params to a dict like {app.json}")
-    # FIXME add it in future
 
-    if not isinstance(app, App):
+    else:
         raise Exception(f"Please set params to a dict like {app.json}")
 
     return {
@@ -95,9 +93,7 @@ def _run_any(params: str):
             "Language": {
                 "JobContext": app.jobContext
             },
-            "Network": {
-                "Type": app.network,
-            },
+            "Network": app.network,
             "PublisherSpec": app.publisherSpec,
             "Resources": app.resources,
             "Timeout": app.timeout,
@@ -109,12 +105,13 @@ def _run_any(params: str):
 
 
 if __name__ == "__main__":
-    a = App()
-    print(a.json)
-    print(_run_any(a.json))
-    print(_run_any(App(seed=1).json))
+    # a = App()
+    # print(a.json)
+    # print(_run_any(a.json))
 
-    input_str = '{"train_cmd": "train_v2", "t": "linear-regression.ipynb", "i": "/app/samples/sample_v3/sample_v3.zip", "seed": 2}'
-    a = App.loads(input_str)
-    assert a.seed == 2
-    print(_run_any(input_str))
+    cowsay_json = {
+        "image": "grycap/cowsay:latest",
+        "entrypoint": ["/usr/games/cowsay", "Your Cowsay Message"]
+    }
+
+    cowsay = App.loads(json.dumps(cowsay_json))
