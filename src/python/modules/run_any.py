@@ -15,7 +15,7 @@ import yaml
 class App:
     image: str
     params: str
-    entrypoint: str
+    entrypoint: List[str]
     envVars: List[str] = None
     concurrency: int = 1
     engine: str = "Docker"
@@ -59,8 +59,6 @@ class App:
     def loads(json_str: str) -> 'App':
         args = json.loads(json_str)
         return App(**args)
-    # def to_dict(self):
-    #     return {"train_cmd": self.train_cmd, "t": self.t, }
 
 
 def _run_any(params: str):
@@ -89,12 +87,7 @@ def _run_any(params: str):
                 "Concurrency": app.concurrency
             },
             "Docker": {
-                "Entrypoint": [
-                    # "bash", "-c",
-                    # stderr logging is nondeterministic (includes timing information)
-                    # "python3 inference.py 2>/dev/null",
-                    f"{app.entrypoint}",
-                ],
+                "Entrypoint": app.entrypoint,
                 "Image": app.image,
                 "EnvironmentVariables": app.envVars
             },
