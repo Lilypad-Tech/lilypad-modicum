@@ -25,7 +25,7 @@ class App:
     network: str = "None"
 
     publisherSpec: dict = None
-    resources: dict = {}  # {"GPU": "1"}
+    resources: dict = None  # {"GPU": "1"}
 
     timeout: int = 1800
 
@@ -47,6 +47,7 @@ class App:
             }
         ]
         self.wasm = self.wasm or {"EntryModule": {}}
+        self.resources = self.resources or {}
 
     @property
     def json(self) -> str:
