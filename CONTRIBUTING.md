@@ -6,6 +6,7 @@ We need the following installed:
 
  * docker
  * jq
+ * bash version 4.0.0 or higher (your default bash is likely outdated)
 
 #### compile contract
 
