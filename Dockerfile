@@ -12,7 +12,9 @@ RUN apt-get update && \
       jq \
       tzdata \
       docker.io
-RUN curl -sL https://get.bacalhau.org/install.sh | bash
+RUN curl -sSL -O https://github.com/bacalhau-project/bacalhau/releases/download/v1.0.3/bacalhau_v1.0.3_linux_amd64.tar.gz && \
+    tar xfv bacalhau_v1.0.3_linux_amd64.tar.gz && \
+    mv bacalhau /usr/local/bin
 RUN pip3 install supervisor
 RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-amd64.tar.gz && \
     tar -xzf kubo.tar.gz && \
