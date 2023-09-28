@@ -1,7 +1,6 @@
 """
-DIY: module - DECENTER, decentralized infra for AI/ML training
-ONLINE_PlAYGROUND: https://decenter-ai.streamlit.app
-
+DIY: module - runAny
+runAny: module enables you to run and test any module prior to PR approval
 """
 
 import dataclasses
