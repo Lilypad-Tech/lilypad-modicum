@@ -14,3 +14,4 @@ supervisord.log
 supervisord.pid
 .env
 ops/testnet/.terraform/providers
+.idea/
