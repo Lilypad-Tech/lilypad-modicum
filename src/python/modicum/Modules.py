@@ -19,7 +19,7 @@ def get_bacalhau_jobspec(template_name, params):
 
     Caller of this method is responsible for writing it to a yaml file and then
     calling `bacalhau create <file.yaml>` on the ResourceProvider
-    """ 
+    """
     return modules[template_name](params)
 
 modules = {
