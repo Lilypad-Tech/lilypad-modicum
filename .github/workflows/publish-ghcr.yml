@@ -155,7 +155,7 @@ jobs:
       - name: Set lowercased repo owner
         id: repo_owner
         run: |
-          owner=${$REPO_OWNER,,} #convert to lowercase
+          owner=$(echo $REPO_OWNER | tr '[:upper:]' '[:lower:]') #convert to lowercase
           echo $owner
           echo "owner=$owner" >> $GITHUB_OUTPUT
         shell: bash
