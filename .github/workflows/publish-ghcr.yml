@@ -100,7 +100,7 @@ jobs:
         with:
           # base for tags
           images: |
-            ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-modicum
+            ${{ env.REGISTRY}}/${{github.repository_owner}}/modicum
             ${{ env.REGISTRY}}/${{github.repository_owner}}/resource-provider
             ${{ env.REGISTRY}}/${{github.repository_owner}}/mediator 
             ${{ env.REGISTRY}}/${{github.repository}}/lilypad-modicum
