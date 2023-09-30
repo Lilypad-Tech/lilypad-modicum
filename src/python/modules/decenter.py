@@ -24,7 +24,7 @@ class App:
     t: str = "linear-regression.ipynb"
     i: str = "/app/samples/sample_v3/sample_v3.zip"
     seed: int = 0  # not used but for deterministic
-    image_tag: str = "v1.5.0"
+    image_tag: str = "main"
     
     gpu: int =1 #1-8
     cpu: int|str = CPU_CONFIG[8]
