@@ -76,8 +76,9 @@ def _decenter(params: str):
                     "/app/venv/bin/python",
                     "main.py",
                     app.train_cmd,
-                    f"-t={app.t} -i={app.i}",
-                    "2>/dev/null ",
+                    f"-t={app.t}",
+                    f"-i={app.i}",
+                    "2>/dev/null",
                     # "> /dev/null 2>&1"
                 ],
                 "Image": f"ghcr.io/decenter-ai/compute:{app.image_tag}",
