@@ -157,7 +157,7 @@ jobs:
         run: |
           owner=${$REPO_OWNER,,} #convert to lowercase
           echo $owner
-          echo "owner=$REPO_OWNER" >> $GITHUB_OUTPUT
+          echo "owner=$owner" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Build multiarch docker image and push
