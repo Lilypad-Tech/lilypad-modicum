@@ -12,6 +12,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   REPO: ${{github.repository}}
+  REPO_OWNER: ${{github.repository_owner}}
 
 jobs:
   setup:
@@ -154,8 +155,8 @@ jobs:
       - name: Set lowercased repo owner
         id: repo_owner
         run: |
-          REPO_OWNER=${${{github.repository_owner}},,} #convert to lowercase
-          echo $REPO_OWNER
+          owner=${$REPO_OWNER,,} #convert to lowercase
+          echo $owner
           echo "owner=$REPO_OWNER" >> $GITHUB_OUTPUT
         shell: bash
 
