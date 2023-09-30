@@ -17,6 +17,7 @@ class App:
     t: str = "linear-regression.ipynb"
     i: str = "/app/samples/sample_v3/sample_v3.zip"
     seed: int = 0  # not used but for deterministic
+    image_tag: str = "v1.5.0"
 
     @property
     def json(self) -> str:
@@ -65,7 +66,7 @@ def _decenter(params: str):
                     f"/app/venv/bin/python main.py {app.train_cmd}",
                     f"-t={app.t} -i={app.i}",
                 ],
-                "Image": "ghcr.io/decenter-ai/compute.decenter-ai/decenter.compute.v1:main",
+                "Image": f"ghcr.io/decenter-ai/compute:{app.image_tag}",
                 "EnvironmentVariables": [
                     # f"PROMPT={params.get('prompt', 'question mark floating in space')}",
                     # f"RANDOM_SEED={params.get('seed', 0)}",
