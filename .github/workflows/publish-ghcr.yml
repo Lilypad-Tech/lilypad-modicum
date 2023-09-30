@@ -102,7 +102,10 @@ jobs:
           images: |
             ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-modicum
             ${{ env.REGISTRY}}/${{github.repository_owner}}/resource-provider
-            ${{ env.REGISTRY}}/${{github.repository_owner}}/mediator
+            ${{ env.REGISTRY}}/${{github.repository_owner}}/mediator 
+            ${{ env.REGISTRY}}/${{github.repository}}/lilypad-modicum
+            ${{ env.REGISTRY}}/${{github.repository}}/resource-provider
+            ${{ env.REGISTRY}}/${{github.repository}}/mediator
           tags: |
             type=schedule
             type=sha,format=short
