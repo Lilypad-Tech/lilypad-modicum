@@ -39,7 +39,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: "16.x"
 
       - name: Test CLI
         run: |
@@ -57,7 +57,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: "16.x"
 
       - name: Test smart contract
         shell: bash
@@ -92,7 +92,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: "16.x"
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -103,7 +103,6 @@ jobs:
             ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-modicum
             ${{ env.REGISTRY}}/${{github.repository_owner}}/resource-provider
             ${{ env.REGISTRY}}/${{github.repository_owner}}/mediator
-
           tags: |
             type=schedule
             type=sha,format=short
@@ -122,6 +121,8 @@ jobs:
           echo "${{ steps.meta.outputs.tags }}"
 
       - name: Build and push Docker image
+        env:
+          DOCKER_CLI_EXPERIMENTAL: enabled
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -129,6 +130,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels}}
           github-token: ${{github.token}}
+          platforms: linux/arm64,linux/amd64
 
       - name: Build multiarch docker image and push
         shell: bash
