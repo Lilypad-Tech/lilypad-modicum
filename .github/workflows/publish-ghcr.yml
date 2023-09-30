@@ -152,9 +152,10 @@ jobs:
       #     platforms: linux/arm64,linux/amd64
 
       - name: Set lowercased repo owner
-        id: owner
+        id: repo_owner
         run: |
           REPO_OWNER=${${{github.repository_owner}},,} #convert to lowercase
+          echo $REPO_OWNER
           echo "owner=$REPO_OWNER" >> $GITHUB_OUTPUT
         shell: bash
 
@@ -169,5 +170,5 @@ jobs:
           for X in modicum resource-provider mediator; do
             docker buildx build --target $X --push \
               --platform linux/arm64,linux/amd64 \
-              -t ${{env.REGISTRY}}/${{steps.owner.owner}}/lilypad-$X:$(git rev-parse --short HEAD) .
+              -t ${{env.REGISTRY}}/${{steps.repo_owner.owner}}/lilypad-$X:$(git rev-parse --short HEAD) .
           done
