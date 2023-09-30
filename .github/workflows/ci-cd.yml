@@ -1,6 +1,18 @@
-name: CI
+name: Publish to quay
 
-on: [push]
+on:
+  push:
+    branches:
+
+    tags:
+
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  PUSH_TAG: ${{github.repository}}:latest
+  REPO: ${{github.repository}}
 
 jobs:
   setup:
