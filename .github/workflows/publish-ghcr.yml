@@ -106,6 +106,13 @@ jobs:
             ${{ env.REGISTRY}}/${{github.repository}}/lilypad-modicum
             ${{ env.REGISTRY}}/${{github.repository}}/resource-provider
             ${{ env.REGISTRY}}/${{github.repository}}/mediator
+
+            ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-modicum
+            ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-resource-provider
+            ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-mediator 
+            ${{ env.REGISTRY}}/${{github.repository}}/lilypad-modicum
+            ${{ env.REGISTRY}}/${{github.repository}}/lilypad-resource-provider
+            ${{ env.REGISTRY}}/${{github.repository}}/lilypad-mediator
           tags: |
             type=schedule
             type=sha,format=short
