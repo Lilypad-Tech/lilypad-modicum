@@ -24,7 +24,7 @@ class App:
     t: str = "linear-regression.ipynb"
     i: str = "/app/samples/sample_v3/sample_v3.zip"
     seed: int = 0  # not used but for deterministic
-    image_tag: str = "main"
+    image_tag: str = "v1.5.5" #stable version checkout stable releases over https://github.com/DeCenter-AI/compute.decenter-ai/releases
     
     gpu: int =1 #1-8
     cpu: int|str = CPU_CONFIG[8]
