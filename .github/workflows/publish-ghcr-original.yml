@@ -1,0 +1,69 @@
+name: Publish to ghcr original
+
+on:
+  push:
+    branches:
+
+    tags:
+
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  REPO: ${{github.repository}}
+  REPO_OWNER: ${{github.repository_owner}}
+
+jobs:
+  deploy-ghcr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Qemu
+        run: |
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+      - name: Create builder
+        run: |
+          export DOCKER_CLI_EXPERIMENTAL=enabled
+          docker context create multi-arch-build
+          docker buildx create --use multi-arch-build
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+
+      - name: Set lowercased repo owner
+        id: repo_owner
+        run: |
+          owner=$(echo $REPO_OWNER | tr '[:upper:]' '[:lower:]') #convert to lowercase
+          echo $owner
+          echo "owner=$owner" >> $GITHUB_OUTPUT
+          echo "REPO_OWNER=$owner" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Build multiarch docker image and push
+        shell: bash
+        run: |
+          set -x
+          # Build contract
+          ./stack reset
+          # Build and push docker images
+          export DOCKER_CLI_EXPERIMENTAL=enabled
+          for X in modicum resource-provider mediator; do
+            docker buildx build --target $X --push \
+              --platform linux/arm64,linux/amd64 \
+              -t ${{env.REGISTRY}}/$REPO_OWNER/lilypad-$X:$(git rev-parse --short HEAD) .
+          done
+
+

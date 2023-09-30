@@ -67,7 +67,7 @@ jobs:
           ./stack reset
           ./stack unit-tests
 
-  build:
+  deploy-ghcr:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -108,9 +108,9 @@ jobs:
             ${{ env.REGISTRY}}/${{github.repository}}/resource-provider
             ${{ env.REGISTRY}}/${{github.repository}}/mediator
 
-            ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-modicum
-            ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-resource-provider
-            ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-mediator 
+            # ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-modicum
+            # ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-resource-provider
+            # ${{ env.REGISTRY}}/${{github.repository_owner}}/lilypad-mediator 
             ${{ env.REGISTRY}}/${{github.repository}}/lilypad-modicum
             ${{ env.REGISTRY}}/${{github.repository}}/lilypad-resource-provider
             ${{ env.REGISTRY}}/${{github.repository}}/lilypad-mediator
@@ -140,37 +140,14 @@ jobs:
           # Build and push docker images
           # export DOCKER_CLI_EXPERIMENTAL=enabled
 
-      # - name: Build and push Docker image
-      #   # env:
-      #   #   DOCKER_CLI_EXPERIMENTAL: enabled #already enabled
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     push: ${{ github.event_name != 'pull_request' }}
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels}}
-      #     github-token: ${{github.token}}
-      #     platforms: linux/arm64,linux/amd64
-
-      - name: Set lowercased repo owner
-        id: repo_owner
-        run: |
-          owner=$(echo $REPO_OWNER | tr '[:upper:]' '[:lower:]') #convert to lowercase
-          echo $owner
-          echo "owner=$owner" >> $GITHUB_OUTPUT
-          echo "REPO_OWNER=$owner" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Build multiarch docker image and push
-        shell: bash
-        run: |
-          set -x
-          # Build contract
-          ./stack reset
-          # Build and push docker images
-          export DOCKER_CLI_EXPERIMENTAL=enabled
-          for X in modicum resource-provider mediator; do
-            docker buildx build --target $X --push \
-              --platform linux/arm64,linux/amd64 \
-              -t ${{env.REGISTRY}}/$REPO_OWNER/lilypad-$X:$(git rev-parse --short HEAD) .
-          done
+      - name: Build and push Docker image
+        # env:
+        #   DOCKER_CLI_EXPERIMENTAL: enabled #already enabled
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels}}
+          github-token: ${{github.token}}
+          platforms: linux/arm64,linux/amd64
