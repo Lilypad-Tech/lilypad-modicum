@@ -21,7 +21,7 @@ RUN curl -o kubo.tar.gz https://dist.ipfs.tech/kubo/v0.21.0/kubo_v0.21.0_linux-a
     cd kubo && \
     bash install.sh
 # this gets the ABI into the python container
-ADD ./src/js/contracts/Modicum.sol/Modicum.json /Modicum.json
+ADD ./src/js/artifacts/contracts/Modicum.sol/Modicum.json /Modicum.json
 ADD ./src/python/modicum/requirements.txt /tmp
 RUN pip3 install -r /tmp/requirements.txt
 ADD ./src/python /app
