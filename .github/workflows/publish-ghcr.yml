@@ -151,13 +151,12 @@ jobs:
       #     github-token: ${{github.token}}
       #     platforms: linux/arm64,linux/amd64
 
-
-      - name: Set lowercased repository name
+      - name: Set lowercased repo owner
+        id: owner
         run: |
           REPO_OWNER=${${{github.repository_owner}},,} #convert to lowercase
-          echo "REPO_OWNER=$REPO_OWNER" >> $GITHUB_ENV
+          echo "owner=$REPO_OWNER" >> $GITHUB_OUTPUT
         shell: bash
-        
 
       - name: Build multiarch docker image and push
         shell: bash
@@ -170,5 +169,5 @@ jobs:
           for X in modicum resource-provider mediator; do
             docker buildx build --target $X --push \
               --platform linux/arm64,linux/amd64 \
-              -t ${{env.REGISTRY}}/$REPO_OWNER/lilypad-$X:$(git rev-parse --short HEAD) .
+              -t ${{env.REGISTRY}}/${{steps.owner.owner}}/lilypad-$X:$(git rev-parse --short HEAD) .
           done
