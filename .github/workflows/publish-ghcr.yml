@@ -54,12 +54,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+
       - name: Test smart contract
+        shell: bash
         run: |
           set -x
-          # Install node
-          curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
-          sudo apt -y install nodejs
           ./stack reset
           ./stack unit-tests
 
@@ -92,6 +95,7 @@ jobs:
           node-version: '16.x'
 
       - name: Build multiarch docker image and push
+        shell: bash
         run: |
           set -x
           # Build contract
