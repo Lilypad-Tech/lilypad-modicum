@@ -120,9 +120,18 @@ jobs:
           echo meta tags
           echo "${{ steps.meta.outputs.tags }}"
 
+      - name: Setup prior to docker build
+        shell: bash
+        run: |
+          set -x
+          # Build contract
+          ./stack reset
+          # Build and push docker images
+          # export DOCKER_CLI_EXPERIMENTAL=enabled
+
       - name: Build and push Docker image
-        env:
-          DOCKER_CLI_EXPERIMENTAL: enabled
+        # env:
+        #   DOCKER_CLI_EXPERIMENTAL: enabled #already enabled
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -132,16 +141,16 @@ jobs:
           github-token: ${{github.token}}
           platforms: linux/arm64,linux/amd64
 
-      - name: Build multiarch docker image and push
-        shell: bash
-        run: |
-          set -x
-          # Build contract
-          ./stack reset
-          # Build and push docker images
-          export DOCKER_CLI_EXPERIMENTAL=enabled
-          for X in modicum resource-provider mediator; do
-            docker buildx build --target $X --push \
-              --platform linux/arm64,linux/amd64 \
-              -t ${{env.REGISTRY}}/${{github.repository_owner}}/lilypad-$X:$(git rev-parse --short HEAD) .
-          done
+      # - name: Build multiarch docker image and push
+      #   shell: bash
+      #   run: |
+      #     set -x
+      #     # Build contract
+      #     ./stack reset
+      #     # Build and push docker images
+      #     export DOCKER_CLI_EXPERIMENTAL=enabled
+      #     for X in modicum resource-provider mediator; do
+      #       docker buildx build --target $X --push \
+      #         --platform linux/arm64,linux/amd64 \
+      #         -t ${{env.REGISTRY}}/${{github.repository_owner}}/lilypad-$X:$(git rev-parse --short HEAD) .
+      #     done
