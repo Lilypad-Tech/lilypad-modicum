@@ -99,7 +99,7 @@ def _decenter(params: str):
                 "Type": "None"
             },
             "PublisherSpec": {
-                "Type": "Estuary"
+                "Type": "IPFS"
             },
             "Resources": {
                 "GPU": str(app.gpu),
@@ -123,6 +123,8 @@ def _decenter(params: str):
 
 
 if __name__ == "__main__":
+    from pprint import pprint
+    
     a = App()
     print(a.json)
     print(_decenter(a.json))
@@ -131,4 +133,11 @@ if __name__ == "__main__":
     input_str = '{"train_cmd": "train_v2", "t": "linear-regression.ipynb", "i": "/app/samples/sample_v3/sample_v3.zip", "seed": 2}'
     a = App.loads(input_str)
     assert a.seed == 2
-    print(_decenter(input_str))
+    
+    print("\n")
+    res = _decenter(input_str)
+    
+    pprint(res,indent=2,width=10)
+    pprint(res["Spec"],indent=2)
+    
+    
