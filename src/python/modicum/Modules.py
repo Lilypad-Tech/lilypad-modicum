@@ -11,6 +11,7 @@ from modules.sdxl import _sdxl
 from modules.lora import _lora_training, _lora_inference
 from modules.duckdb import _duckdb
 from modules.decenter import _decenter
+from modules.scorepoc import _scorepoc
 
 def get_bacalhau_jobspec(template_name, params):
     """
@@ -33,4 +34,5 @@ modules = {
     "deterministic_wasm:v0.0.1": _deterministic_wasm,
     "duckdb:v0.0.1": _duckdb,
     "decenter:main": _decenter,
+    "scorepoc:v0.0.1": _scorepoc,
 }
