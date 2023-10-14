@@ -10,6 +10,13 @@ from dataclasses import dataclass
 
 import yaml
 
+CPU_CONFIG = {
+    500: "500m",
+    2: "2",
+    8: "8",
+}
+
+
 
 @dataclass
 class App:
@@ -17,6 +24,15 @@ class App:
     t: str = "linear-regression.ipynb"
     i: str = "/app/samples/sample_v3/sample_v3.zip"
     seed: int = 0  # not used but for deterministic
+    image_tag: str = "v1.5.5" #stable version checkout stable releases over https://github.com/DeCenter-AI/compute.decenter-ai/releases
+    
+    gpu: int =1 #1-8
+    cpu: int|str = CPU_CONFIG[8]
+    memory: str = "1Gb"
+    
+    def __post_init__(self):
+        pass
+        
 
     @property
     def json(self) -> str:
@@ -28,8 +44,6 @@ class App:
     def loads(json_str: str) -> 'App':
         args = json.loads(json_str)
         return App(**args)
-    # def to_dict(self):
-    #     return {"train_cmd": self.train_cmd, "t": self.t, }
 
 
 def _decenter(params: str):
@@ -38,7 +52,6 @@ def _decenter(params: str):
     if params.startswith("{"):
         params = yaml.safe_load(params)
         # app = App.loads(params)
-        # FIXME: no need of yaml safe load, but going with the sample provided
         app = App(**params)
     # else:
     #     raise Exception(f"Please set params to a dict like {app.json}")
@@ -59,13 +72,16 @@ def _decenter(params: str):
             },
             "Docker": {
                 "Entrypoint": [
-                    # "bash", "-c",
-                    # stderr logging is nondeterministic (includes timing information)
-                    # "python3 inference.py 2>/dev/null",
-                    f"/app/venv/bin/python main.py {app.train_cmd}",
-                    f"-t={app.t} -i={app.i}",
+                    "bash", "-c",
+                    "/app/venv/bin/python",
+                    "main.py",
+                    app.train_cmd,
+                    f"-t={app.t}",
+                    f"-i={app.i}",
+                    "2>/dev/null",
+                    # "> /dev/null 2>&1"
                 ],
-                "Image": "ghcr.io/decenter-ai/compute.decenter-ai/decenter.compute.v1:main",
+                "Image": f"ghcr.io/decenter-ai/compute:{app.image_tag}",
                 "EnvironmentVariables": [
                     # f"PROMPT={params.get('prompt', 'question mark floating in space')}",
                     # f"RANDOM_SEED={params.get('seed', 0)}",
@@ -83,10 +99,12 @@ def _decenter(params: str):
                 "Type": "None"
             },
             "PublisherSpec": {
-                "Type": "Estuary"
+                "Type": "IPFS"
             },
             "Resources": {
-                "GPU": "1"
+                "GPU": str(app.gpu),
+                "CPU": str(app.cpu),
+                "MEMORY": str(app.memory),
             },
             "Timeout": 1800,
             "Verifier": "Noop",
@@ -105,6 +123,8 @@ def _decenter(params: str):
 
 
 if __name__ == "__main__":
+    from pprint import pprint
+    
     a = App()
     print(a.json)
     print(_decenter(a.json))
@@ -113,4 +133,11 @@ if __name__ == "__main__":
     input_str = '{"train_cmd": "train_v2", "t": "linear-regression.ipynb", "i": "/app/samples/sample_v3/sample_v3.zip", "seed": 2}'
     a = App.loads(input_str)
     assert a.seed == 2
-    print(_decenter(input_str))
+    
+    print("\n")
+    res = _decenter(input_str)
+    
+    pprint(res,indent=2,width=10)
+    pprint(res["Spec"],indent=2)
+    
+    

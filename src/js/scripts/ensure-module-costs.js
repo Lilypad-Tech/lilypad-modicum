@@ -22,7 +22,7 @@ const MODULE_COSTS = {
   "fastchat:v0.0.1": 2,
   "filecoin_data_prep:v0.0.1": 100,
   "deterministic_wasm:v0.0.1": 2,
-  "decenter:main": 1,
+  "decenter:main": 200,
 }
 
 async function main() {
